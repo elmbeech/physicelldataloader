@@ -33,7 +33,7 @@ jobs:
       run: |
         choco install ffmpeg imagemagick
         python -m pip install --upgrade pip
-        python -m pip install flake8 pytest aicsimageio anndata matplotlib numpy pandas requests scipy vtk
+        python -m pip install flake8 pytest bioio anndata matplotlib numpy pandas requests scipy vtk
         python -m pip install D:\a\physicelldataloader\physicelldataloader -v
         #echo 'set PYTHONPATH=D:\a\physicelldataloader\physicelldataloader' >> $GITHUB_ENV
         #if [ -f requirements.txt ]; then pip install -r requirements.txt; fi

@@ -69,7 +69,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "aicsimageio",
+    "bioio",
     "anndata",
     "matplotlib",
     "numpy",

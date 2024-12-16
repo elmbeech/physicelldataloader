@@ -20,7 +20,7 @@ The pcdl python3 library maintains three branches:
 ## Header:
 
 + Language: python [>= 3.9](https://devguide.python.org/versions/)
-+ Library dependencies: aicsimageio, anndata, matplotlib, numpy, pandas, (requests), scipy, vtk
++ Library dependencies: bioio, anndata, matplotlib, numpy, pandas, (requests), scipy, vtk
 + Date of origin original PhysiCell-Tools python-loader: 2019-09-02
 + Date of origin pcdl fork: 2022-08-30
 + Doi: https://doi.org/10.5281/ZENODO.8176399

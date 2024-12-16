@@ -20,8 +20,8 @@
 
 
 # load libraries
-import aicsimageio
-from aicsimageio.writers import OmeTiffWriter
+import bioio
+from bioio.writers import OmeTiffWriter
 import glob
 import matplotlib.pyplot as plt
 import numpy as np
@@ -1099,7 +1099,7 @@ class pyMCDSts:
                 #ome_xml=x_img,
                 channel_names = ls_substrate + ls_celltype,
                 image_names = [f'timeseries_{cell_attribute}'],
-                physical_pixel_sizes = aicsimageio.types.PhysicalPixelSizes(mcds.get_voxel_spacing()[2], 1.0, 1.0), #z,y,x [um]
+                physical_pixel_sizes = bioio.types.PhysicalPixelSizes(mcds.get_voxel_spacing()[2], 1.0, 1.0), #z,y,x [um]
                 #channel_colors=,
                 #fs_kwargs={},
             )

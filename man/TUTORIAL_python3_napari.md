@@ -1,6 +1,6 @@
 # PhysiCell Data Loader Tutorial: pcdl and Python and Napari
 
-[Napari](https://napari.org/stable/) is both, a python library and a GUI software.
+[Napari](https://napari.org/stable/) is both a python library and a GUI software.
 Napari is used by wetlab scientists and bioinformatician to analyze fluorescent microscopy data.
 Napari can read [ome.tiff](https://www.openmicroscopy.org/ome-files/) files.
 https://github.com/AllenCellModeling/napari-aicsimageio
@@ -8,13 +8,13 @@ https://github.com/AllenCellModeling/napari-aicsimageio
 
 ## Install napari
 
-And install the [aicsimageio](https://allencellmodeling.github.io/aicsimageio/) library,
+And install the [bioio](https://bioio-devs.github.io/bioio/OVERVIEW.html) library,
 which installs the "ome-types" napari plugin,
 that napari can read ome.tiff images inclusive ome metadata.
 
 ```bash
 pip3 install napari[all]
-pip3 install aicsimageio
+pip3 install bioio
 ```
 
 

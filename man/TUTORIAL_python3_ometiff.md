@@ -14,7 +14,7 @@ and [TUTORIAL_fiji_imagej.md](https://github.com/elmbeech/physicelldataloader/bl
 
 Additionally ome.tiff, tiff, png, and jpeg files can as well be loaded back in to python as [numpy](https://numpy.org/) array, for example with the [sci-kit image](https://scikit-image.org/) library (image data only).
 
-Besides that, ome.tiff files can be loaded with Allen Institute for Cell Science's [aicsiamgeio](https://github.com/AllenCellModeling/aicsimageio) library (image and metadata).
+Besides that, ome.tiff files can be loaded with Allen Institute for Cell Science's [bioio](https://bioio-devs.github.io/bioio/OVERVIEW.html) library (image and metadata).
 
 
 ### Save pcdl data constructs from the command line into tiff and ome.tiff files
@@ -64,12 +64,12 @@ a_ome.shape  # (25, 2, 200, 300)
 ```
 
 
-### Load ome.tiff files as AICSImage object into python
+### Load ome.tiff files as BioImage object into python
 
 ```python
-from aicsimageio import AICSImage
+from bioio import BioImage
 
-img = AICSImage('output/timeseries_ID.ome.tiff')
+img = BioImage('output/timeseries_ID.ome.tiff')
 img.shape  # (25, 2, 1, 200, 300)
 ```
 ```python
