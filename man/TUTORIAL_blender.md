@@ -66,25 +66,21 @@ To learn more about Blender and BVTK Node plugin, please study the official docu
 
 ## &#x2728; Handle ome tiff files
 
-The blender bioxel nodes plugin allows us load ome tiff files into blender.
+The blender bioxel nodes plugin allows us load single time step ome tiff files into blender.
 
-### Generate vtk files from the command line
+### Generate ome tiff files from the command line
 
 ```bash
-pcdl_make_conc_vtk output
-```
-```bash
-pcdl_make_cell_vtk output
+pcdl_make_ome_tiff output --collapse false
 ```
 
-### Generate vtk files from within python
+### Generate ome tiff files from within python
 
 ```python
 import pcdl
 
 mcdsts = pcdl.TimeSeries('output/')
-mcdsts.make_conc_vtk()
-mcdsts.make_cell_vtk()
+mcdsts.make_ome_tiff(collapse=False)
 ```
 
 ### The blender bioxel nodes plugin

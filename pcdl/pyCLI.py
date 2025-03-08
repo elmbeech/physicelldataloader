@@ -1274,7 +1274,7 @@ def get_anndata():
         )
         # going home
         s_opathfile = s_pathfile.replace('.xml', f'_cell_{args.scale}.h5ad')
-        ann_mcds.write(s_opathfile)
+        ann_mcds.write_h5ad(s_opathfile)
         return s_opathfile
 
     else:
@@ -1300,12 +1300,12 @@ def get_anndata():
         # going home
         if b_collapse :
             s_opathfile = f'{s_path}/timeseries_cell_{args.scale}.h5ad'
-            ann_mcdsts.write(s_opathfile)
+            ann_mcdsts.write_h5ad(s_opathfile)
             return s_opathfile
         else:
             ls_opathfile = [f"{s_path}/{s_xmlfile.replace('.xml', '_cell_{}.h5ad'.format(args.scale))}" for s_xmlfile in mcdsts.get_xmlfile_list()]
             for i, ann_mcds in enumerate(ann_mcdsts):
-                ann_mcds.write(ls_opathfile[i])
+                ann_mcds.write_h5ad(ls_opathfile[i])
             return ls_opathfile
 
 

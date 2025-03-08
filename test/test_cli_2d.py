@@ -813,7 +813,7 @@ class TestPyCliAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_path_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
                (ann.shape[0] >  9) and \
@@ -829,7 +829,7 @@ class TestPyCliAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--collapse', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace("['","").replace("']\n","").split("', '")
+        ls_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.\n','').replace("['","").replace("']\n","").split("', '")  # bue 20250307: >= python3.11
         assert len(ls_opathfile) == 25 and \
                ls_opathfile[0].endswith('output_2d/output00000000_cell_maxabs.h5ad') and \
                ls_opathfile[-1].endswith('output_2d/output00000024_cell_maxabs.h5ad') and \
@@ -841,7 +841,7 @@ class TestPyCliAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--custom_data_type', 'sample:bool'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
                (set(ann.var_names).issuperset({'sample'})) and \
@@ -858,7 +858,7 @@ class TestPyCliAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
                (not set(ann.var_names).issuperset({'oxygen'})) and \
@@ -875,7 +875,7 @@ class TestPyCliAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--graph', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
                (ann.shape[0] > 9) and \
@@ -891,7 +891,7 @@ class TestPyCliAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
                (ann.shape[0] > 9) and \
@@ -907,7 +907,7 @@ class TestPyCliAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--settingxml', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
                (set(ann.var_names).issuperset({'default_fusion_rates'})) and \
@@ -924,7 +924,7 @@ class TestPyCliAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--settingxml', 'none'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
                (set(ann.var_names).issuperset({'default_fusion_rates'})) and \
@@ -941,7 +941,7 @@ class TestPyCliAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '2'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
                (ann.shape[0] > 9) and \
@@ -957,7 +957,7 @@ class TestPyCliAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--drop', 'cell_type', 'oxygen'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
                (not set(ann.var_names).issuperset({'cell_type'})) and \
@@ -975,7 +975,7 @@ class TestPyCliAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--keep', 'cell_type', 'oxygen'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/timeseries_cell_maxabs.h5ad')) and \
                (set(ann.var_names).issuperset({'oxygen'})) and \
@@ -993,7 +993,7 @@ class TestPyCliAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_path_2d, '--scale', 'std'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/timeseries_cell_std.h5ad')) and \
                (ann.shape[0] > 9) and \
@@ -1010,7 +1010,7 @@ class TestPyCliAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/output00000024_cell_maxabs.h5ad')) and \
                (ann.shape[0] > 9) and \
@@ -1026,7 +1026,7 @@ class TestPyCliAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--microenv', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/output00000024_cell_maxabs.h5ad')) and \
                (not set(ann.var_names).issuperset({'oxygen'})) and \
@@ -1043,7 +1043,7 @@ class TestPyCliAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--graph', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/output00000024_cell_maxabs.h5ad')) and \
                (ann.shape[0] > 9) and \
@@ -1059,7 +1059,7 @@ class TestPyCliAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--physiboss', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/output00000024_cell_maxabs.h5ad')) and \
                (ann.shape[0] > 9) and \
@@ -1075,7 +1075,7 @@ class TestPyCliAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--settingxml', 'false'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/output00000024_cell_maxabs.h5ad')) and \
                (set(ann.var_names).issuperset({'default_fusion_rates'})) and \
@@ -1092,7 +1092,7 @@ class TestPyCliAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--settingxml', 'none'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/output00000024_cell_maxabs.h5ad')) and \
                (set(ann.var_names).issuperset({'default_fusion_rates'})) and \
@@ -1109,7 +1109,7 @@ class TestPyCliAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '2'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/output00000024_cell_maxabs.h5ad')) and \
                (ann.shape[0] > 9) and \
@@ -1125,7 +1125,7 @@ class TestPyCliAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--drop', 'cell_type', 'oxygen'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/output00000024_cell_maxabs.h5ad')) and \
                (not set(ann.var_names).issuperset({'cell_type'})) and \
@@ -1143,7 +1143,7 @@ class TestPyCliAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--keep', 'cell_type', 'oxygen'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/output00000024_cell_maxabs.h5ad')) and \
                (set(ann.var_names).issuperset({'oxygen'})) and \
@@ -1161,7 +1161,7 @@ class TestPyCliAnndata(object):
         s_result = subprocess.run(['pcdl_get_anndata', s_pathfile_2d, '--scale', 'std'], check=False, capture_output=True)
         #print(f'\ns_result.stdout: {s_result.stdout}\n')
         #print(f'\ns_result.stderr: {s_result.stderr}\n')
-        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','')
+        s_opathfile = s_result.stderr.decode('UTF8').replace('\r','').replace('\n','').replace('<sys>:0:','sys:1:').replace('sys:1: DeprecationWarning: Call to deprecated function (or staticmethod) _destroy.','')  # bue 20250307: >= python3.11
         ann = ad.read_h5ad(s_opathfile)
         assert (s_opathfile.endswith('output_2d/output00000024_cell_std.h5ad')) and \
                (ann.shape[0] > 9) and \

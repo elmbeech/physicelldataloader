@@ -15,8 +15,8 @@
 
 
 # load library
-import aicsimageio  # bioio, bioio_base
-from aicsimageio.writers import OmeTiffWriter
+import bioio_base
+from bioio.writers import OmeTiffWriter
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib import colors
@@ -569,12 +569,22 @@ class pyMCDS:
         tr_m_range, tr_n_range, tr_p_range = self.get_mesh_mnp_range()
         ar_m_axis, ar_n_axis, ar_p_axis = self.get_mesh_mnp_axis()
 
-        dm = (tr_m_range[1] - tr_m_range[0]) / (ar_m_axis.shape[0] - 1)
-        dn = (tr_n_range[1] - tr_n_range[0]) / (ar_n_axis.shape[0] - 1)
+        # m axis
+        if (len(set(tr_m_range)) == 1):
+            dm = np.float64(1.0)
+        else:
+            dm = (tr_m_range[1] - tr_m_range[0]) / (ar_m_axis.shape[0] - 1)
+        # n axis
+        if (len(set(tr_n_range)) == 1):
+            dn = np.float64(1.0)
+        else:
+            dn = (tr_n_range[1] - tr_n_range[0]) / (ar_n_axis.shape[0] - 1)
+        # p axis
         if (len(set(tr_p_range)) == 1):
             dp = np.float64(1.0)
         else:
             dp = (tr_p_range[1] - tr_p_range[0]) / (ar_p_axis.shape[0] - 1)
+
         return [dm, dn, dp]
 
 
@@ -1412,7 +1422,7 @@ class pyMCDS:
                 iren.Start()
 
             # free memory
-            del vfa_value
+            #del vfa_value
 
         # save vtk file
         s_vtkpathfile = self.path + '/' + s_vtkfile
@@ -2062,7 +2072,8 @@ class pyMCDS:
                     voa_data.InsertNextValue(df_cell.loc[i, s_attribute])
 
             vug_data.GetPointData().AddArray(voa_data)
-            del voa_data
+            # free memory
+            #del voa_data
 
         # generate sphere source
         vss_data = vtk.vtkSphereSource()
@@ -2327,7 +2338,12 @@ class pyMCDS:
             if len(ls_celltype) > 0:
                 s_channel += f'_{cell_attribute}'
             s_tifffile = self.xmlfile.replace('.xml', f'{s_channel}.ome.tiff')
+            if (len(s_tifffile) > 255):
+                print(f"Warning: filename {len(s_tifffile)} > 255 character.")
+                s_tifffile = self.xmlfile.replace('.xml', f'_channels.ome.tiff')
+                print(f"file name adjusted to {s_tifffile}.")
             s_tiffpathfile = self.path + '/' + s_tifffile
+
             # save to file
             OmeTiffWriter.save(
                 a_czyx_img,
@@ -2336,7 +2352,7 @@ class pyMCDS:
                 #ome_xml=x_img,
                 channel_names = ls_channel,
                 image_names = [s_tifffile.replace('.ome.tiff','')],
-                physical_pixel_sizes = aicsimageio.types.PhysicalPixelSizes(self.get_voxel_spacing()[2], 1.0, 1.0),  # z,y,x [um]
+                physical_pixel_sizes = bioio_base.types.PhysicalPixelSizes(self.get_voxel_spacing()[2], 1.0, 1.0),  # z,y,x [um]
                 #channel_colors=,
                 #fs_kwargs={},
             )
