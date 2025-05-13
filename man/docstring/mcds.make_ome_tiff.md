@@ -28,7 +28,7 @@
 
 ## output:
 ```
-            a_czyx_img: numpy array or ome tiff file.
+            a_tczyx_img: numpy array or ome tiff file.
 
 ```
 

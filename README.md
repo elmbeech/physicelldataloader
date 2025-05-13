@@ -18,7 +18,7 @@ The pcdl python3 library maintains three branches:
 
 ## Header:
 
-+ Language: python [>= 3.9](https://devguide.python.org/versions/)
++ Language: python [>= 3.10](https://devguide.python.org/versions/)
 + Library dependencies: anndata, bioio, matplotlib, numpy, pandas, (requests), scipy, vtk
 + Date of origin original PhysiCell-Tools python-loader: 2019-09-02
 + Date of origin pcdl fork: 2022-08-30
@@ -64,9 +64,7 @@ Extras tutorials for GUI software:
 + [pcdl and blender](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_blender.md)
 + [pcdl and napari](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_napari.md)
 + [pcdl and fiji imagej](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_fijiimagej.md)
-<!--
-+ [pcdl and neuroglancer](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_(python3)_neuroglancer.md)
--->
++ [pcdl and neuroglancer](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_neuroglancer.md)
 
 Slides:
 
@@ -96,10 +94,12 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 + fork pcdl continuous testing and feedbacks: Aneequa Sundus, John Metzcar
 + student prj on pcdl:
   Benjamin Jacobs (make\_gml),
+  Jason Lu (make\_neuroglancer),
   Katie Pletz (beta testing),
   Marshal Gress (plot\_scatter),
   Nick Oldfather (unit test model),
-  Thierry-Pascal Fleurant (plot\_timeseries)
+  Thierry-Pascal Fleurant (plot\_timeseries),
+  Viviana Kwong (make\_neuroglancer)
 
 Developers, please make pull requests to the https://github.com/elmbeech/physicelldataloader/tree/development branch. Thanks!
 
@@ -121,13 +121,37 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 ## Road Map:
 
 + evt generate lineage tree graph output files.
-+ evt add neuroglancer ome.tiff support.
 + evt add DataDiVR support.
 
 ## Release Notes:
++ version 4.0.0 (2025-05-13): elmbeech/physicelldataloader
+    + v4 was forked from v3.3.4!
+    + **mcds.data** struct was rewritten in more python less c++ way.
+    + pyMCDS.py and part of pyAnnData.py was fused to **timestep.py**.
+    + pyMCDSts.py and part of pyAnnData.py was fused to **timeseries.py**.
+    + pyCLI.py was renames to **commandline.py**.
+    + data\_timeseries.py was renamed to **output_data.py**.
+    + TimeStep function **get_concentration** was deprecated because pandas already has this functionlity.
+    + TimeStep function **get_concentration_at** was deprecated because pandas already has this functionlity.
+    + TimeStep function **get_cell_df_at** was deprecated because pandas already has this functionlity.
+    + **make_conc_vtk** and **make_cell_vtk** on the fly visualization was removed because paraview is good enough.
+    + new TimeStep **get_cell_attribute_list** function, to retrieve a list of all tracked cell attribute labels.
+    + new **pcdl_get_cell_attribute_list** function, to retrieve a list of all tracked cell attribute labels.
+    + new **render_neuroglancer** function, to render ome tiff image into neuroglancer.
+    + new **pcdl_render_neuroglancer** function, to render ome tiff images into neuroglancer.
+
++ version 3.3.6 (2025-05-13): elmbeech/physicelldataloader
+    + compatible with numpy >= 2.0.0 and python >= 3.9.
+
++ version 3.3.5 (2025-05-13): elmbeech/physicelldataloader
+    + compatible with numpy < 2.0.0 and python >= 3.9.
+    + remove pyMCDS and pyMCDSts **make_ome_tiff** and pyCLI **pcdl_make_ome_tiff** to make pyMCS.py stand alone again.
+    + new TimeStep **get_cell_attribute_list** function, to retrieve a list of all tracked cell attribute labels.
+    + new **pcdl_get_cell_attribute_list** function, to retrieve a list of all tracked cell attribute labels.
+
 + version 3.3.4 (2025-03-07): elmbeech/physicelldataloader
     + replace the **aicsimageio** library dependency with its successor **bioio**. special thanks to Joel Eliason!
-    + **make_ome_tiff** can handle automatically generated file names with > 255 characters. special thank to Genevieve Stein-O'Brien and DanielBergman!
+    + **make_ome_tiff** can now handel generated file names with > 255 characters. special thank to Genevieve Stein-O'Brien and DanielBergman!
     + **get_mesh_spacing** handels now an edge case correctly that would have resulted in a division by zero. special thanks to Randy Heiland!
 
 + version 3.3.3 (2025-01-10): elmbeech/physicelldataloader

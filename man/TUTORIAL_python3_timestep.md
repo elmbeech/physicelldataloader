@@ -197,39 +197,6 @@ df_conc.loc[(df_conc.voxel_i == 2) & (df_conc.voxel_j == 1) & (df_conc.voxel_k =
 Please have a look at [TUTORIAL_python3_pandas.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_pandas.md) to learn more.
 
 
-Additionally, there is a less often used function to retrieve substrate specific 3D or 2D meshgrid [numpy](https://numpy.org/) arrays.
-To get a 2D meshgrids you can slice though any z stack value, the function will always pick the closest mesh center coordinate, the smaller coordinate, if you hit the saddle point between two voxels.
-(This function might become deprecated in a future pcdl version.)
-
-```python
-# concentration meshgrid for a particular substrate
-oxygen_2d = mcds.get_concentration('oxygen', z_slice=0)
-oxygen_2d.shape  # (11, 11)
-```
-```python
-# concentration meshgrid for a particular substrate
-oxygen_3d = mcds.get_concentration('oxygen')
-oxygen_3d.shape  # (11, 11, 1)
-```
-
-
-Additionally, there is a less often used functions to retrieve a [numpy](https://numpy.org/) array of all substrate concentrations at a particular xyz coordinate, ordered alphabetically by substrate name, like the list retrieved by the get\_substrate\_names function.
-(This function might become deprecated in a future pcdl version.)
-
-```python
-# all concentration values at a particular coordinate
-mcds.get_concentration_at(x=0, y=0, z=0)  # array([34.4166271])
-```
-```python
-# all concentration values at a particular coordinate
-mcds.get_concentration_at(x=111, y=22, z=-5)  # array([18.80652216])
-```
-```python
-# all concentration values at a particular coordinate
-mcds.get_concentration_at(x=111, y=22, z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0)
-```
-
-
 ### &#x2728; Microenvironment Data Analysis with [Matplotlib](https://matplotlib.org/)
 
 For substrate concentration visualization, **matplotlib contour and contourf plots**,
@@ -313,15 +280,6 @@ df_cell.loc[(df_cell.voxel_i == 2) & (df_cell.voxel_j == 1) & (df_cell.voxel_k =
 ```
 
 Please have a look at [TUTORIAL_python3_pandas.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_pandas.md) to learn more.
-
-
-There exist an additional, less often used function,
-to filter for cells in xyz position plus minus (voxel spacing / 2).
-(This function might become deprecated in a future pcdl version.)
-
-```python
-mcds.get_cell_df_at(x=45, y=10, z=0)  # cells: 5, 7, 39
-```
 
 
 ### &#x2728; Cell Data Analysis within the [Scverse](https://scverse.org/)
@@ -554,7 +512,7 @@ mcds.is_in_mesh(x=0, y=0, z=0)  # True
 mcds.is_in_mesh(x=111, y=22, z=-5)  # True
 ```
 ```python
-mcds.is_in_mesh(x=111, y=22, z=-5.1)  # False and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0)
+mcds.is_in_mesh(x=111, y=22, z=-5.1)  # False and Warning @ TimeStep.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0)
 ```
 
 Translate a xyz position coordinate into a ijk voxel coordinate:
@@ -565,7 +523,7 @@ mcds.get_voxel_ijk(x=0, y=0, z=0)  # [0,0,0]
 mcds.get_voxel_ijk(x=111, y=22, z=-5)  # [4, 2, 0]
 ```
 ```python
-mcds.get_voxel_ijk(x=111, y=22, z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0)
+mcds.get_voxel_ijk(x=111, y=22, z=-5.1)  # None and Warning @ TimeStep.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0)
 ```
 
 Translate a xyz position coordinate into a mnp mesh center coordinate:
@@ -577,7 +535,7 @@ mcds.get_mesh_mnp(x=0, y=0, z=0)  # [0,0,0]
 mcds.get_mesh_mnp(x=111, y=22, z=-5)  # [4, 2, 0]
 ```
 ```python
-mcds.get_mesh_mnp(x=111, y=22, z=-5.1)  # None and Warning @ pyMCDS.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0)
+mcds.get_mesh_mnp(x=111, y=22, z=-5.1)  # None and Warning @ TimeStep.is_in_mesh : z = -5.1 out of bounds: z-range is (-5.0, 5.0)
 ```
 
 

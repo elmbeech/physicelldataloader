@@ -86,7 +86,7 @@ class uninstall_data:
 
         # for each obsolet timeserie
         for s_file in sorted(os.listdir(s_path)):
-            if s_file.startswith('output_'):
+            if s_file.startswith('output_2d') or s_file.startswith('output_3d'):
 
                # get path and filename
                s_pathfile = s_path + s_file

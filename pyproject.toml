@@ -71,11 +71,14 @@ classifiers = [
 # bue 2024-12-06: enforcing some versions
 dependencies = [
     "anndata>=0.10.8",
-    "bioio>=1.2.1",
+    "bioio>=1.2.1",  # needs numpy < 2.0.0
+    "bioio-ome-tiff",
     "matplotlib",
-    "numpy<2.0.0",
+    "neuroglancer",
+    "numpy",
     "pandas>=2.2.2",
     "requests",
+    "scikit-image>=0.24.0",
     "scipy>=1.13.0",
     "vtk",
 ]
@@ -84,28 +87,30 @@ dependencies = [
 [project.scripts]
 # special thanks to Miguel Ponce-de-Leon who introduced me to entry point scripts!
 # metadata
-pcdl_get_version = "pcdl.pyCLI:get_version"
-pcdl_get_unit_dict = "pcdl.pyCLI:get_unit_dict"
+pcdl_get_version = "pcdl.commandline:get_version"
+pcdl_get_unit_dict = "pcdl.commandline:get_unit_dict"
 # substrate
-pcdl_get_substrate_list = "pcdl.pyCLI:get_substrate_list"
-pcdl_get_conc_attribute = "pcdl.pyCLI:get_conc_attribute"
-pcdl_get_conc_df = "pcdl.pyCLI:get_conc_df"
-pcdl_plot_contour = "pcdl.pyCLI:plot_contour"
-pcdl_make_conc_vtk = "pcdl.pyCLI:make_conc_vtk"
+pcdl_get_substrate_list = "pcdl.commandline:get_substrate_list"
+pcdl_get_conc_attribute = "pcdl.commandline:get_conc_attribute"
+pcdl_get_conc_df = "pcdl.commandline:get_conc_df"
+pcdl_plot_contour = "pcdl.commandline:plot_contour"
+pcdl_make_conc_vtk = "pcdl.commandline:make_conc_vtk"
 # cell agent
-pcdl_get_celltype_list = "pcdl.pyCLI:get_celltype_list"
-pcdl_get_cell_attribute = "pcdl.pyCLI:get_cell_attribute"
-pcdl_get_cell_df = "pcdl.pyCLI:get_cell_df"
-pcdl_get_anndata = "pcdl.pyCLI:get_anndata"
-pcdl_make_graph_gml = "pcdl.pyCLI:make_graph_gml"
-pcdl_plot_scatter = "pcdl.pyCLI:plot_scatter"
-pcdl_make_cell_vtk = "pcdl.pyCLI:make_cell_vtk"
+pcdl_get_celltype_list = "pcdl.commandline:get_celltype_list"
+pcdl_get_cell_attribute_list = "pcdl.commandline:get_cell_attribute_list"
+pcdl_get_cell_attribute = "pcdl.commandline:get_cell_attribute"
+pcdl_get_cell_df = "pcdl.commandline:get_cell_df"
+pcdl_get_anndata = "pcdl.commandline:get_anndata"
+pcdl_make_graph_gml = "pcdl.commandline:make_graph_gml"
+pcdl_plot_scatter = "pcdl.commandline:plot_scatter"
+pcdl_make_cell_vtk = "pcdl.commandline:make_cell_vtk"
 # substrate and cell agent
-pcdl_plot_timeseries = "pcdl.pyCLI:plot_timeseries"
-pcdl_make_ome_tiff = "pcdl.pyCLI:make_ome_tiff"
+pcdl_plot_timeseries = "pcdl.commandline:plot_timeseries"
+pcdl_make_ome_tiff = "pcdl.commandline:make_ome_tiff"
+pcdl_render_neuroglancer = "pcdl.commandline:render_neuroglancer"
 # making movies
-pcdl_make_gif = "pcdl.pyCLI:make_gif"
-pcdl_make_movie = "pcdl.pyCLI:make_movie"
+pcdl_make_gif = "pcdl.commandline:make_gif"
+pcdl_make_movie = "pcdl.commandline:make_movie"
 
 
 [project.urls]

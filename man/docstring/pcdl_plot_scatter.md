@@ -30,8 +30,7 @@ options:
                         empty string.
   --microenv MICROENV   should the microenvironment data be loaded? setting
                         microenv to False will use less memory and speed up
-                        processing, similar to the original pyMCDS_cells.py
-                        script. default is True.
+                        processing. default is True.
   --physiboss PHYSIBOSS
                         if found, should physiboss state data be extracted and
                         loaded into the df_cell dataframe? default is True.
@@ -76,12 +75,9 @@ options:
                         and max from mesh y axis range. default is None.
   --xyequal XYEQUAL     to specify equal axis spacing for x and y axis.
                         default is True.
-  --s S                 scatter plot dot size in pixel. typographic points are
-                        1/72 inch. the marker size s is specified in
-                        points**2. plt.rcParams['lines.markersize']**2 is in
-                        my case 36. None tries to take the value from the
-                        initial.svg file. fall back setting is 36. default is
-                        None.
+  --s S                 scatter plot dot size scale factor. with figsizepx
+                        extracted from initial.svg, scale factor 1.0 should be
+                        ok. adjust if necessary. default 1.0.
   --figsizepx FIGSIZEPX [FIGSIZEPX ...]
                         size of the figure in pixels (integer), x y. the given
                         x and y will be rounded to the nearest even number, to

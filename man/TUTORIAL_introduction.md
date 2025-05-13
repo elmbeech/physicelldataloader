@@ -22,7 +22,7 @@ The name of this script filed was pyMCDS.py and basically defined one class name
 
 In autumn 2022 an endeavor was undertaken to pack the original pyMCDS.py script into a pip installable python3 library and develop it further, but always in such a way that, if necessary, the code could still be run like in the early days.\
 The result is the pcdl physicelldataloader library branch v2, v3.
-In autumn 2024 the code was stripped of some relics from the early days, to make the code more python3 than C++ like, which resulted in branch v4.
+In spring 2025 the code was stripped of some relics from the early days, to make the code more python3 than C++ like, which resulted in branch v4.
 
 The result from all of this is the pcdl physicelldataloader library here.\
 In the big picture, the pyMCDS class evolved into the TimeStep class, which is slightly heavier but much more powerful for downstream data analysis than the original pyMCDS class.

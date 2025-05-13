@@ -3,7 +3,7 @@
 
 ## input:
 ```
-            self: pyMCDSts class instance.
+            self: TimeSeries class instance.
 
             values: integer; default is 1
                 minimal number of values a variable has to have

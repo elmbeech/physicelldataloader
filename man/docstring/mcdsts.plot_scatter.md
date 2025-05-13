@@ -3,7 +3,7 @@
 
 ## input:
 ```
-            self: pyMCDSts class instance
+            self: TimeSeries class instance
 
             focus: string; default is 'cell_type'
                 column name within cell dataframe.
@@ -52,13 +52,10 @@
             xyequal: boolean; default True
                 to specify equal axis spacing for x and y axis.
 
-            s: integer; default is None
-                scatter plot dot size in pixel.
-                typographic points are 1/72 inch.
-                the marker size s is specified in points**2.
-                plt.rcParams['lines.markersize']**2 is in my case 36.
-                None tries to take the value from the initial.svg file.
-                fall back setting is 36.
+            s: floating point number; default is 1.0
+                scatter plot dot size scale factor.
+                with figsizepx extracted from initial.svg, scale factor 1.0
+                should be ok. adjust if necessary.
 
             figsizepx: list of two integers; default is None
                 size of the figure in pixels, (x, y).

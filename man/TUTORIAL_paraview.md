@@ -7,7 +7,7 @@ fluorescent microscopy ome tiff standard is 16 bit.
 -->
 
 [Paraview](https://www.paraview.org/) is a free and open source scientific visualization software,
-that lets us load and analyze vtk rectilinear grid data and vtk polynomial data<!--, and even ome.tiff data files-->.
+that lets us load and analyze vtk rectilinear grid data and vtk polynomial data, and even ome.tiff data files.
 
 ## Install paraview
 

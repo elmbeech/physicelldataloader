@@ -73,7 +73,7 @@ python3 -c"import pathlib, pcdl, shutil; pcdl.install_data(); s_ipath=str(pathli
 ## Loading an MCDS Time Series
 
 
-Like in the pyMCDs class, for memory consumption and processing speed control,
+Like in the TimeStep class, for memory consumption and processing speed control,
 we can specify if we want to load microenvironment data and graph data from the snapshots we later on analyze.
 Additionally, we can specify, if for first even want to load data at all,
 or if we only would like to load the output xml file list, which we will see, can be manipulated before actual data is loaded.

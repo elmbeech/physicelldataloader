@@ -3,7 +3,7 @@
 
 ## input:
 ```
-            self: pyMCDSts class instance
+            self: TimeSeries class instance
 
             focus: string
                 column name within conc dataframe, for example.

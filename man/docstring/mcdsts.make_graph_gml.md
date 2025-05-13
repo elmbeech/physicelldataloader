@@ -3,7 +3,7 @@
 
 ## input:
 ```
-            self: pyMCDS class instance.
+            self: TimeSeries class instance.
 
             graph_type: string
                 to specify which physicell output data should be processed.
