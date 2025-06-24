@@ -7,7 +7,7 @@ run-name: ${{ github.actor }}::pytest pcdl library on linux os; all python3 vers
 
 on:
   push:
-    branches: ["v3"]
+    branches: ["utest"]  # ["master", "v3", "v4"]
 
 jobs:
   build-linux:
@@ -15,8 +15,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        #python-version: ["3.13"]
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        #python-version: ["3.14"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
 
     env:
       PYTHONPATH: /home/runner/work/physicelldataloader/physicelldataloader
