@@ -257,6 +257,8 @@ class TimeSeries:
     def make_gif(self, path, interface='jpeg'):
         """
         help(pcdl.make_gif)
+        try: mcdsts.make_gif(mcdsts.plot_scatter())
+        try: mcdsts.make_gif(mcdsts.plot_contour('substrate'))
         """
         s_opathfile = make_gif(path=path, interface=interface)
         return s_opathfile
@@ -265,6 +267,8 @@ class TimeSeries:
     def make_movie(self, path, interface='jpeg', framerate=12):
         """
         help(pcdl.make_movie)
+        try: mcdsts.make_movie(mcdsts.plot_scatter())
+        try: mcdsts.make_movie(mcdsts.plot_contour('substrate'))
         """
         s_opathfile = make_movie(path=path, interface=interface, framerate=framerate)
         return s_opathfile
@@ -273,6 +277,7 @@ class TimeSeries:
     def render_neuroglancer(self, tiffpathfile, timestep=0, intensity_cmap='gray'):
         """
         help(pcdl.render_neuroglancer)
+        try: mcdsts.render_neuroglancer(mcdsts.make_ome_tiff(), 0)
         """
         o_viewer = render_neuroglancer(
             tiffpathfile = tiffpathfile,
@@ -1327,9 +1332,9 @@ class TimeSeries:
         elif (focus_num == 'count'):
             ylabel = f'focus_num [{yunit}]'
         elif (yunit is None):
-            ylabel = f"{aggregate_num.__name__.replace('np.nan','')} {focus_num}"
+            ylabel = f"{aggregate_num.__name__.replace('nan','')} {focus_num}"
         else:
-            ylabel = f"{aggregate_num.__name__.replace('np.nan','')} {focus_num} [{yunit}]"
+            ylabel = f"{aggregate_num.__name__.replace('nan','')} {focus_num} [{yunit}]"
 
         # generate series line plot
         if (ax is None):

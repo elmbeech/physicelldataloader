@@ -126,11 +126,10 @@ df_cell = mcds.get_cell_df()
 
 Generate a dataframe with some categorical data
 
-<!-- bue 20240901: change to cell_type, as soon we have new unit test data -->
 ```pandas
 df_cat = df_cell.loc[:, ['cell_type', 'cycle_model', 'current_phase', 'dead']]
 df_cat['count'] = 1
-df_catplot = df_cat.loc[:, ['dead','count']].groupby('dead').count()
+df_catplot = df_cat.loc[:, ['cell_type','count']].groupby('cell_type').count()
 df_catplot.info()
 ```
 
@@ -152,7 +151,7 @@ df_catplot.plot(
     y = 'count',
     ylabel = '',
     legend = False,
-    title = 'dead'
+    title = 'cell_type'
 )
 ```
 

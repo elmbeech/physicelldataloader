@@ -136,7 +136,7 @@ pcdl_get_anndata output/
 We will use the [schard](https://github.com/cellgeni/schard) R package
 to translate the h5ad file into R data structures that can be analyzed
 by [singlecellexperiment](https://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html)
-and  [seurat](https://satijalab.org/seurat/).
+and [seurat](https://satijalab.org/seurat/).
 
 Special thanks to Marcello Hurtado from the Pancald Lab, who told me that such translation software exist!
 

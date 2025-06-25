@@ -23,8 +23,10 @@ import json
 import numpy as np
 import os
 import pandas as pd
+import pathlib
 import pcdl
 from scipy import stats
+import subprocess
 import sys
 
 
@@ -1343,7 +1345,7 @@ def get_anndata():
             values = args.values,
             drop = set(args.drop),
             keep = set(args.keep),
-            scale = args.scale,
+            scale = None if (args.scale.lower() == 'none') else args.scale,
         )
         # going home
         s_opathfile = s_pathfile.replace('.xml', f'_cell_{args.scale}.h5ad')
@@ -1367,16 +1369,17 @@ def get_anndata():
             values = args.values,
             drop = set(args.drop),
             keep = set(args.keep),
-            scale = args.scale,  # ERROR
+            scale = None if (args.scale.lower() == 'none') else args.scale,
             collapse = b_collapse,
         )
         # going home
         if b_collapse :
             s_opathfile = f'{s_path}/timeseries_cell_{args.scale}.h5ad'
+            s_opathfile = f'{s_path}/timeseries_cell_{args.scale.lower()}.h5ad'
             ann_mcdsts.write_h5ad(s_opathfile)
             return s_opathfile
         else:
-            ls_opathfile = [f"{s_path}/{s_xmlfile.replace('.xml', '_cell_{}.h5ad'.format(args.scale))}" for s_xmlfile in mcdsts.get_xmlfile_list()]
+            ls_opathfile = [f"{s_path}/{s_xmlfile.replace('.xml', '_cell_{}.h5ad'.format(args.scale.lower()))}" for s_xmlfile in mcdsts.get_xmlfile_list()]
             for i, ann_mcds in enumerate(ann_mcdsts):
                 ann_mcds.write_h5ad(ls_opathfile[i])
             return ls_opathfile
@@ -2341,7 +2344,8 @@ def render_neuroglancer():
     )
     # time step
     parser.add_argument(
-        '--timestep',
+        'timestep',
+        nargs = '?',
         default = 0,
         type = int,
         help = 'time step, within a possibly collapsed ome tiff file, to render. the default will work with single time step ome tiff files.',
@@ -2358,16 +2362,12 @@ def render_neuroglancer():
     print(args)
 
     # process arguments
-    #s_tiffpathfile = args.tiffpathfile.replace('\\','/')
+    s_neuromancerpath = str(pathlib.Path(pcdl.__file__).parent).replace('\\','/') + '/'
+    s_tiffpathfile = args.tiffpathfile.replace('\\','/')
 
     # run
-    viewer = pcdl.render_neuroglancer(
-        tiffpathfile = args.tiffpathfile,
-        timestep = args.timestep,
-        intensity_cmap = None if (args.intensity_cmap.lower() == 'none') else args.intensity_cmap,
-    )
-    # going home
-    return viewer
+    # bue 20250623: use subprocess to run python3 in interactive mode to run the neuromancer script, which is needed to keep the neuroglancer web gl server running.
+    subprocess.run(['python3', '-i', f'{s_neuromancerpath}neuromancer.py', s_tiffpathfile, '--timestep', str(args.timestep), '--intensity_cmap', args.intensity_cmap])
 
 
 #################

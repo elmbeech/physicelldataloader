@@ -8,12 +8,13 @@ into [python3](https://en.wikipedia.org/wiki/Python_(programming_language)).
 
 pcdl was forked from the original [PhysiCell-Tools](https://github.com/PhysiCell-Tools) [python-loader](https://github.com/PhysiCell-Tools/python-loader) implementation.
 
-The pcdl python3 library maintains three branches:
+The pcdl python3 library maintains four branches:
 
 + **Branch version 1** is the original PhysiCell-Tools/python-loader code.
 + **Branch version 2** will be strictly compatible with the original PhysiCell-Tools/python-loader code, although pip installable.
 + **Branch version 3** might break with old habits, although tries to be as much downward compatible as possible.
   The aim of the v3 branch is to get a very lean and agile python3 physicell output interface for the ones coming from the python3 world.
++ Finally, **Branch version 4** reimplemented the backend in a more python3, less C++ like manner.
 
 
 ## Header:
@@ -28,12 +29,12 @@ The pcdl python3 library maintains three branches:
 + Source code: [https://github.com/elmbeech/physicelldataloader](https://github.com/elmbeech/physicelldataloader)
 
 
-## HowTo Guide:
+## &#x2728; HowTo Guide:
 
 + [installation and troubleshooting](https://github.com/elmbeech/physicelldataloader/tree/master/man/HOWTO.md)
 
 
-## Tutorial:
+## &#x2728; Tutorial:
 
 Basics Tutorials:
 
@@ -63,7 +64,7 @@ Extras tutorials for GUI software:
 + [pcdl and paraview](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_paraview.md)
 + [pcdl and blender](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_blender.md)
 + [pcdl and napari](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_napari.md)
-+ [pcdl and fiji imagej](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_fijiimagej.md)
++ [pcdl and fiji imagej, icy, qupath](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_fijiimagej.md)
 + [pcdl and neuroglancer](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_neuroglancer.md)
 
 Slides:
@@ -71,7 +72,7 @@ Slides:
 + [presentations given](https://github.com/elmbeech/physicelldataloader/tree/master/man/lecture)
 
 
-## Reference Manual:
+## &#x2728; Reference Manual:
 
 + [API application interface](https://github.com/elmbeech/physicelldataloader/tree/master/man/REFERENCE.md)
 
@@ -93,13 +94,14 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 + fork pcdl co-programmer: Furkan Kurtoglu, Jennifer Eng, Heber Rocha
 + fork pcdl continuous testing and feedbacks: Aneequa Sundus, John Metzcar
 + student prj on pcdl:
-  Benjamin Jacobs (make\_gml),
-  Jason Lu (make\_neuroglancer),
+  Benjamin Jacobs (make\_graph\_gml),
+  Jason Lu (render\_neuroglancer),
   Katie Pletz (beta testing),
+  Leena Sohail (beta testing),
   Marshal Gress (plot\_scatter),
   Nick Oldfather (unit test model),
   Thierry-Pascal Fleurant (plot\_timeseries),
-  Viviana Kwong (make\_neuroglancer)
+  Viviana Kwong (render\_neuroglancer)
 
 Developers, please make pull requests to the https://github.com/elmbeech/physicelldataloader/tree/development branch. Thanks!
 
@@ -121,9 +123,12 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 ## Road Map:
 
 + evt generate lineage tree graph output files.
-+ evt add DataDiVR support.
 
 ## Release Notes:
++ version 4.0.1 (2025-06-24): elmbeech/physicelldataloader
+    + man updated.
+    + minor bugfixes.
+
 + version 4.0.0 (2025-05-13): elmbeech/physicelldataloader
     + v4 was forked from v3.3.4!
     + **mcds.data** struct was rewritten in more python less c++ way.
@@ -140,11 +145,15 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
     + new **render_neuroglancer** function, to render ome tiff image into neuroglancer.
     + new **pcdl_render_neuroglancer** function, to render ome tiff images into neuroglancer.
 
++ version 3.3.7 (2025-06-01): elmbeech/physicelldataloader
+    + compatible with current (non end-of-life cycle) python versions.
+    + minor bugfixes.
+
 + version 3.3.6 (2025-05-13): elmbeech/physicelldataloader
-    + compatible with numpy >= 2.0.0 and python >= 3.9.
+    + compatible with numpy >= 2.0.0 and current (non end-of-life cycle) python versions.
 
 + version 3.3.5 (2025-05-13): elmbeech/physicelldataloader
-    + compatible with numpy < 2.0.0 and python >= 3.9.
+    + compatible with numpy < 2.0.0 and current (non end-of-life cycle) python versions.
     + remove pyMCDS and pyMCDSts **make_ome_tiff** and pyCLI **pcdl_make_ome_tiff** to make pyMCS.py stand alone again.
     + new TimeStep **get_cell_attribute_list** function, to retrieve a list of all tracked cell attribute labels.
     + new **pcdl_get_cell_attribute_list** function, to retrieve a list of all tracked cell attribute labels.

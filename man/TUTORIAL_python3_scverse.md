@@ -62,8 +62,8 @@ Load the data.
 
 ```python
 mcdsts = pcdl.TimeSeries('output/')
-annts = mcdsts.get_anndata(values=2, scale='maxabs', collapse=True)
-print(annts)
+adata = mcdsts.get_anndata(values=2, scale='maxabs', collapse=True)
+print(adata)
 ```
 
 Let's do an interactive data analysis.\
@@ -78,22 +78,22 @@ Please note, sub-library abbreviations used in the scanpy and squidpy library ar
 Principal component analysis:
 
 ```python
-sc.tl.pca(annts)  # process anndata object with the pca tool.
-sc.pl.pca(annts)  # plot pca result.
+sc.tl.pca(adata)  # process anndata object with the pca tool.
+sc.pl.pca(adata)  # plot pca result.
 ```
 ```python
-sc.pl.pca(annts, color=['current_phase','oxygen'])  # plot the pca results colored by some attributes.
+sc.pl.pca(adata, color=['current_phase','oxygen'])  # plot the pca results colored by some attributes.
 ```
 ```python
-sc.pl.pca_variance_ratio(annts)  # plot how much of the variation each principal component captures.
+sc.pl.pca_variance_ratio(adata)  # plot how much of the variation each principal component captures.
 ```
 
 Neighborhood graph clustering:
 
 ```python
-sc.pp.neighbors(annts, n_neighbors=15)  # compute the neighborhood graph with the neighbors preprocess step.
-sc.tl.leiden(annts, resolution=0.01)  # cluster the neighborhood graph with the leiden tool.
-sc.pl.pca(annts, color='leiden')  # plot the pca results colored by leiden clusters.
+sc.pp.neighbors(adata, n_neighbors=15)  # compute the neighborhood graph with the neighbors preprocess step.
+sc.tl.leiden(adata, resolution=0.01)  # cluster the neighborhood graph with the leiden tool.
+sc.pl.pca(adata, color='leiden')  # plot the pca results colored by leiden clusters.
 ```
 <!--
 #```python
@@ -122,15 +122,15 @@ d_leiden = {
 T-sne dimensional reduction embedding:
 
 ```python
-sc.tl.tsne(annts)  # process anndata object with the tsne tool.
-sc.pl.tsne(annts, color=['current_phase','cell_type','leiden'])  # plot the tsne result colored by some attributes.
+sc.tl.tsne(adata)  # process anndata object with the tsne tool.
+sc.pl.tsne(adata, color=['current_phase','cell_type','leiden'])  # plot the tsne result colored by some attributes.
 ```
 
 Umap dimensional reduction embedding:
 
 ```python
-sc.tl.umap(annts)  # process anndata object with the umap tool.
-sc.pl.umap(annts, color=['current_phase','oxygen','leiden'])  # plot the umap result colored by some attributes.
+sc.tl.umap(adata)  # process anndata object with the umap tool.
+sc.pl.umap(adata, color=['current_phase','oxygen','leiden'])  # plot the umap result colored by some attributes.
 sc.pl.umap(ann, save='interaction_16200min_umap.png')  # plot is saved to figures directory.
 ```
 
@@ -138,14 +138,14 @@ Save anndata object:
 
 ```python
 # save and load anndata objects
-annts.write(f'output/timeseries.h5ad')
+adata.write(f'output/timeseries.h5ad')
 ```
 
 Load the anndata object (just for fun):
 
 ```python
-annts = ad.read(f'output/timeseries.h5ad')
-print(annts)
+adata = ad.read(f'output/timeseries.h5ad')
+print(adata)
 ```
 
 That's it. Please check out the official scverse documentation to learn more.

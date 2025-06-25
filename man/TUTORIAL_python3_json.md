@@ -7,10 +7,10 @@ In pcdl output from the [TimeSeries](https://github.com/elmbeech/physicelldatalo
 The [json library](https://docs.python.org/3/library/json.html) is a part of core python.
 
 Json is the ideal data format for unstructured data constructs that not can be stored in csv file format, like a dictionary of lists.
-Please note, python objecta are not per se json comaptible.
+Please note, python objects are not per se json comaptible.
 For example:
-Complex numbers are a standard data type in python, but complex numbers cannot be stored in json.
 Python dictionary keys can be of almost any data type, but json object keys have to be strings.
+Complex numbers are a standard data type in python, but complex numbers cannot be stored in json.
 
 
 ### Dump pcdl data construct from the command line into a json file

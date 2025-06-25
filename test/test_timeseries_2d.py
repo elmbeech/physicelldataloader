@@ -428,6 +428,7 @@ class TestTimeSeriesCell(object):
 
 
 ## graph related functions ##
+
 class TestTimeSeriesGraph(object):
     ''' tests for pcdl.TimeSeries graph related functions. '''
     mcdsts = pcdl.TimeSeries(s_path_2d, verbose=False)
@@ -466,7 +467,9 @@ class TestTimeSeriesGraph(object):
         for s_pathfile in ls_pathfile:
             os.remove(s_pathfile)
 
+
 ## ome tiff related functions ##
+
 class TestTimeSeriesOmeTiff(object):
     ''' tests for pcdl.TimeSeries ome tiff related functions. '''
     mcdsts = pcdl.TimeSeries(s_path_2d, verbose=False)
@@ -511,6 +514,45 @@ class TestTimeSeriesOmeTiff(object):
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10 )
         os.remove(s_pathfile)
+
+
+class TestTimeSeriesNeuroglancer(object):
+    ''' tests for loading a pcdl.TimeSeries data set. '''
+    mcdsts = pcdl.TimeSeries(s_path_2d, verbose=True)
+
+    ## make_gif and magick ommand ##
+    def test_mcdsts_render_neuroglancer_default(self, mcdsts=mcdsts):
+        s_tiffpathfile = mcdsts.make_ome_tiff()
+        o_viewer = mcdsts.render_neuroglancer(
+            tiffpathfile = s_tiffpathfile,
+            #timestep = 0,
+            #intensity_cmap='gray',
+        )
+        assert(str(type(o_viewer)) == "<class 'neuroglancer.viewer.Viewer'>") and \
+              (str(o_viewer).startswith('http://127.0.0.1:'))
+        os.remove(s_tiffpathfile)
+
+    def test_mcdsts_render_neuroglancer_timestep(self, mcdsts=mcdsts):
+        s_tiffpathfile = mcdsts.make_ome_tiff()
+        o_viewer = mcdsts.render_neuroglancer(
+            tiffpathfile = s_tiffpathfile,
+            timestep = 12,
+            intensity_cmap='gray',
+        )
+        assert(str(type(o_viewer)) == "<class 'neuroglancer.viewer.Viewer'>") and \
+              (str(o_viewer).startswith('http://127.0.0.1:'))
+        os.remove(s_tiffpathfile)
+
+    def test_mcdsts_render_neuroglancer_cmap(self, mcdsts=mcdsts):
+        s_tiffpathfile = mcdsts.make_ome_tiff()
+        o_viewer = mcdsts.render_neuroglancer(
+            tiffpathfile = s_tiffpathfile,
+            timestep = 0,
+            intensity_cmap='magma',
+        )
+        assert(str(type(o_viewer)) == "<class 'neuroglancer.viewer.Viewer'>") and \
+              (str(o_viewer).startswith('http://127.0.0.1:'))
+        os.remove(s_tiffpathfile)
 
 
 ## time series related functions ##

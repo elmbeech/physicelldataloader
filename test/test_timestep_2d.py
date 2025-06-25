@@ -979,8 +979,8 @@ class TestTimeStepOmeTiff(object):
               (a_ometiff[0].max() >= 1.0)
 
 
-class TestTimeSeriesNeuroglancer(object):
-    ''' tests for loading a pcdl.TimeSeries data set. '''
+class TestTimeStepNeuroglancer(object):
+    ''' tests for loading a pcdl.TimeStep data set. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
 
     ## make_gif and magick ommand ##
@@ -988,8 +988,8 @@ class TestTimeSeriesNeuroglancer(object):
         s_tiffpathfile = mcds.make_ome_tiff()
         o_viewer = mcds.render_neuroglancer(
             tiffpathfile = s_tiffpathfile,
-             timestep = 0,
-             intensity_cmap='gray',
+            #timestep = 0,
+            #intensity_cmap='gray',
         )
         assert(str(type(o_viewer)) == "<class 'neuroglancer.viewer.Viewer'>") and \
               (str(o_viewer).startswith('http://127.0.0.1:'))
@@ -999,8 +999,8 @@ class TestTimeSeriesNeuroglancer(object):
         s_tiffpathfile = mcds.make_ome_tiff()
         o_viewer = mcds.render_neuroglancer(
             tiffpathfile = s_tiffpathfile,
-             timestep = -1,
-             intensity_cmap='gray',
+            timestep = -1,
+            intensity_cmap='gray',
         )
         assert(str(type(o_viewer)) == "<class 'neuroglancer.viewer.Viewer'>") and \
               (str(o_viewer).startswith('http://127.0.0.1:'))
@@ -1010,8 +1010,8 @@ class TestTimeSeriesNeuroglancer(object):
         s_tiffpathfile = mcds.make_ome_tiff()
         o_viewer = mcds.render_neuroglancer(
             tiffpathfile = s_tiffpathfile,
-             timestep = 0,
-             intensity_cmap='magma',
+            timestep = 0,
+            intensity_cmap='magma',
         )
         assert(str(type(o_viewer)) == "<class 'neuroglancer.viewer.Viewer'>") and \
               (str(o_viewer).startswith('http://127.0.0.1:'))
