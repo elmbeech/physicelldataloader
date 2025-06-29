@@ -2,8 +2,7 @@
 
 [Vtk](https://vtk.org/) the visualization tool kit is a software for image processing, 3D graphics, volume rendering and visualization. \
 Naturally, we will work here with the [vtk](https://pypi.org/project/vtk/) python binding.
-Additionally, we will have a look at [fury](https://fury.gl/latest/index.html),
-a python library for scientific visualization and 3D animations that can read vtk files too.
+Additionally, we will have a look at the [pyvista](https://docs.pyvista.org/) and [fury](https://fury.gl/latest/index.html) python libraries for scientific visualization that can read vtk files too.
 
 
 

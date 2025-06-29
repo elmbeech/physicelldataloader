@@ -80,14 +80,15 @@ def make_gif(path, interface='jpeg'):
     if path.endswith('/'): path = path[:-1]
     if not os.path.isdir(path):
         sys.exit(f'Error @ make_gif : {path} path does not exist.')
-    s_file = path.split('/')[-1]
-    if s_file.startswith('.'): s_file = s_file[1:]
-    if (len(s_file) == 0): s_file = 'movie'
-    s_file += f'_{interface}.gif'
-    s_opathfile = f'{path}/{s_file}'
+    s_ofile = path.split('/')[-1]
+    if s_ofile.startswith('.'): s_ofile = s_ofile[1:]
+    if (len(s_ofile) == 0): s_ofile = 'movie'
+    s_ofile += f'_{interface}.gif'
+    s_ofile = s_ofile.replace(' ','_')
+    s_opathfile = path + '/' + s_ofile
     s_ipathfiles = f'{path}/*.{interface}'
     # genaerate gif
-    s_cmd = f'{s_magick}convert {s_ipathfiles} {s_opathfile}'
+    s_cmd = f'{s_magick}convert "{s_ipathfiles}" "{s_opathfile}"'
     if (os.system(s_cmd) != 0):
         sys.exit("Error @ make_gif : imagemagick could not generatet the gif.")
 
@@ -133,6 +134,7 @@ def make_movie(path, interface='jpeg', framerate=12):
     if s_ofile.startswith('.'): s_ofile = s_ofile[1:]
     if (len(s_ofile) == 0): s_ofile = 'movie'
     s_ofile += f'_{interface}{framerate}.mp4'
+    s_ofile = s_ofile.replace(' ','_')
     s_opathfile = f'{s_path}/{s_ofile}'
 
     # generate input file list
@@ -144,7 +146,7 @@ def make_movie(path, interface='jpeg', framerate=12):
     f.close()
 
     # genearete movie
-    s_cmd = f'ffmpeg -y -r {framerate} -f concat -i ffmpeginput.txt -vcodec libx264 -pix_fmt yuv420p -strict -2 -tune animation -crf 15 -acodec none {s_ofile}'  # -safe 0
+    s_cmd = f'ffmpeg -y -r {framerate} -f concat -i ffmpeginput.txt -vcodec libx264 -pix_fmt yuv420p -strict -2 -tune animation -crf 15 -acodec none "{s_ofile}"'  # -safe 0
     if (os.system(s_cmd) != 0):
         sys.exit("Error @ make_movie : ffmpeg could not generatet the movie.")
     os.remove('ffmpeginput.txt')
@@ -1100,7 +1102,7 @@ class TimeSeries:
                 s_channel += f'_{s_celltype}'
             if len(ls_celltype) > 0:
                 s_channel += f'_{cell_attribute}'
-            s_tifffile = f'timeseries{s_channel}.ome.tiff'
+            s_tifffile = f"timeseries{s_channel.replace(' ','_')}.ome.tiff"
             if (len(s_tifffile) > 255):
                 print(f"Warning: filename {len(s_tifffile)} > 255 character.")
                 s_tifffile = 'timeseries_channels.ome.tiff'
@@ -1396,9 +1398,10 @@ class TimeSeries:
             return fig
         else:
             if (focus_num == 'count'):
-                s_pathfile = self.path + f'/timeseries_{frame}_{focus_cat}_{focus_num}.{ext}'
+                s_ofile = 'timeseries_{frame}_{focus_cat}_{focus_num}.{ext}'.replace(' ','_')
             else:
-                s_pathfile = self.path + f"/timeseries_{frame}_{focus_cat}_{focus_num}_{aggregate_num.__name__.replace('np.nan','')}.{ext}"
+                s_ofile = f"timeseries_{frame}_{focus_cat}_{focus_num}_{aggregate_num.__name__.replace('np.nan','')}.{ext}".replace(' ','_')
+            s_pathfile = self.path + '/' + s_ofile
             if figbgcolor is None:
                 figbgcolor = 'auto'
             plt.tight_layout()

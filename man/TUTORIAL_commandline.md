@@ -9,7 +9,7 @@ The command parameter mimics the related python3 function arguments as closely a
 You can always call the [help](https://en.wikipedia.org/wiki/Help!) parameter ( pcdl\_command -h),
 to access the man page for a pcdl command!
 
-Please spend some time to learn about each of the 18 commands, by studying its man page.
+Please spend some time to learn about each of the about 20 commands, by studying its man page.
 This will truly make you a power user!
 
 

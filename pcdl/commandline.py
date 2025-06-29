@@ -338,7 +338,8 @@ def get_conc_attribute():
         keep = set(args.keep),
         allvalues = b_allvalues,
     )
-    s_opathfile = f'{s_path}/timeseries_conc_attribute_{s_values}.json'
+    s_ofile = f"timeseries_conc_attribute_{s_values.replace(' ','_')}.json"
+    s_opathfile = s_path + '/' + s_ofile
     json.dump(dl_variable, open(s_opathfile, 'w'), sort_keys=True)
     # going home
     return s_opathfile
@@ -1038,7 +1039,7 @@ def get_cell_attribute():
         b_allvalues = True if args.allvalues.lower().startswith('t') else False
         if b_allvalues:
             s_values = 'all'
-        s_opathfile = f"{s_pathfile.replace('.xml','')}_{s_values}.json"
+        s_opathfile = f"{s_pathfile.replace('.xml','')}_{s_values.replace(' ','_')}.json"
 
     else:
         mcdsts = pcdl.TimeSeries(
@@ -1056,7 +1057,8 @@ def get_cell_attribute():
         b_allvalues = True if args.allvalues.lower().startswith('t') else False
         if b_allvalues:
             s_values = 'all'
-        s_opathfile = f'{s_path}/timeseries_cell_attribute_{s_values}.json'
+        s_ofile = f"timeseries_cell_attribute_{s_values.replace(' ','_')}.json"
+        s_opathfile = s_path + '/' + s_ofile
 
     # going home
     dl_variable = mcdsts.get_cell_attribute(
@@ -1375,11 +1377,10 @@ def get_anndata():
         # going home
         if b_collapse :
             s_opathfile = f'{s_path}/timeseries_cell_{args.scale}.h5ad'
-            s_opathfile = f'{s_path}/timeseries_cell_{args.scale.lower()}.h5ad'
             ann_mcdsts.write_h5ad(s_opathfile)
             return s_opathfile
         else:
-            ls_opathfile = [f"{s_path}/{s_xmlfile.replace('.xml', '_cell_{}.h5ad'.format(args.scale.lower()))}" for s_xmlfile in mcdsts.get_xmlfile_list()]
+            ls_opathfile = [f"{s_path}/{s_xmlfile.replace('.xml', '_cell_{}.h5ad'.format(args.scale))}" for s_xmlfile in mcdsts.get_xmlfile_list()]
             for i, ann_mcds in enumerate(ann_mcdsts):
                 ann_mcds.write_h5ad(ls_opathfile[i])
             return ls_opathfile
@@ -1765,8 +1766,8 @@ def plot_scatter():
             figbgcolor = None if (args.figbgcolor.lower() == 'none') else args.figbgcolor,
         )
         # going home
-        s_opathfile = '/'.join(ls_opathfile[0].split('/')[:-1])
-        return s_opathfile
+        s_opath = '/'.join(ls_opathfile[0].split('/')[:-1])
+        return s_opath
 
 
 def make_cell_vtk():

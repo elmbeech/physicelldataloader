@@ -125,6 +125,9 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 + evt generate lineage tree graph output files.
 
 ## Release Notes:
++ version 4.0.2 (2025-06-29): elmbeech/physicelldataloader
+    + minor bugfixes.
+
 + version 4.0.1 (2025-06-24): elmbeech/physicelldataloader
     + man updated.
     + minor bugfixes.
