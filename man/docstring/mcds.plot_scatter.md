@@ -75,6 +75,10 @@
                 or white (jpeg, tiff).
                 figure background color.
 
+            **kwargs: possible additional keyword arguments input,
+                handled by the pandas dataframe plot function.
+                + https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.plot.html
+
 ```
 
 ## output:

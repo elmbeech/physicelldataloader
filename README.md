@@ -91,7 +91,7 @@ Within the pcdl library, we tried to stick to the documentation policy laid out 
 
 + original PhysiCell-Tools python-loader implementation: Patrick Wall, Randy Heiland, Paul Macklin
 + fork pcdl implementation: Elmar Bucher
-+ fork pcdl co-programmer: Furkan Kurtoglu, Jennifer Eng, Heber Rocha
++ fork pcdl co-programmer: Furkan Kurtoglu, Heber Rocha, Jennifer Eng
 + fork pcdl continuous testing and feedbacks: Aneequa Sundus, John Metzcar
 + student prj on pcdl:
   Benjamin Jacobs (make\_graph\_gml),
@@ -125,6 +125,13 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 + evt generate lineage tree graph output files.
 
 ## Release Notes:
++ version 4.0.4 (2025-07-23): elmbeech/physicelldataloader
+    + command line commands now return **error code 0** if the command runs successfully.
+
++ version 4.0.3 (2025-07-20): elmbeech/physicelldataloader
+    + timestep and timeseries **plot_contour**, **plot_scatter**, and **plot_timeseries** handle now **kwargs** arguments.
+    + minor bugfixes.
+
 + version 4.0.2 (2025-06-29): elmbeech/physicelldataloader
     + minor bugfixes.
 
@@ -147,6 +154,9 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
     + new **pcdl_get_cell_attribute_list** function, to retrieve a list of all tracked cell attribute labels.
     + new **render_neuroglancer** function, to render ome tiff image into neuroglancer.
     + new **pcdl_render_neuroglancer** function, to render ome tiff images into neuroglancer.
+
++ version 3.3.8 (2025-07-23): elmbeech/physicelldataloader
+    + command line commands now return **error code 0** if the command runs successfully.
 
 + version 3.3.7 (2025-06-01): elmbeech/physicelldataloader
     + compatible with current (non end-of-life cycle) python versions.

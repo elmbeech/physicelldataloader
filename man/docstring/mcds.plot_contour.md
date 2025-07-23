@@ -70,6 +70,11 @@
                 or white (jpeg, tiff).
                 figure background color.
 
+            **kwargs: possible additional keyword arguments input,
+                handled by the matplotlib contour and contourf function.
+                + https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.contour.html
+                + https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.contourf.html
+
 ```
 
 ## output:

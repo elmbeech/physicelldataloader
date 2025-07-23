@@ -1118,7 +1118,7 @@ class TimeStep:
         return df_conc
 
 
-    def plot_contour(self, focus, z_slice=0.0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', title=None, grid=True, xlim=None, ylim=None, xyequal=True, ax=None, figsizepx=None, ext=None, figbgcolor=None):
+    def plot_contour(self, focus, z_slice=0.0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', title=None, grid=True, xlim=None, ylim=None, xyequal=True, ax=None, figsizepx=None, ext=None, figbgcolor=None, **kwargs):
         """
         input:
             focus: string
@@ -1187,6 +1187,11 @@ class TimeStep:
             figbgcolor: string; default is None which is transparent (png)
                 or white (jpeg, tiff).
                 figure background color.
+
+            **kwargs: possible additional keyword arguments input,
+                handled by the matplotlib contour and contourf function.
+                + https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.contour.html
+                + https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.contourf.html
 
         output:
             fig: matplotlib figure, depending on ext, either as object or as file.
@@ -1269,9 +1274,9 @@ class TimeStep:
 
         # get contour plot
         if fill:
-            ax.contourf(df_mesh.columns, df_mesh.index, df_mesh.values, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
+            ax.contourf(df_mesh.columns, df_mesh.index, df_mesh.values, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap, **kwargs)
         else:
-            ax.contour(df_mesh.columns, df_mesh.index, df_mesh.values, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap)
+            ax.contour(df_mesh.columns, df_mesh.index, df_mesh.values, vmin=vmin, vmax=vmax, alpha=alpha, cmap=cmap, **kwargs)
 
         # set title
         if not (title is None):
@@ -1513,7 +1518,7 @@ class TimeStep:
         return self.data['cell']['ls_cellattr'].copy()
 
 
-    def plot_scatter(self, focus='cell_type', z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, ax=None, figsizepx=None, ext=None, figbgcolor=None):
+    def plot_scatter(self, focus='cell_type', z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, ax=None, figsizepx=None, ext=None, figbgcolor=None, **kwargs):
         """
         input:
             focus: string; default is 'cell_type'
@@ -1587,6 +1592,10 @@ class TimeStep:
             figbgcolor: string; default is None which is transparent (png)
                 or white (jpeg, tiff).
                 figure background color.
+
+            **kwargs: possible additional keyword arguments input,
+                handled by the pandas dataframe plot function.
+                + https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.plot.html
 
         output:
             fig: matplotlib figure, depending on ext, either as object or as file.
@@ -1737,6 +1746,7 @@ class TimeStep:
             s = 's',
             grid = grid,
             ax = ax,
+            **kwargs,
         )
 
         # plot categorical data legen

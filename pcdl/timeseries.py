@@ -521,7 +521,7 @@ class TimeSeries:
         return dlr_variable_range
 
 
-    def plot_contour(self, focus, z_slice=0.0, extrema=None, alpha=1, fill=True, cmap='viridis', title='', grid=True, xlim=None, ylim=None, xyequal=True, figsizepx=None, ext='jpeg', figbgcolor=None):
+    def plot_contour(self, focus, z_slice=0.0, extrema=None, alpha=1, fill=True, cmap='viridis', title='', grid=True, xlim=None, ylim=None, xyequal=True, figsizepx=None, ext='jpeg', figbgcolor=None, **kwargs):
         """
         input:
             self: TimeSeries class instance
@@ -582,6 +582,11 @@ class TimeSeries:
             figbgcolor: string; default is None which is transparent (png)
                 or white (jpeg, tiff).
                 figure background color.
+
+            **kwargs: possible additional keyword arguments input,
+                handled by the matplotlib contour and contourf function.
+                + https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.contour.html
+                + https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.contourf.html
 
         output:
             fig: matplotlib figures, depending on ext, either as files or as
@@ -653,6 +658,7 @@ class TimeSeries:
                 figsizepx = figsizepx,
                 ext = ext,
                 figbgcolor = figbgcolor,
+                **kwargs,
             )
             lo_output.append(o_output)
 
@@ -845,7 +851,7 @@ class TimeSeries:
         return dl_variable_range
 
 
-    def plot_scatter(self, focus='cell_type', z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title='', grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, figsizepx=None, ext='jpeg', figbgcolor=None):
+    def plot_scatter(self, focus='cell_type', z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title='', grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, figsizepx=None, ext='jpeg', figbgcolor=None, **kwargs):
         """
         input:
             self: TimeSeries class instance
@@ -917,6 +923,10 @@ class TimeSeries:
                 or white (jpeg, tiff).
                 figure background color.
 
+            **kwargs: possible additional keyword arguments input,
+                handled by the pandas dataframe plot function.
+                + https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame
+
         output:
             fig: matplotlib figures, depending on ext, either as files or
                 as objects. the figures contains the scatter plot and
@@ -956,6 +966,7 @@ class TimeSeries:
                 figsizepx = figsizepx,
                 ext = ext,
                 figbgcolor = figbgcolor,
+                **kwargs,
             )
             lo_output.append(o_output)
 
@@ -1130,7 +1141,7 @@ class TimeSeries:
 
     ## TIME SERIES RELATED FUNCTIONS ##
 
-    def plot_timeseries(self, focus_cat=None, focus_num=None, aggregate_num=np.nanmean, frame='cell', z_slice=None, logy=False, ylim=None, secondary_y=None, subplots=False, sharex=False, sharey=False, linestyle='-', linewidth=None, cmap=None, color=None, grid=True, legend=True, yunit=None, title=None, ax=None, figsizepx=[640, 480], ext=None, figbgcolor=None):
+    def plot_timeseries(self, focus_cat=None, focus_num=None, aggregate_num=np.nanmean, frame='cell', z_slice=None, logy=False, ylim=None, secondary_y=None, subplots=False, sharex=False, sharey=False, linestyle='-', linewidth=None, cmap=None, color=None, grid=True, legend=True, yunit=None, title=None, ax=None, figsizepx=[640, 480], ext=None, figbgcolor=None, **kwargs):
         """
         input:
             self: TimeSeries class instance
@@ -1230,6 +1241,10 @@ class TimeSeries:
                 or white (jpeg, tiff).
                 figure background color.
                 only relevant if ext not is None.
+
+            **kwargs: possible additional keyword arguments input,
+                handled by the pandas series plot function.
+                + https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.plot.html
 
         output:
             if ext is None: a fig matplotlib figure, containing the ax axis object, is returned.
@@ -1370,7 +1385,8 @@ class TimeSeries:
                 ylabel = ylabel,
                 xlabel = f"time [{mcds.get_unit_dict()['time']}]",
                 title = title,
-                ax = ax
+                ax = ax,
+                **kwargs,
             )
         else:
             # if color
@@ -1390,7 +1406,8 @@ class TimeSeries:
                 ylabel = ylabel,
                 xlabel = f"time [{mcds.get_unit_dict()['time']}]",
                 title = title,
-                ax = ax
+                ax = ax,
+                **kwargs,
             )
 
         # output
@@ -1398,7 +1415,7 @@ class TimeSeries:
             return fig
         else:
             if (focus_num == 'count'):
-                s_ofile = 'timeseries_{frame}_{focus_cat}_{focus_num}.{ext}'.replace(' ','_')
+                s_ofile = f'timeseries_{frame}_{focus_cat}_{focus_num}.{ext}'.replace(' ','_')
             else:
                 s_ofile = f"timeseries_{frame}_{focus_cat}_{focus_num}_{aggregate_num.__name__.replace('np.nan','')}.{ext}".replace(' ','_')
             s_pathfile = self.path + '/' + s_ofile

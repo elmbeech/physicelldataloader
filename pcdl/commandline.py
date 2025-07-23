@@ -98,7 +98,8 @@ def get_version():
     )
     s_version = f'version:\n{mcds.get_physicell_version()}\n{mcds.get_multicellds_version()}\npcdl_{pcdl.__version__}'
     # going home
-    return s_version
+    print(s_version)
+    return 0
 
 
 def get_unit_dict():
@@ -175,7 +176,8 @@ def get_unit_dict():
     se_unit.sort_index(inplace=True)
     se_unit.to_csv(s_opathfile)
     # going home
-    return s_opathfile
+    print(s_opathfile)
+    return 0
 
 
 ###########################################
@@ -240,7 +242,8 @@ def get_substrate_list():
         verbose = True if args.verbose.lower().startswith('t') else False
     )
     # going home
-    return mcds.get_substrate_list()
+    print(mcds.get_substrate_list())
+    return 0
 
 
 def get_conc_attribute():
@@ -342,7 +345,8 @@ def get_conc_attribute():
     s_opathfile = s_path + '/' + s_ofile
     json.dump(dl_variable, open(s_opathfile, 'w'), sort_keys=True)
     # going home
-    return s_opathfile
+    print(s_opathfile)
+    return 0
 
 
 def get_conc_df():
@@ -439,7 +443,7 @@ def get_conc_df():
         # going home
         s_opathfile = s_pathfile.replace('.xml','_conc.csv')
         df_conc.to_csv(s_opathfile)
-        return s_opathfile
+        print(s_opathfile)
 
     else:
         mcdsts = pcdl.TimeSeries(
@@ -464,12 +468,15 @@ def get_conc_df():
         if b_collapse:
             s_opathfile = f'{s_path}/timeseries_conc.csv'
             ldf_conc.to_csv(s_opathfile)
-            return s_opathfile
+            print(s_opathfile)
         else:
             ls_opathfile = [f"{s_path}/{s_xmlfile.replace('.xml','_conc.csv')}" for s_xmlfile in mcdsts.get_xmlfile_list()]
             for i, df_conc in enumerate(ldf_conc):
                 df_conc.to_csv(ls_opathfile[i])
-            return ls_opathfile
+            print(ls_opathfile)
+
+    # going home
+    return 0
 
 
 def plot_contour():
@@ -655,7 +662,7 @@ def plot_contour():
             figbgcolor = None if (args.figbgcolor.lower() == 'none') else args.figbgcolor,
         )
         # going home
-        return s_opathfile
+        print(s_opathfile)
 
     else:
         mcdsts = pcdl.TimeSeries(
@@ -687,7 +694,10 @@ def plot_contour():
         )
         # going home
         s_opath = '/'.join(ls_opathfile[0].split('/')[:-1])
-        return s_opath
+        print(s_opath)
+
+    # going home
+    return 0
 
 
 def make_conc_vtk():
@@ -750,7 +760,7 @@ def make_conc_vtk():
         )
         s_opathfile = mcds.make_conc_vtk()
         # going home
-        return s_opathfile
+        print(s_opathfile)
 
     else:
         mcdsts = pcdl.TimeSeries(
@@ -765,8 +775,10 @@ def make_conc_vtk():
         )
         ls_opathfile = mcdsts.make_conc_vtk()
         # going home
-        return ls_opathfile
+        print(ls_opathfile)
 
+    # going home
+    return 0
 
 ############################################
 # cell agent relatd command line functions #
@@ -835,7 +847,8 @@ def get_celltype_list():
         verbose = True if args.verbose.lower().startswith('t') else False
     )
     # going home
-    return mcds.get_celltype_list()
+    print(mcds.get_celltype_list())
+    return 0
 
 
 def get_cell_attribute_list():
@@ -912,7 +925,7 @@ def get_cell_attribute_list():
     )
 
     # going home
-    return mcds.get_cell_attribute_list()
+    print(mcds.get_cell_attribute_list())
 
 
 def get_cell_attribute():
@@ -1068,7 +1081,8 @@ def get_cell_attribute():
         allvalues = b_allvalues,
     )
     json.dump(dl_variable, open(s_opathfile, 'w'), sort_keys=True)
-    return s_opathfile
+    print(s_opathfile)
+    return 0
 
 
 def get_cell_df():
@@ -1180,7 +1194,7 @@ def get_cell_df():
         # going home
         s_opathfile = s_pathfile.replace('.xml','_cell.csv')
         df_cell.to_csv(s_opathfile)
-        return s_opathfile
+        print(s_opathfile)
 
     else:
         mcdsts = pcdl.TimeSeries(
@@ -1205,12 +1219,15 @@ def get_cell_df():
         if b_collapse:
             s_opathfile = f'{s_path}/timeseries_cell.csv'
             ldf_cell.to_csv(s_opathfile)
-            return s_opathfile
+            print(s_opathfile)
         else:
             ls_opathfile = [f"{s_path}/{s_xmlfile.replace('.xml','_cell.csv')}" for s_xmlfile in mcdsts.get_xmlfile_list()]
             for i, df_cell in enumerate(ldf_cell):
                 df_cell.to_csv(ls_opathfile[i])
-            return ls_opathfile
+            print(ls_opathfile)
+
+    # going home
+    return 0
 
 
 def get_anndata():
@@ -1352,7 +1369,7 @@ def get_anndata():
         # going home
         s_opathfile = s_pathfile.replace('.xml', f'_cell_{args.scale}.h5ad')
         ann_mcds.write_h5ad(s_opathfile)
-        return s_opathfile
+        print(s_opathfile)
 
     else:
         mcdsts = pcdl.TimeSeries(
@@ -1378,12 +1395,15 @@ def get_anndata():
         if b_collapse :
             s_opathfile = f'{s_path}/timeseries_cell_{args.scale}.h5ad'
             ann_mcdsts.write_h5ad(s_opathfile)
-            return s_opathfile
+            print(s_opathfile)
         else:
             ls_opathfile = [f"{s_path}/{s_xmlfile.replace('.xml', '_cell_{}.h5ad'.format(args.scale))}" for s_xmlfile in mcdsts.get_xmlfile_list()]
             for i, ann_mcds in enumerate(ann_mcdsts):
                 ann_mcds.write_h5ad(ls_opathfile[i])
-            return ls_opathfile
+            print(ls_opathfile)
+
+    # going home
+    return 0
 
 
 def make_graph_gml():
@@ -1502,7 +1522,7 @@ def make_graph_gml():
             node_attribute = args.node_attribute,
         )
         # going home
-        return s_opathfile
+        print(s_opathfile)
 
     else:
         mcdsts = pcdl.TimeSeries(
@@ -1521,7 +1541,10 @@ def make_graph_gml():
             node_attribute = args.node_attribute,
         )
         # going home
-        return ls_opathfile
+        print(ls_opathfile)
+
+    # going home
+    return 0
 
 
 def plot_scatter():
@@ -1734,7 +1757,7 @@ def plot_scatter():
             figbgcolor = None if (args.figbgcolor.lower() == 'none') else args.figbgcolor,
         )
         # going home
-        return s_opathfile
+        print(s_opathfile)
 
     else:
         mcdsts = pcdl.TimeSeries(
@@ -1767,7 +1790,10 @@ def plot_scatter():
         )
         # going home
         s_opath = '/'.join(ls_opathfile[0].split('/')[:-1])
-        return s_opath
+        print(s_opath)
+
+    # going home
+    return 0
 
 
 def make_cell_vtk():
@@ -1872,7 +1898,7 @@ def make_cell_vtk():
             attribute = args.attribute,
         )
         # going home
-        return s_opathfile
+        print(s_opathfile)
 
     else:
         mcdsts = pcdl.TimeSeries(
@@ -1889,7 +1915,10 @@ def make_cell_vtk():
             attribute = args.attribute,
         )
         # going home
-        return ls_opathfile
+        print(ls_opathfile)
+
+    # going home
+    return 0
 
 
 ###################################################
@@ -2174,7 +2203,8 @@ def plot_timeseries():
         figbgcolor = None if (args.figbgcolor.lower() == 'none') else args.figbgcolor,
     )
     # going home
-    return s_pathfile
+    print(s_pathfile)
+    return 0
 
 
 def make_ome_tiff():
@@ -2301,7 +2331,7 @@ def make_ome_tiff():
             file = True,
         )
         # going home
-        return s_opathfile
+        print(s_opathfile)
 
     else:
         mcdsts = pcdl.TimeSeries(
@@ -2322,7 +2352,10 @@ def make_ome_tiff():
             collapse = False if args.collapse.lower().startswith('f') else True,
         )
         # going home
-        return o_opathfile
+        print(o_opathfile)
+
+    # going home
+    return 0
 
 
 #######################
@@ -2416,7 +2449,8 @@ def make_gif():
         interface = args.interface,
     )
     # going home
-    return s_opathfile
+    print(s_opathfile)
+    return 0
 
 
 def make_movie():
@@ -2468,4 +2502,5 @@ def make_movie():
         framerate = args.framerate,
     )
     # going home
-    return s_opathfile
+    print(s_opathfile)
+    return 0
