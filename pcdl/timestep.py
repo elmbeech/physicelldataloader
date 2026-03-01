@@ -3333,6 +3333,11 @@ class TimeStep:
             except AttributeError:
                 pass
 
+        ###############
+        # free memory #
+        ###############
+        del d_mcds['raw_substrate']
+        del d_mcds['raw_cell']
 
         ##########
         # output #
