@@ -129,6 +129,9 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 
 
 ## Release Notes:
++ version 4.1.1 (2026-02-28): elmbeech/physicelldataloader
+    + reduce memory footprint.
+
 + version 4.1.0 (2025-12-31): elmbeech/physicelldataloader
     + new TimeStep class and TimeSeris class function **get_spatialdata** and command line command **pcdl_get_spatialdata**.
 
