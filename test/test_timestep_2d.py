@@ -1104,7 +1104,7 @@ class TestTimeStepSpatialData(object):
               (str(type(sdata)) == "<class 'spatialdata._core.spatialdata.SpatialData'>") and \
               (str(type(sdata['subs_image'])) == "<class 'xarray.core.dataarray.DataArray'>") and \
               (sdata['subs_image'].shape == (2, 200, 300)) and \
-              (str(type(sdata['subs_point'])) == "<class 'dask.dataframe.core.DataFrame'>") and \
+              (str(type(sdata['subs_point'])) == "<class 'dask.dataframe.dask_expr._collection.DataFrame'>") and \
               (sdata['subs_point'].compute().shape[0] > 9) and \
               (sdata['subs_point'].compute().shape[1] == 2) and \
               (str(type(sdata['cell_shape'])) == "<class 'geopandas.geodataframe.GeoDataFrame'>") and \
@@ -1127,10 +1127,10 @@ class TestTimeStepSpatialData(object):
               (str(type(sdata)) == "<class 'spatialdata._core.spatialdata.SpatialData'>") and \
               (str(type(sdata['subs_image'])) == "<class 'xarray.core.dataarray.DataArray'>") and \
               (sdata['subs_image'].shape == (2, 200, 300)) and \
-              (str(type(sdata['subs_point'])) == "<class 'dask.dataframe.core.DataFrame'>") and \
+              (str(type(sdata['subs_point'])) == "<class 'dask.dataframe.dask_expr._collection.DataFrame'>") and \
               (sdata['subs_point'].compute().shape[0] > 9) and \
               (sdata['subs_point'].compute().shape[1] == 2) and \
-              (str(type(sdata['cell_point'])) == "<class 'dask.dataframe.core.DataFrame'>") and \
+              (str(type(sdata['cell_point'])) == "<class 'dask.dataframe.dask_expr._collection.DataFrame'>") and \
               (sdata['cell_point'].compute().shape[0] > 9) and \
               (sdata['cell_point'].compute().shape[1] == 2) and \
               (str(type(sdata['cell_table'])) == "<class 'anndata._core.anndata.AnnData'>") and \
