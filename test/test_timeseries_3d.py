@@ -46,6 +46,12 @@ if not os.path.exists(s_path_3d):
 class TestTimeSeries3dInit(object):
     ''' tests for loading a pcdl.TimeSeries data set. '''
 
+    def test_mcdsts_custom_data_astype(self):
+        mcdsts = pcdl.TimeSeries(s_path_3d, load=True, verbose=False)
+        mcdsts.custom_data_astype({'sample': bool})
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+              (mcdsts.l_mcds[-1].data['cell']['df_cell']['sample'].dtype == bool)
+
     def test_mcdsts_set_verbose_true(self):
         mcdsts = pcdl.TimeSeries(s_path_3d, load=False, verbose=False)
         mcdsts.set_verbose_true()
@@ -103,6 +109,11 @@ class TestTimeSeries3dInit(object):
               (len(ls_xmlfile) == 3) and \
               (len(mcdsts.l_mcds) == 3) and \
               (mcdsts.l_mcds == l_mcds)
+
+    def test_mcdsts_form_list_of_mcds(self):
+        mcdsts = pcdl.TimeSeries([])
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+              (len(mcdsts.l_mcds) == 0)
 
 
 ## micro environment related functions ##

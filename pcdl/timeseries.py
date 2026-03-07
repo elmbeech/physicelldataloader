@@ -164,9 +164,10 @@ class TimeSeries:
     def __init__(self, output_path='.', custom_data_type={}, load=True, microenv=True, graph=True, physiboss=True, settingxml=False, verbose=True):
         """
         input:
-            output_path: string, default '.'
+            output_path: string or list of mcds objects, default '.'
                 relative or absolute path to the directory where
-                the PhysiCell output files are stored.
+                the PhysiCell output files are stored or
+                a list of mcds timestep objects.
 
             custom_data_type: dictionary; default is {}
                 variable to specify custom_data variable types
@@ -208,30 +209,66 @@ class TimeSeries:
             TimeSeries.__init__ generates a class instance the instance offers
             functions to process all time steps in the output_path directory.
         """
-        output_path = output_path.replace('\\','/')
-        while (output_path.find('//') > -1):
-            output_path = output_path.replace('//','/')
-        if (output_path.endswith('/')) and (len(output_path) > 1):
-            output_path = output_path[:-1]
-        if not os.path.isdir(output_path):
-            sys.exit(f'Error @ TimeSeries.__init__ : this is not a path! could not load {output_path}.')
-        self.path = output_path
-        # bue 2022-10-22: is output*.xml always the correct pattern? i could add initial or final step.
-        self.ls_xmlfile = [s_pathfile.replace('\\','/').split('/')[-1] for s_pathfile in sorted(glob.glob(self.path + f'/output*.xml'))]
-        if (len(self.ls_xmlfile) == 0):
-            sys.exit(f'Error @ TimeSeries.__init__ : could not detect any output*.xml! is the given output_path correct? {output_path}')
-        self.custom_data_type = custom_data_type
-        self.microenv = microenv
-        self.graph = graph
-        self.physiboss = physiboss
-        self.settingxml = settingxml
+        # set generic variables
         self.verbose = verbose
-        if load:
-            self.read_mcds()
-        else:
-            self.l_mcds = None
         self.l_annmcds = None
         self.l_sdmcds = None
+
+        # load mcds timeseries from list if mcds timesteps
+        if (type(output_path) is list):
+            self.ls_xmlfile = None
+            self.l_mcds = output_path
+            self.custom_data_type = None
+            self.microenv = None
+            self.graph = None
+            self.physiboss = None
+            self.settingxml = None
+
+        # load mcds timrseries from physicell output directory
+        else:
+            output_path = output_path.replace('\\','/')
+            while (output_path.find('//') > -1):
+                output_path = output_path.replace('//','/')
+            if (output_path.endswith('/')) and (len(output_path) > 1):
+                output_path = output_path[:-1]
+            if not os.path.isdir(output_path):
+                sys.exit(f'Error @ TimeSeries.__init__ : this is not a path! could not load {output_path}.')
+            self.path = output_path
+            # bue 2022-10-22: is output*.xml always the correct pattern? i could add initial or final step.
+            self.ls_xmlfile = [s_pathfile.replace('\\','/').split('/')[-1] for s_pathfile in sorted(glob.glob(self.path + f'/output*.xml'))]
+            if (len(self.ls_xmlfile) == 0):
+                sys.exit(f'Error @ TimeSeries.__init__ : could not detect any output*.xml! is the given output_path correct? {output_path}')
+            self.custom_data_type = custom_data_type
+            self.microenv = microenv
+            self.graph = graph
+            self.physiboss = physiboss
+            self.settingxml = settingxml
+            if load:
+                self.read_mcds()
+            else:
+                self.l_mcds = None
+
+
+    def custom_data_astype(self, custom_data_type={}):
+        """
+        input:
+            custom_data_type: dictionary; default is {}
+                variable to specify custom_data variable types other than
+                floats (namely: int, bool, str) like this: {var: dtype, ...}.
+                downstream float and int will be handled as numeric,
+                bool as Boolean, and str as categorical data.
+
+        output:
+            self.data['cell']['df_cell']:
+                the dtype of columns as specified in the custom_data_type dictionary.
+
+        description:
+            function to set the dtype of custom_data variables,
+            even after the data is loaded.
+        """
+        # variable typing
+        for mcds in self.get_mcds_list():
+            mcds.custom_data_astype(custom_data_type=custom_data_type)
 
 
     def set_verbose_false(self):
@@ -1826,4 +1863,3 @@ class TimeSeries:
             function returns a binding to the self.l_sdmcds list of spdata mcds objects.
         """
         return self.l_sdmcds
-

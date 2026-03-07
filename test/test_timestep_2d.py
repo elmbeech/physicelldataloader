@@ -225,6 +225,16 @@ class TestTimeStepInitSettingxmlNone(object):
               (df_cell.shape[1] == 122)
 
 
+class TestTimeStepInitCustomdataastype(object):
+    ''' tests for loading a pcdl.TimeStep data and run custom_data_astype function. '''
+    mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
+
+    def test_mcds_custom_data_astype(self, mcds=mcds):
+        mcds.custom_data_astype({'sample': bool})
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (mcds.data['cell']['df_cell']['sample'].dtype == bool)
+
+
 class TestTimeStepInitVerboseTrue(object):
     ''' tests for loading a pcdl.TimeStep data set and set_verbose_false function. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
@@ -1094,7 +1104,7 @@ class TestTimeStepSpatialData(object):
               (str(type(sdata)) == "<class 'spatialdata._core.spatialdata.SpatialData'>") and \
               (str(type(sdata['subs_image'])) == "<class 'xarray.core.dataarray.DataArray'>") and \
               (sdata['subs_image'].shape == (2, 200, 300)) and \
-              (str(type(sdata['subs_point'])) == "<class 'dask.dataframe.core.DataFrame'>") and \
+              (str(type(sdata['subs_point'])) == "<class 'dask.dataframe.dask_expr._collection.DataFrame'>") and \
               (sdata['subs_point'].compute().shape[0] > 9) and \
               (sdata['subs_point'].compute().shape[1] == 2) and \
               (str(type(sdata['cell_shape'])) == "<class 'geopandas.geodataframe.GeoDataFrame'>") and \
@@ -1117,10 +1127,10 @@ class TestTimeStepSpatialData(object):
               (str(type(sdata)) == "<class 'spatialdata._core.spatialdata.SpatialData'>") and \
               (str(type(sdata['subs_image'])) == "<class 'xarray.core.dataarray.DataArray'>") and \
               (sdata['subs_image'].shape == (2, 200, 300)) and \
-              (str(type(sdata['subs_point'])) == "<class 'dask.dataframe.core.DataFrame'>") and \
+              (str(type(sdata['subs_point'])) == "<class 'dask.dataframe.dask_expr._collection.DataFrame'>") and \
               (sdata['subs_point'].compute().shape[0] > 9) and \
               (sdata['subs_point'].compute().shape[1] == 2) and \
-              (str(type(sdata['cell_point'])) == "<class 'dask.dataframe.core.DataFrame'>") and \
+              (str(type(sdata['cell_point'])) == "<class 'dask.dataframe.dask_expr._collection.DataFrame'>") and \
               (sdata['cell_point'].compute().shape[0] > 9) and \
               (sdata['cell_point'].compute().shape[1] == 2) and \
               (str(type(sdata['cell_table'])) == "<class 'anndata._core.anndata.AnnData'>") and \
