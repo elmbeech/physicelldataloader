@@ -129,15 +129,15 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 
 
 ## Release Notes:
-+ version 4.2.0 (2026-03-06): elmbeech/physicelldataloader
-    + new TimeStep class and TimeSeries class function **custom_data_astype** to set the dtype of custom\_data variables even after the timestep or timeseries is loaded.
-    + the TimeSeries \_\_init\_\_ function can now handle a list of TimeStep objects as input instead of a path.
++ version 4.1.2 (2026-03-06): elmbeech/physicelldataloader
+    + new  **custom_data_astype** TimeStep class and TimeSeries class function to set the dtype of custom\_data variables even after the timestep or timeseries is loaded.
+    + TimeSeries \_\_init\_\_ function can now handle a list of TimeStep objects as input instead of a path.
 
 + version 4.1.1 (2026-02-28): elmbeech/physicelldataloader
-    + reduce memory footprint.
+    + reduced memory footprint.
 
 + version 4.1.0 (2025-12-31): elmbeech/physicelldataloader
-    + new TimeStep class and TimeSeris class function **get_spatialdata** and command line command **pcdl_get_spatialdata**.
+    + new **get_spatialdata** TimeStep class and TimeSeris class function and **pcdl_get_spatialdata** command line command.
 
 + version 4.0.5 (2025-10-22): elmbeech/physicelldataloader
     + **settingxml** default is now set to False, because the cell\_type id label mapping can, in recent PhysiCell output, be retrieved from output\*.xml too.
