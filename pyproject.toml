@@ -41,7 +41,7 @@ dynamic = ["version"]
 description = "physicell data loader (pcdl) provides a platform independent, python3 based, pip installable interface to load output, generated with the PhysiCell agent based modeling framework, into python3."
 readme = "README.md"
 
-requires-python = ">=3.10, <4"
+requires-python = ">=3.11, <4"
 
 license = "BSD-3-Clause"
 #license-files = {paths = ["LICENSE"]}
@@ -71,8 +71,9 @@ classifiers = [
 # bue 2024-12-06: enforcing some versions
 dependencies = [
     "anndata>=0.10.8",
-    "bioio>=1.2.1",  # needs numpy < 2.0.0
+    "bioio>=2.0.0",
     "bioio-ome-tiff",
+    "geopandas>=0.14",  # spatialdata
     "matplotlib",
     "neuroglancer",
     "numpy",
@@ -80,6 +81,8 @@ dependencies = [
     "requests",
     "scikit-image>=0.24.0",
     "scipy>=1.13.0",
+    "shapely>=2.0.1",  # spatialdata
+    "spatialdata>=0.7.2",
     "vtk",
 ]
 
@@ -105,6 +108,7 @@ pcdl_make_graph_gml = "pcdl.commandline:make_graph_gml"
 pcdl_plot_scatter = "pcdl.commandline:plot_scatter"
 pcdl_make_cell_vtk = "pcdl.commandline:make_cell_vtk"
 # substrate and cell agent
+pcdl_get_spatialdata = "pcdl.commandline:get_spatialdata"
 pcdl_plot_timeseries = "pcdl.commandline:plot_timeseries"
 pcdl_make_ome_tiff = "pcdl.commandline:make_ome_tiff"
 pcdl_render_neuroglancer = "pcdl.commandline:render_neuroglancer"

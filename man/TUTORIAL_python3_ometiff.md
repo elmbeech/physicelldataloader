@@ -77,7 +77,7 @@ img.shape  # (25, 2, 1, 200, 300)
 img.dims  # <Dimensions [T: 25, C: 2, Z: 1, Y: 200, X: 300]>
 ```
 ```python
-img.channel_names  # [np.str_('oxygen'), np.str_('cancer_cell')]
+img.channel_names  # [np.str_('oxygen'), np.str_('default')]
 ```
 
 That's it. The rest is analysis!

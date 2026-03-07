@@ -225,6 +225,16 @@ class TestTimeStepInitSettingxmlNone(object):
               (df_cell.shape[1] == 122)
 
 
+class TestTimeStepInitCustomdataastype(object):
+    ''' tests for loading a pcdl.TimeStep data and run custom_data_astype function. '''
+    mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
+
+    def test_mcds_custom_data_astype(self, mcds=mcds):
+        mcds.custom_data_astype({'sample': bool})
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (mcds.data['cell']['df_cell']['sample'].dtype == bool)
+
+
 class TestTimeStepInitVerboseTrue(object):
     ''' tests for loading a pcdl.TimeStep data set and set_verbose_false function. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
@@ -630,7 +640,9 @@ class TestTimeStepCell(object):
     def test_mcds_plot_scatter_cat_if(self, mcds=mcds):
         fig = mcds.plot_scatter(
             focus='cell_type',  # case categorical
-            z_slice = -3.333,   # test if
+            cat_drop = set(),  # {set(), {'blood_cells'}}
+            cat_keep = set(),  # {set(), {'default'}}
+            z_slice = -3.333,  # test if
             z_axis = None,  # test if case categorical
             #alpha = 1,  # matplotlib
             cmap = 'viridis',  # else case es_categorical
@@ -653,10 +665,12 @@ class TestTimeStepCell(object):
     def test_mcds_plot_scatter_cat_else1(self, mcds=mcds):
         s_pathfile = mcds.plot_scatter(
             focus='cell_type',  # case categorical
+            cat_drop = {'blood_cells'},  # set(), {'blood_cells'}}
+            cat_keep = set(),  # {set(), {'default'}}
             z_slice = 0,  # jump over if
-            z_axis = {'cancer_cell'},  # test else case categorical
+            z_axis = {'default'},  # test else case categorical
             #alpha = 1,  # matplotlib
-            cmap = {'cancer_cell': 'maroon'},  # test if case es_categorical
+            cmap = {'default': 'maroon'},  # test if case es_categorical
             title ='test_mcds_plot_scatter_else',  # matplotlib
             #grid = True,  # matplotlib
             #legend_loc = 'lower left',  # matplotlib
@@ -679,8 +693,10 @@ class TestTimeStepCell(object):
         fig, ax = plt.subplots()
         mcds.plot_scatter(
             focus='cell_type',  # case categorical
+            cat_drop = set(),  # {set(), {'blood_cells'}}
+            cat_keep = {'default'},  # {set(), {'default'}}
             z_slice = 0,  # jump over if
-            z_axis = {'cancer_cell'},  # test else case categorical
+            z_axis = {'default'},  # test else case categorical
             #alpha = 1,  # matplotlib
             cmap = 'viridis',  # test else case es_categorical
             title ='test_mcds_plot_scatter_else2',  # matplotlib
@@ -703,6 +719,8 @@ class TestTimeStepCell(object):
     def test_mcds_plot_scatter_num_if(self, mcds=mcds):
         fig = mcds.plot_scatter(
             focus='oxygen',  # case numeric
+            cat_drop = set(),  # {set(), {'blood_cells'}}
+            cat_keep = set(),  # {set(), {'default'}}
             z_slice = -3.333,   # test if
             z_axis = None,  # test if numeric
             #alpha = 1,  # matplotlib
@@ -726,6 +744,8 @@ class TestTimeStepCell(object):
     def test_mcds_plot_scatter_num_else(self, mcds=mcds):
         fig = mcds.plot_scatter(
             focus='oxygen',  # case numeric
+            cat_drop = set(),  # {set(), {'blood_cells'}}
+            cat_keep = set(),  # {set(), {'default'}}
             z_slice = 0,   # jump over if
             z_axis = [0, 38],  # test else numeric
             #alpha = 1,  # matplotlib
@@ -1071,3 +1091,68 @@ class TestTimeStepAnnData(object):
               (ann.var.shape == (105, 0)) and \
               (len(ann.uns) == 1)
 
+
+## spatialdata time step related functions ##
+class TestTimeStepSpatialData(object):
+    ''' test for pcdl.TimeStep class. '''
+
+    ## get_spatialdata command ##
+    def test_mcds_get_spatialdata_default(self):
+        mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
+        sdata = mcds.get_spatialdata(images={'subs'}, labels=set(), points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs')
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (str(type(sdata)) == "<class 'spatialdata._core.spatialdata.SpatialData'>") and \
+              (str(type(sdata['subs_image'])) == "<class 'xarray.core.dataarray.DataArray'>") and \
+              (sdata['subs_image'].shape == (2, 200, 300)) and \
+              (str(type(sdata['subs_point'])) == "<class 'dask.dataframe.dask_expr._collection.DataFrame'>") and \
+              (sdata['subs_point'].compute().shape[0] > 9) and \
+              (sdata['subs_point'].compute().shape[1] == 2) and \
+              (str(type(sdata['cell_shape'])) == "<class 'geopandas.geodataframe.GeoDataFrame'>") and \
+              (sdata['cell_shape'].shape[0] > 9) and \
+              (sdata['cell_shape'].shape[1] == 2) and \
+              (str(type(sdata['cell_table'])) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (sdata['cell_table'].shape[0] > 9) and \
+              (sdata['cell_table'].shape[1] > 9) and \
+              (str(type(sdata['subs_table'])) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (sdata['subs_table'].shape[0] > 9) and \
+              (sdata['subs_table'].shape[1] == 2) and \
+              (sdata['subs_table'].obs.shape[0] > 9) and \
+              (sdata['subs_table'].obs.shape[1] == 11) and \
+              (len(sdata['subs_table'].uns) == 1)
+
+    def test_mcds_get_spatialdata_points(self):
+        mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
+        sdata = mcds.get_spatialdata(images={'subs'}, labels={}, points={'subs','cell'}, shapes=set(), values=1, drop=set(), keep=set(), scale='maxabs')
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (str(type(sdata)) == "<class 'spatialdata._core.spatialdata.SpatialData'>") and \
+              (str(type(sdata['subs_image'])) == "<class 'xarray.core.dataarray.DataArray'>") and \
+              (sdata['subs_image'].shape == (2, 200, 300)) and \
+              (str(type(sdata['subs_point'])) == "<class 'dask.dataframe.dask_expr._collection.DataFrame'>") and \
+              (sdata['subs_point'].compute().shape[0] > 9) and \
+              (sdata['subs_point'].compute().shape[1] == 2) and \
+              (str(type(sdata['cell_point'])) == "<class 'dask.dataframe.dask_expr._collection.DataFrame'>") and \
+              (sdata['cell_point'].compute().shape[0] > 9) and \
+              (sdata['cell_point'].compute().shape[1] == 2) and \
+              (str(type(sdata['cell_table'])) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (sdata['cell_table'].shape[0] > 9) and \
+              (sdata['cell_table'].shape[1] > 9) and \
+              (str(type(sdata['subs_table'])) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (sdata['subs_table'].shape[0] > 9) and \
+              (sdata['subs_table'].shape[1] == 2) and \
+              (sdata['subs_table'].obs.shape[0] > 9) and \
+              (sdata['subs_table'].obs.shape[1] == 11) and \
+              (len(sdata['subs_table'].uns) == 1)
+
+    def test_mcds_get_spatialdata_none(self):
+        mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
+        sdata = mcds.get_spatialdata(images=set(), labels=set(), points=set(), shapes=set(), values=1, drop=set(), keep=set(), scale='maxabs')
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (str(type(sdata)) == "<class 'spatialdata._core.spatialdata.SpatialData'>") and \
+              (str(type(sdata['cell_table'])) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (sdata['cell_table'].shape[0] > 9) and \
+              (sdata['cell_table'].shape[1] > 9) and \
+              (str(type(sdata['subs_table'])) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (sdata['subs_table'].shape[0] > 9) and \
+              (sdata['subs_table'].shape[1] ==2) and \
+              (sdata['subs_table'].obs.shape[0] > 9) and \
+              (sdata['subs_table'].obs.shape[1] == 11)

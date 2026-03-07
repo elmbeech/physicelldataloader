@@ -13,7 +13,6 @@ Please spend some time to learn about each of the about 20 commands, by studying
 This will truly make you a power user!
 
 
-
 ## Preparation
 
 To runs this tutorial,
@@ -31,9 +30,7 @@ python3 -c"import pathlib, pcdl, shutil; pcdl.install_data(); s_ipath=str(pathli
 ```
 
 
-
 ## Metadata related commands
-
 
 ### &#x2728; pcdl\_get\_version
 
@@ -48,7 +45,6 @@ pcdl_get_version output/output00000000.xml
 ```bash
 pcdl_get_version -h
 ```
-
 
 ### &#x2728; pcdl\_get\_unit\_dict
 
@@ -65,9 +61,7 @@ pcdl_get_unit_dict -h
 ```
 
 
-
 ## Microenvironment related commands
-
 
 ### &#x2728; pcdl\_get\_substrate\_list
 
@@ -82,7 +76,6 @@ pcdl_get_substrate_list output/output00000000.xml
 ```bash
 pcdl_get_substrate_list -h
 ```
-
 
 ### &#x2728; pcdl\_get\_conc\_attribute
 
@@ -108,7 +101,6 @@ Further readings:
 + [TUTORIAL_r.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_r.md)
 + [TUTORIAL_julia.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_julia.md)
 
-
 ### &#x2728; pcdl\_get\_conc\_df
 
 Generate a dataframe [csv](https://en.wikipedia.org/wiki/Comma-separated_values) file that lists one voxel per row,
@@ -133,7 +125,6 @@ Further readings:
 + [TUTORIAL_r.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_r.md)
 + [TUTORIAL_julia.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_julia.md)
 
-
 ### &#x2728; pcdl\_plot\_contour
 
 For oxygen generate a [jpeg](https://en.wikipedia.org/wiki/JPEG) file
@@ -148,7 +139,6 @@ pcdl_plot_contour output/output00000000.xml oxygen
 ```bash
 pcdl_plot_contour -h
 ```
-
 
 ### &#x2728; pcdl\_make\_conc\_vtk
 
@@ -178,7 +168,6 @@ Further readings:
 
 
 ## Cell agent related commands
-
 
 ### &#x2728; pcdl\_get\_celltype\_list
 
@@ -232,7 +221,6 @@ Further readings:
 + [TUTORIAL_r.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_r.md)
 + [TUTORIAL_julia.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_julia.md)
 
-
 ### &#x2728; pcdl\_get\_cell\_df
 
 Generate a dataframe [csv](https://en.wikipedia.org/wiki/Comma-separated_values) file that lists one cell per row,
@@ -244,7 +232,11 @@ In the example below, the generated csv contains:
 
 ```bash
 pcdl_get_cell_df output 2
+```
+```bash
 pcdl_get_cell_df output/output00000000.xml
+```
+```bash
 pcdl_get_cell_df -h
 ```
 
@@ -253,17 +245,15 @@ Further readings:
 + [TUTORIAL_r.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_r.md)
 + [TUTORIAL_julia.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_julia.md)
 
-
 ### &#x2728; pcdl\_get\_anndata
 
-From the whole time series or from a single time step generate h5ad [anndata](https://anndata.readthedocs.io/en/latest/) [hd5](https://en.wikipedia.org/wiki/Hierarchical_Data_Format) files.
+From the whole time series or from a single time step, generate h5ad [anndata](https://anndata.readthedocs.io/en/latest/) [hd5](https://en.wikipedia.org/wiki/Hierarchical_Data_Format) files.
 
 Anndata is the standard data format in the python single cell community.
 Data stored in this format can be analyzed the same way as usually sc RNA seq data is analyzed.
 
 ```bash
 pcdl_get_anndata output/output00000000.xml
-pcdl_get_anndata -h
 ```
 ```bash
 pcdl_get_anndata output
@@ -276,7 +266,6 @@ Further readings:
 + [TUTORIAL_python3_scverse.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_scverse.md)
 + [TUTORIAL_r.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_r.md)
 + [TUTORIAL_julia.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_julia.md)
-
 
 ### &#x2728; pcdl\_make\_graph\_gml
 
@@ -300,7 +289,6 @@ Further readings:
 + [TUTORIAL_r.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_r.md)
 + [TUTORIAL_julia.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_julia.md)
 
-
 ### &#x2728; pcdl\_plot\_scatter
 
 Generate a [jpeg](https://en.wikipedia.org/wiki/JPEG) file that displaying all cells.
@@ -318,7 +306,6 @@ pcdl_plot_scatter output
 ```bash
 pcdl_plot_scatter -h
 ```
-
 
 ### &#x2728; pcdl\_make\_cell\_vtk
 
@@ -348,9 +335,28 @@ Further readings:
 + [TUTORIAL_julia.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_julia.md)
 
 
-
 ## Microenvironment and cell agent related commands
 
+### &#x2728; pcdl\_get\_spatialdata
+
+From a single time step, generate [spatialdata](https://spatialdata.scverse.org/en/stable/) [zarr](https://zarr.dev/) files.
+The spatialdata format should, in the long run, become comaptibel with the [OME-NGFF](https://ngff.openmicroscopy.org/latest/index.html) data format.
+
+Spatialdata is the standard data format in the python spatial single cell community.
+Data stored in this format can be analyzed the same way as spatial sc RNA seq data is analyzed.
+
+```bash
+pcdl_get_spatialdata output/output00000000.xml
+```
+```bash
+pcdl_get_spatialdata output
+```
+```bash
+pcdl_get_spatialdata -h
+```
+
+Further readings:
++ [TUTORIAL_python3_scverse.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_scverse.md)
 
 ### &#x2728; pcdl\_plot\_timeseries
 
@@ -376,11 +382,9 @@ pcdl_plot_timeseries output none
 ```bash
 pcdl_plot_timeseries output cell_type
 ```
-
 ```bash
 pcdl_plot_timeseries output cell_type oxygen
 ```
-
 ```bash
 pcdl_plot_timeseries output cell_type oxygen max
 ```
@@ -388,7 +392,6 @@ pcdl_plot_timeseries output cell_type oxygen max
 ```bash
 pcdl_plot_timeseries output none oxygen
 ```
-
 ```bash
 pcdl_plot_timeseries output none oxygen --frame conc
 ```
@@ -396,7 +399,6 @@ pcdl_plot_timeseries output none oxygen --frame conc
 ```bash
 pcdl_plot_timeseries -h
 ```
-
 
 ### &#x2728; pcdl\_make\_ome\_tiff
 
@@ -427,7 +429,6 @@ Further readings:
 + [TUTORIAL_fiji_imagej.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_fijiimagej.md)
 + [TUTORIAL_neuroglancer.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_neuroglancer.md)
 + [TUTORIAL_blender.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_blender.md)
-
 
 ### &#x2728; pcdl\_render\_neuroglancer
 
@@ -476,6 +477,7 @@ pcdl_make_movie output/cell_cell_type_z0.0/
 ```bash
 pcdl_make_movie -h
 ```
+
 
 ## Data Clean Up
 

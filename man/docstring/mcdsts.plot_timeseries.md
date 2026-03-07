@@ -21,6 +21,16 @@
                 cell: dataframe will be retrieved through the mcds.get_cell_df function.
                 conc: dataframe will be retrieved through the mcds.get_conc_df function.
 
+            cat_drop: set of strings; default is an empty set
+                if focus is a categorical attribute,
+                set of category labels to be dropped for the dataframe.
+                Attention: when the cat_keep parameter is given, then
+                the cat_drop parameter has to be an empty set!
+
+            cat_keep: set of strings; default is an empty set
+                if focus is a categorical attribute,
+                set of category labels to be kept in the dataframe.
+
             z_slice: floating point number; default is None
                 z-axis position to slice a 2D xy-plain out of the 3D mesh.
                 if z_slice position numeric but not an exact mesh center coordinate,
@@ -92,14 +102,16 @@
                 to be able to generate movies from the images.
 
             ext: string; default is None
-                output image format. possible formats are None, jpeg, png, and tiff.
-                if None then the matplotlib figure is returned by the function
-                and not written to file.
+                output format.
+                possible image formats are jpeg, jpg, png, tif, and tiff.
+                for retrieving a datafarme file use csv.
+                any other string or a number returns a pandas dataframe object.
+                None returnes a matplotlib figure object.
 
             figbgcolor: string; default is None which is transparent (png)
                 or white (jpeg, tiff).
                 figure background color.
-                only relevant if ext not is None.
+                only relevant if ext specifies an image file.
 
             **kwargs: possible additional keyword arguments input,
                 handled by the pandas series plot function.

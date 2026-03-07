@@ -11,7 +11,7 @@
                 relative or absolute path to the directory where
                 the PhysiCell output files are stored.
 
-            custom_dtype: dictionary; default is {}
+            custom_data_type: dictionary; default is {}
                 variable to specify custom_data variable types other than
                 floats (namely: int, bool, str) like this: {var: dtype, ...}.
                 downstream float and int will be handled as numeric,
@@ -29,7 +29,7 @@
                 should physiboss state data be loaded, if found?
                 setting physiboss to False will use less memory and speed up processing.
 
-            settingxml: string; default PhysiCell_settings.xml
+            settingxml: string; default False
                 the settings.xml that is loaded, from which the cell type ID
                 label mapping, is extracted, if this information is not found
                 in the output xml file.

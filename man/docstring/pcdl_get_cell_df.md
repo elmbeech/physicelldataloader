@@ -29,7 +29,7 @@ options:
                         type ID label mapping, is extracted, if this
                         information is not found in the output xml file. set
                         to None or False if the xml file is missing! default
-                        is PhysiCell_settings.xml.
+                        is False.
   -v VERBOSE, --verbose VERBOSE
                         setting verbose to False for less text output, while
                         processing. default is True.

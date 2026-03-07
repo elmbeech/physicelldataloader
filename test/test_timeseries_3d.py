@@ -46,6 +46,12 @@ if not os.path.exists(s_path_3d):
 class TestTimeSeries3dInit(object):
     ''' tests for loading a pcdl.TimeSeries data set. '''
 
+    def test_mcdsts_custom_data_astype(self):
+        mcdsts = pcdl.TimeSeries(s_path_3d, load=True, verbose=False)
+        mcdsts.custom_data_astype({'sample': bool})
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+              (mcdsts.l_mcds[-1].data['cell']['df_cell']['sample'].dtype == bool)
+
     def test_mcdsts_set_verbose_true(self):
         mcdsts = pcdl.TimeSeries(s_path_3d, load=False, verbose=False)
         mcdsts.set_verbose_true()
@@ -103,6 +109,11 @@ class TestTimeSeries3dInit(object):
               (len(ls_xmlfile) == 3) and \
               (len(mcdsts.l_mcds) == 3) and \
               (mcdsts.l_mcds == l_mcds)
+
+    def test_mcdsts_form_list_of_mcds(self):
+        mcdsts = pcdl.TimeSeries([])
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+              (len(mcdsts.l_mcds) == 0)
 
 
 ## micro environment related functions ##
@@ -290,7 +301,9 @@ class TestTimeSeries3dCell(object):
     def test_mcdsts_plot_scatter_num(self, mcdsts=mcdsts):
         ls_pathfile = mcdsts.plot_scatter(
             focus='pressure',  # case numeric
-            z_slice = -3.333,   # test if
+            cat_drop = set(),  # {set(), {'blood_cells'}}
+            cat_keep = set(),  # {set(), {'default'}}
+            z_slice = -3.333,  # test if
             z_axis = None,  # test iff numeric
             #alpha = 1,  # matplotlib
             #cmap = 'viridis',  # matplotlib
@@ -319,7 +332,9 @@ class TestTimeSeries3dCell(object):
     def test_mcdsts_plot_scatter_cat(self, mcdsts=mcdsts):
         l_fig = mcdsts.plot_scatter(
             focus='cell_type',  # case categorical
-            z_slice = 0.0,   # jump over if
+            cat_drop = set(),  # {set(), {'blood_cells'}}
+            cat_keep = set(),  # {set(), {'default'}}
+            z_slice = 0.0,  # jump over if
             z_axis = None,  # test iff  categorical
             #alpha = 1,  # TimeStep
             #cmap = 'viridis',  # TimeStep
@@ -433,6 +448,8 @@ class TestTimeSeries3dTimeseries(object):
             focus_num = None,  # test if {None/count, 'oxygen'}
             #aggregate_num = np.mean,  # pandas
             frame = 'cell',  # test if else {'df_cell', 'df_conc'}
+            cat_drop = set(),  # test if else {set(), {'default'}}
+            cat_keep = set(),  # test if else {set(), {'default'}}
             z_slice = None,  # test timeseries
             #logy = False,  # pandas
             #ylim = None,  # pandas
@@ -450,7 +467,7 @@ class TestTimeSeries3dTimeseries(object):
             #title = None, pandas
             ax = ax,  # test if else {None, ax}
             figsizepx = [641, 481],  # test non even pixel number
-            ext = 'jpeg',  # test if else {'jpeg', None}
+            ext = 'jpeg',  # test if else {'jpeg', 'csv', 0, None}
             figbgcolor = None  # test if
         )
         assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
@@ -458,72 +475,14 @@ class TestTimeSeries3dTimeseries(object):
               (os.path.exists(s_pathfile))
         os.remove(s_pathfile)
 
-    def test_mcdsts_plot_timeseries_cat_none_yunit_cell(self, mcdsts=mcdsts):
-        fig = mcdsts.plot_timeseries(
+    def test_mcdsts_plot_timeseries_cat_none_catdrop_cell_csv(self, mcdsts=mcdsts):
+        s_pathfile = mcdsts.plot_timeseries(
             focus_cat = 'cell_type',  # test if {None/total, 'cell_type'}
             focus_num = None,  # test if {None/count, 'oxygen'}
             #aggregate_num = np.mean,  # pandas
             frame = 'df_cell',  # test if else {'df_cell', 'df_conc'}
-            z_slice = -0.3,  # test if if
-            #logy = False,  # pandas
-            #ylim = None,  # pandas
-            #secondary_y = None,  # pandas
-            #subplots = False,  # pandas
-            #sharex = False,  # pandas
-            #sharey = False,  # pandas
-            #linestyle = '-',  # pandas
-            #linewidth = None,  # pandas
-            #cmap = None,  # pandas
-            #color = None,  # pandas
-            #grid = True,  # pandas
-            #legend = True,
-            yunit = 'mmHg',  # test if {None, 'mmHg'}
-            #title = None, pandas
-            ax = None,  # test if else {None, ax}
-            figsizepx = [641, 481],  # test non even pixel number
-            ext = None,  # test if else {'jpeg', None}
-            figbgcolor = None  # test if
-        )
-        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
-              (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
-        plt.close()
-
-    def test_mcdsts_plot_timeseries_none_num_yunit_cell(self, mcdsts=mcdsts):
-        fig = mcdsts.plot_timeseries(
-            focus_cat = None,  # test if {None/total, 'cell_type'}
-            focus_num = 'oxygen',  # test if {None/count, 'oxygen'}
-            #aggregate_num = np.mean,  # pandas
-            frame = 'df_cell',  # test if else {'df_cell', 'df_conc'}
-            z_slice = -0.3,  # test if if
-            #logy = False,  # pandas
-            #ylim = None,  # pandas
-            #secondary_y = None,  # pandas
-            #subplots = False,  # pandas
-            #sharex = False,  # pandas
-            #sharey = False,  # pandas
-            #linestyle = '-',  # pandas
-            #linewidth = None,  # pandas
-            #cmap = None,  # pandas
-            #color = None,  # pandas
-            #grid = True,  # pandas
-            #legend = True,
-            yunit = 'mmHg',  # test if {None, 'mmHg'}
-            #title = None, pandas
-            ax = None,  # test if else {None, ax}
-            figsizepx = [641, 481],  # test non even pixel number
-            ext = None,  # test if else {'jpeg', None}
-            figbgcolor = None  # test if
-        )
-        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
-              (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
-        plt.close()
-
-    def test_mcdsts_plot_timeseries_cat_num_none_cell(self, mcdsts=mcdsts):
-        fig = mcdsts.plot_timeseries(
-            focus_cat = 'cell_type',  # test if {None/total, 'cell_type'}
-            focus_num = 'oxygen',  # test if {None/count, 'oxygen'}
-            #aggregate_num = np.mean,  # pandas
-            frame = 'cell',  # test if else {'df_cell', 'df_conc'}
+            cat_drop = {'default'},  # test if else {set(), {'default'}}
+            cat_keep = set(),  # test if else {set(), {'default'}}
             z_slice = -0.3,  # test if if
             #logy = False,  # pandas
             #ylim = None,  # pandas
@@ -541,7 +500,104 @@ class TestTimeSeries3dTimeseries(object):
             #title = None, pandas
             ax = None,  # test if else {None, ax}
             figsizepx = [641, 481],  # test non even pixel number
-            ext = None,  # test if else {'jpeg', None}
+            ext = 'csv',  # test if else {'jpeg', 'csv', 0, None}
+            figbgcolor = None  # test if
+        )
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+              (s_pathfile.endswith('/pcdl/output_3d/timeseries_df_cell_cell_type_count.csv')) and \
+              (os.path.exists(s_pathfile))
+        os.remove(s_pathfile)
+
+    def test_mcdsts_plot_timeseries_cat_none_catkeep_cell_df(self, mcdsts=mcdsts):
+        df = mcdsts.plot_timeseries(
+            focus_cat = 'cell_type',  # test if {None/total, 'cell_type'}
+            focus_num = None,  # test if {None/count, 'oxygen'}
+            #aggregate_num = np.mean,  # pandas
+            frame = 'df_cell',  # test if else {'df_cell', 'df_conc'}
+            cat_drop = set(),  # test if else {set(), {'default'}}
+            cat_keep = {'default'},  # test if else {set(), {'default'}}
+            z_slice = -0.3,  # test if if
+            #logy = False,  # pandas
+            #ylim = None,  # pandas
+            #secondary_y = None,  # pandas
+            #subplots = False,  # pandas
+            #sharex = False,  # pandas
+            #sharey = False,  # pandas
+            #linestyle = '-',  # pandas
+            #linewidth = None,  # pandas
+            #cmap = None,  # pandas
+            #color = None,  # pandas
+            #grid = True,  # pandas
+            #legend = True,
+            yunit = None,  # test if {None, 'mmHg'}
+            #title = None, pandas
+            ax = None,  # test if else {None, ax}
+            figsizepx = [641, 481],  # test non even pixel number
+            ext = 0,  # test if else {'jpeg', 'csv', 0, None}
+            figbgcolor = None  # test if
+        )
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+              (str(type(df)) == "<class 'pandas.core.frame.DataFrame'>")
+        plt.close()
+
+    def test_mcdsts_plot_timeseries_none_num_yunit_cell_fig(self, mcdsts=mcdsts):
+        fig = mcdsts.plot_timeseries(
+            focus_cat = None,  # test if {None/total, 'cell_type'}
+            focus_num = 'oxygen',  # test if {None/count, 'oxygen'}
+            #aggregate_num = np.mean,  # pandas
+            frame = 'df_cell',  # test if else {'df_cell', 'df_conc'}
+            cat_drop = set(),  # test if else {set(), {'default'}}
+            cat_keep = set(),  # test if else {set(), {'default'}}
+            z_slice = -0.3,  # test if if
+            #logy = False,  # pandas
+            #ylim = None,  # pandas
+            #secondary_y = None,  # pandas
+            #subplots = False,  # pandas
+            #sharex = False,  # pandas
+            #sharey = False,  # pandas
+            #linestyle = '-',  # pandas
+            #linewidth = None,  # pandas
+            #cmap = None,  # pandas
+            #color = None,  # pandas
+            #grid = True,  # pandas
+            #legend = True,
+            yunit = 'mmHg',  # test if {None, 'mmHg'}
+            #title = None, pandas
+            ax = None,  # test if else {None, ax}
+            figsizepx = [641, 481],  # test non even pixel number
+            ext = None,  # test if else {'jpeg', 'csv', 0, None}
+            figbgcolor = None  # test if
+        )
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+              (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+        plt.close()
+
+    def test_mcdsts_plot_timeseries_cat_num_none_cell_fig(self, mcdsts=mcdsts):
+        fig = mcdsts.plot_timeseries(
+            focus_cat = 'cell_type',  # test if {None/total, 'cell_type'}
+            focus_num = 'oxygen',  # test if {None/count, 'oxygen'}
+            #aggregate_num = np.mean,  # pandas
+            frame = 'cell',  # test if else {'df_cell', 'df_conc'}
+            cat_drop = set(),  # test if else {set(), {'default'}}
+            cat_keep = set(),  # test if else {set(), {'default'}}
+            z_slice = -0.3,  # test if if
+            #logy = False,  # pandas
+            #ylim = None,  # pandas
+            #secondary_y = None,  # pandas
+            #subplots = False,  # pandas
+            #sharex = False,  # pandas
+            #sharey = False,  # pandas
+            #linestyle = '-',  # pandas
+            #linewidth = None,  # pandas
+            #cmap = None,  # pandas
+            #color = None,  # pandas
+            #grid = True,  # pandas
+            #legend = True,
+            yunit = None,  # test if {None, 'mmHg'}
+            #title = None, pandas
+            ax = None,  # test if else {None, ax}
+            figsizepx = [641, 481],  # test non even pixel number
+            ext = None,  # test if else {'jpeg', 'csv', 0, None}
             figbgcolor = None  # test if
         )
         assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
@@ -555,6 +611,8 @@ class TestTimeSeries3dTimeseries(object):
             focus_num = None,  # test if {None/count, 'oxygen'}
             #aggregate_num = np.mean,  # pandas
             frame = 'conc',  # test if else {'df_cell', 'df_conc'}
+            cat_drop = set(),  # test if else {set(), {1,2,3,4}}
+            cat_keep = set(),  # test if else {set(), {1,2,3,4}}
             z_slice = None,  # test timeseries
             #logy = False,  # pandas
             #ylim = None,  # pandas
@@ -572,81 +630,23 @@ class TestTimeSeries3dTimeseries(object):
             #title = None, pandas
             ax = ax,  # test if else {None, ax}
             figsizepx = [641, 481],  # test non even pixel number
-            ext = 'jpeg',  # test if else {'jpeg', None}
+            ext = 'jpeg',  # test if else {'jpeg', 'csv', 0, None}
             figbgcolor = None  # test if
         )
         assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
-              (s_pathfile.endswith('/pcdl/output_3d/timeseries_conc_total_count.jpeg')) and \
+              (s_pathfile.endswith('/pcdl/output_3d/timeseries_conc_substrate_value_nanmean.jpeg')) and \
               (os.path.exists(s_pathfile))
         os.remove(s_pathfile)
         plt.close()
 
-    def test_mcdsts_plot_timeseries_cat_none_yunit_conc(self, mcdsts=mcdsts):
-        fig = mcdsts.plot_timeseries(
-            focus_cat = 'voxel_i',  # test if {None/total, 'voxel_i'}
-            focus_num = None,  # test if {None/count, 'oxygen'}
-            #aggregate_num = np.mean,  # pandas
-            frame = 'df_conc',  # test if else {'df_cell', 'df_conc'}
-            z_slice = -0.3,  # test if if
-            #logy = False,  # pandas
-            #ylim = None,  # pandas
-            #secondary_y = None,  # pandas
-            #subplots = False,  # pandas
-            #sharex = False,  # pandas
-            #sharey = False,  # pandas
-            #linestyle = '-',  # pandas
-            #linewidth = None,  # pandas
-            #cmap = None,  # pandas
-            #color = None,  # pandas
-            #grid = True,  # pandas
-            #legend = True,
-            yunit = 'mmHg',  # test if {None, 'mmHg'}
-            #title = None, pandas
-            ax = None,  # test if else {None, ax}
-            figsizepx = [641, 481],  # test non even pixel number
-            ext = None,  # test if else {'jpeg', None}
-            figbgcolor = None  # test if
-        )
-        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
-              (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
-        plt.close()
-
-    def test_mcdsts_plot_timeseries_none_num_yunit_conc(self, mcdsts=mcdsts):
-        fig = mcdsts.plot_timeseries(
-            focus_cat = None,  # test if {None/total, 'voxel_i'}
-            focus_num = 'oxygen',  # test if {None/count, 'oxygen'}
-            #aggregate_num = np.mean,  # pandas
-            frame = 'df_conc',  # test if else {'df_cell', 'df_conc'}
-            z_slice = -0.3,  # test if if
-            #logy = False,  # pandas
-            #ylim = None,  # pandas
-            #secondary_y = None,  # pandas
-            #subplots = False,  # pandas
-            #sharex = False,  # pandas
-            #sharey = False,  # pandas
-            #linestyle = '-',  # pandas
-            #linewidth = None,  # pandas
-            #cmap = None,  # pandas
-            #color = None,  # pandas
-            #grid = True,  # pandas
-            #legend = True,
-            yunit = 'mmHg',  # test if {None, 'mmHg'}
-            #title = None, pandas
-            ax = None,  # test if else {None, ax}
-            figsizepx = [641, 481],  # test non even pixel number
-            ext = None,  # test if else {'jpeg', None}
-            figbgcolor = None  # test if
-        )
-        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
-              (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
-        plt.close()
-
-    def test_mcdsts_plot_timeseries_cat_num_none_conc(self, mcdsts=mcdsts):
+    def test_mcdsts_plot_timeseries_cat_num_none_conc_fig(self, mcdsts=mcdsts):
         fig = mcdsts.plot_timeseries(
             focus_cat = 'voxel_i',  # test if {None/total, 'voxel_i'}
             focus_num = 'oxygen',  # test if {None/count, 'oxygen'}
             #aggregate_num = np.mean,  # pandas
             frame = 'conc',  # test if else {'df_cell', 'df_conc'}
+            cat_drop = set(),  # test if else {set(), {1,2,3,4}}
+            cat_keep = set(),  # test if else {set(), {1,2,3,4}}
             z_slice = -0.3,  # test if if
             #logy = False,  # pandas
             #ylim = None,  # pandas
@@ -664,7 +664,104 @@ class TestTimeSeries3dTimeseries(object):
             #title = None, pandas
             ax = None,  # test if else {None, ax}
             figsizepx = [641, 481],  # test non even pixel number
-            ext = None,  # test if else {'jpeg', None}
+            ext = None,  # test if else {'jpeg', 'csv', 0, None}
+            figbgcolor = None  # test if
+        )
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+              (str(type(fig)) == "<class 'matplotlib.figure.Figure'>")
+        plt.close()
+
+    def test_mcdsts_plot_timeseries_cat_num_catdrop_conc_csv(self, mcdsts=mcdsts):
+        s_pathfile = mcdsts.plot_timeseries(
+            focus_cat = 'voxel_i',  # test if {None/total, 'voxel_i'}
+            focus_num = 'oxygen',  # test if {None/count, 'oxygen'}
+            #aggregate_num = np.mean,  # pandas
+            frame = 'df_conc',  # test if else {'df_cell', 'df_conc'}
+            cat_drop = {1,2,3,4},  # test if else {set(), {1,2,3,4}}
+            cat_keep = set(),  # test if else {set(), {1,2,3,4}}
+            z_slice = -0.3,  # test if if
+            #logy = False,  # pandas
+            #ylim = None,  # pandas
+            #secondary_y = None,  # pandas
+            #subplots = False,  # pandas
+            #sharex = False,  # pandas
+            #sharey = False,  # pandas
+            #linestyle = '-',  # pandas
+            #linewidth = None,  # pandas
+            #cmap = None,  # pandas
+            #color = None,  # pandas
+            #grid = True,  # pandas
+            #legend = True,
+            yunit = None,  # test if {None, 'mmHg'}
+            #title = None, pandas
+            ax = None,  # test if else {None, ax}
+            figsizepx = [641, 481],  # test non even pixel number
+            ext = 'csv',  # test if else {'jpeg', 'csv', 0, None}
+            figbgcolor = None  # test if
+        )
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+              (s_pathfile.endswith('/pcdl/output_3d/timeseries_df_conc_voxel_i_oxygen_nanmean.csv')) and \
+              (os.path.exists(s_pathfile))
+        os.remove(s_pathfile)
+
+    def test_mcdsts_plot_timeseries_cat_num_catkeep_conc_df(self, mcdsts=mcdsts):
+        df = mcdsts.plot_timeseries(
+            focus_cat = 'voxel_i',  # test if {None/total, 'voxel_i'}
+            focus_num = 'oxygen',  # test if {None/count, 'oxygen'}
+            #aggregate_num = np.mean,  # pandas
+            frame = 'df_conc',  # test if else {'df_cell', 'df_conc'}
+            cat_drop = set(),  # test if else {set(), {1,2,3,4}}
+            cat_keep = {1,2,3,4},  # test if else {set(), {1,2,3,4}}
+            z_slice = -0.3,  # test if if
+            #logy = False,  # pandas
+            #ylim = None,  # pandas
+            #secondary_y = None,  # pandas
+            #subplots = False,  # pandas
+            #sharex = False,  # pandas
+            #sharey = False,  # pandas
+            #linestyle = '-',  # pandas
+            #linewidth = None,  # pandas
+            #cmap = None,  # pandas
+            #color = None,  # pandas
+            #grid = True,  # pandas
+            #legend = True,
+            yunit = None,  # test if {None, 'mmHg'}
+            #title = None, pandas
+            ax = None,  # test if else {None, ax}
+            figsizepx = [641, 481],  # test non even pixel number
+            ext = 0,  # test if else {'jpeg', 'csv', 0, None}
+            figbgcolor = None  # test if
+        )
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+              (str(type(df)) == "<class 'pandas.core.frame.DataFrame'>")
+        plt.close()
+
+    def test_mcdsts_plot_timeseries_none_none_yunit_conc_fig(self, mcdsts=mcdsts):
+        fig = mcdsts.plot_timeseries(
+            focus_cat = None,  # test if {None/total, 'voxel_i'}
+            focus_num = None,  # test if {None/count, 'oxygen'}
+            #aggregate_num = np.mean,  # pandas
+            frame = 'df_conc',  # test if else {'df_cell', 'df_conc'}
+            cat_drop = set(),  # test if else {set(), {1,2,3,4}}
+            cat_keep = set(),  # test if else {set(), {1,2,3,4}}
+            z_slice = -0.3,  # test if if
+            #logy = False,  # pandas
+            #ylim = None,  # pandas
+            #secondary_y = None,  # pandas
+            #subplots = False,  # pandas
+            #sharex = False,  # pandas
+            #sharey = False,  # pandas
+            #linestyle = '-',  # pandas
+            #linewidth = None,  # pandas
+            #cmap = None,  # pandas
+            #color = None,  # pandas
+            #grid = True,  # pandas
+            #legend = True,
+            yunit = 'mmHg',  # test if {None, 'mmHg'}
+            #title = None, pandas
+            ax = None,  # test if else {None, ax}
+            figsizepx = [641, 481],  # test non even pixel number
+            ext = None,  # test if else {'jpeg', 'csv', 0, None}
             figbgcolor = None  # test if
         )
         assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
@@ -759,4 +856,36 @@ class TestTimeSeries3dAnnData(object):
               (len(ann.obsp) == 0) and \
               (ann.var.shape == (105, 0)) and \
               (len(ann.uns) == 0)
+
+
+## spatialdata time seris related functions ##
+class TestTimeSeriesSpatialData(object):
+    ''' test for pcdl.TestSeries class. '''
+
+    # get_sdmcds_list {integrated}
+    # get_cell_attributes ok
+    # get_get_spatialdata ok
+    # keep_mcds {True, _False_}
+
+    def test_mcdsts_get_spatialdata_default(self):
+        mcdsts = pcdl.TimeSeries(s_path_3d, verbose=True)
+        lo_sdmcds_output = mcdsts.get_spatialdata(images={'subs'}, labels=set(), points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs', keep_mcds=True)
+        lo_sdmcds_memory = mcdsts.get_sdmcds_list()
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+              (len(mcdsts.l_mcds) == 25) and \
+              (len(mcdsts.l_sdmcds) == 25) and \
+              (lo_sdmcds_output == mcdsts.l_sdmcds) and \
+              (lo_sdmcds_output == lo_sdmcds_memory) and \
+              (str(type(lo_sdmcds_output[8])) == "<class 'spatialdata._core.spatialdata.SpatialData'>")
+
+    def test_mcdsts_get_spatialdata_keepmcdsfalse(self):
+        mcdsts = pcdl.TimeSeries(s_path_3d, verbose=True)
+        lo_sdmcds_output = mcdsts.get_spatialdata(images={'subs'}, labels=set(), points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs', keep_mcds=False)
+        lo_sdmcds_memory = mcdsts.get_sdmcds_list()
+        assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+              (len(mcdsts.l_mcds) == 0) and \
+              (len(mcdsts.l_sdmcds) == 25) and \
+              (lo_sdmcds_output == mcdsts.l_sdmcds) and \
+              (lo_sdmcds_output == lo_sdmcds_memory) and \
+              (str(type(lo_sdmcds_output[8])) == "<class 'spatialdata._core.spatialdata.SpatialData'>")
 

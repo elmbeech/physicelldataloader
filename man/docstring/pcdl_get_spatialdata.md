@@ -1,13 +1,15 @@
 ```
-usage: pcdl_get_anndata [-h] [--custom_data_type [CUSTOM_DATA_TYPE ...]]
-                        [--microenv MICROENV] [--graph GRAPH]
-                        [--physiboss PHYSIBOSS] [--settingxml SETTINGXML]
-                        [-v VERBOSE] [--drop [DROP ...]] [--keep [KEEP ...]]
-                        [--scale SCALE] [--collapse COLLAPSE]
-                        [path] [values]
+usage: pcdl_get_spatialdata [-h] [--custom_data_type [CUSTOM_DATA_TYPE ...]]
+                            [--microenv MICROENV] [--graph GRAPH]
+                            [--physiboss PHYSIBOSS] [--settingxml SETTINGXML]
+                            [-v VERBOSE] [--images [IMAGES ...]]
+                            [--labels [LABELS ...]] [--points [POINTS ...]]
+                            [--shapes [SHAPES ...]] [--drop [DROP ...]]
+                            [--keep [KEEP ...]] [--scale SCALE]
+                            [path] [values]
 
-function to transform mcds time steps into one or many anndata objects for
-downstream analysis.
+function to transform mcds time steps into spatialdata objects for downstream
+analysis.
 
 positional arguments:
   path                  path to the PhysiCell output directory or a
@@ -27,15 +29,15 @@ options:
                         Boolean, and str as categorical data. default is an
                         empty string.
   --microenv MICROENV   should the microenvironment be extracted and loaded
-                        into the anndata object? setting microenv to False
+                        into the spatialdata object? setting microenv to False
                         will use less memory and speed up processing. default
                         is True.
   --graph GRAPH         should neighbor graph, attach graph, and attached
-                        spring graph be extracted and loaded into the anndata
-                        object? default is True.
+                        spring graph be extracted and loaded into the
+                        spatialdata object? default is True.
   --physiboss PHYSIBOSS
                         if found, should physiboss state data be extracted and
-                        loaded into the anndata object? default is True.
+                        loaded into the spatialdata object? default is True.
   --settingxml SETTINGXML
                         the settings.xml that is loaded, from which the cell
                         type ID label mapping, is extracted, if this
@@ -45,6 +47,22 @@ options:
   -v VERBOSE, --verbose VERBOSE
                         setting verbose to False for less text output, while
                         processing. default is True.
+  --images [IMAGES ...]
+                        specify if from the subs or cell dataset a
+                        multichannel image should be generate. so far, only
+                        the subs image element is implemented.
+  --labels [LABELS ...]
+                        specify if from the subs or cell dataset a label
+                        element should be generated. so far, neither subs nor
+                        cell label elements are implemented.
+  --points [POINTS ...]
+                        specify if from the subs or cell dataset a points
+                        element should be generated. both, subs and cell point
+                        elements, are implemented.
+  --shapes [SHAPES ...]
+                        specify if from the subs or cell dataset a shape
+                        element should be generated. so far, only the cell
+                        shape element is implemented.
   --drop [DROP ...]     set of column labels to be dropped for the dataframe.
                         don't worry: essential columns like ID, coordinates
                         and time will never be dropped. Attention: when the
@@ -76,9 +94,6 @@ options:
                         method has ddof set to 0. if the attribute has only
                         one value, the value will be set to 0. default is
                         maxabs
-  --collapse COLLAPSE   should all mcds time steps from the time series be
-                        collapsed into one big anndata h5ad file, or a many
-                        h5ad, one h5ad for each time step?, default is True.
 
 homepage: https://github.com/elmbeech/physicelldataloader
 ```

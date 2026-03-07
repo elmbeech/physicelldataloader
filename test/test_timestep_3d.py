@@ -368,6 +368,8 @@ class TestTimeStep3dCellWorkhorse(object):
         fig, ax = plt.subplots()
         fig = mcds.plot_scatter(
             focus='cell_type',  # case categorical
+            cat_drop = set(),  # {set(), {'blood_cells'}}
+            cat_keep = set(),  # {set(), {'default'}}
             z_slice = -3.333,   # test if
             z_axis = None,  # test if case categorical
             #alpha = 1,  # matplotlib
@@ -391,10 +393,12 @@ class TestTimeStep3dCellWorkhorse(object):
     def test_mcds_plot_scatter_cat_else1(self, mcds=mcds):
         s_pathfile = mcds.plot_scatter(
             focus='cell_type',  # case categorical
+            cat_drop = {'blood_cells'},  # set(), {'blood_cells'}}
+            cat_keep = set(),  # {set(), {'default'}}
             z_slice = 0,  # jump over if
-            z_axis = {'cancer_cell'},  # test else case categorical
+            z_axis = {'default'},  # test else case categorical
             #alpha = 1,  # matplotlib
-            cmap = {'cancer_cell': 'maroon'},  # test if case es_categorical
+            cmap = {'default': 'maroon'},  # test if case es_categorical
             title ='test_mcds_plot_scatter_else',  # matplotlib
             #grid = True,  # matplotlib
             #legend_loc = 'lower left',  # matplotlib
@@ -417,8 +421,10 @@ class TestTimeStep3dCellWorkhorse(object):
         fig, ax = plt.subplots()
         mcds.plot_scatter(
             focus='cell_type',  # case categorical
+            cat_drop = set(),  # {set(), {'blood_cells'}}
+            cat_keep = {'default'},  # {set(), {'default'}}
             z_slice = 0,  # jump over if
-            z_axis = {'cancer_cell'},  # test else case categorical
+            z_axis = {'default'},  # test else case categorical
             #alpha = 1,  # matplotlib
             cmap = 'viridis',  # test else case es_categorical
             title ='test_mcds_plot_scatter_else2',  # matplotlib
@@ -441,6 +447,8 @@ class TestTimeStep3dCellWorkhorse(object):
     def test_mcds_plot_scatter_num_if(self, mcds=mcds):
         fig = mcds.plot_scatter(
             focus='oxygen',  # case numeric
+            cat_drop = set(),  # {set(), {'blood_cells'}}
+            cat_keep = set(),  # {set(), {'default'}}
             z_slice = -3.333,   # test if
             z_axis = None,  # test if numeric
             #alpha = 1,  # matplotlib
@@ -464,6 +472,8 @@ class TestTimeStep3dCellWorkhorse(object):
     def test_mcds_plot_scatter_num_else(self, mcds=mcds):
         fig = mcds.plot_scatter(
             focus='oxygen',  # case numeric
+            cat_drop = set(),  # {set(), {'blood_cells'}}
+            cat_keep = set(),  # {set(), {'default'}}
             z_slice = 0,   # jump over if
             z_axis = [0, 38],  # test else numeric
             #alpha = 1,  # matplotlib
@@ -659,4 +669,70 @@ class TestTimeStep3dAnnData(object):
               (len(ann.obsp) == 2) and \
               (ann.var.shape == (105, 0)) and \
               (len(ann.uns) == 1)
+
+
+## spatialdata time step related functions ##
+class TestTimeStepSpatialData(object):
+    ''' test for pcdl.TimeStep class. '''
+
+    ## get_spatialdata command ##
+    def test_mcds_get_spatialdata_default(self):
+        mcds = pcdl.TimeStep(s_pathfile_3d, verbose=False)
+        sdata = mcds.get_spatialdata(images={'subs'}, labels=set(), points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs')
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (str(type(sdata)) == "<class 'spatialdata._core.spatialdata.SpatialData'>") and \
+              (str(type(sdata['subs_image'])) == "<class 'xarray.core.dataarray.DataArray'>") and \
+              (sdata['subs_image'].shape == (2,11,200,300)) and \
+              (str(type(sdata['subs_point'])) == "<class 'dask.dataframe.dask_expr._collection.DataFrame'>") and \
+              (sdata['subs_point'].compute().shape[0] > 9) and \
+              (sdata['subs_point'].compute().shape[1] == 3) and \
+              (str(type(sdata['cell_shape'])) == "<class 'geopandas.geodataframe.GeoDataFrame'>") and \
+              (sdata['cell_shape'].shape[0] > 9) and \
+              (sdata['cell_shape'].shape[1] == 2) and \
+              (str(type(sdata['cell_table'])) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (sdata['cell_table'].shape[0] > 9) and \
+              (sdata['cell_table'].shape[1] > 9) and \
+              (str(type(sdata['subs_table'])) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (sdata['subs_table'].shape[0] > 9) and \
+              (sdata['subs_table'].shape[1] == 2) and \
+              (sdata['subs_table'].obs.shape[0] > 9) and \
+              (sdata['subs_table'].obs.shape[1] == 11) and \
+              (len(sdata['subs_table'].uns) == 1)
+
+    def test_mcds_get_spatialdata_points(self):
+        mcds = pcdl.TimeStep(s_pathfile_3d, verbose=False)
+        sdata = mcds.get_spatialdata(images={'subs'}, labels=set(), points={'subs','cell'}, shapes=set(), values=1, drop=set(), keep=set(), scale='maxabs')
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (str(type(sdata)) == "<class 'spatialdata._core.spatialdata.SpatialData'>") and \
+              (str(type(sdata['subs_image'])) == "<class 'xarray.core.dataarray.DataArray'>") and \
+              (sdata['subs_image'].shape == (2,11,200,300)) and \
+              (str(type(sdata['subs_point'])) == "<class 'dask.dataframe.dask_expr._collection.DataFrame'>") and \
+              (sdata['subs_point'].compute().shape[0] > 9) and \
+              (sdata['subs_point'].compute().shape[1] == 3) and \
+              (str(type(sdata['cell_point'])) == "<class 'dask.dataframe.dask_expr._collection.DataFrame'>") and \
+              (sdata['cell_point'].compute().shape[0] > 9) and \
+              (sdata['cell_point'].compute().shape[1] == 3) and \
+              (str(type(sdata['cell_table'])) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (sdata['cell_table'].shape[0] > 9) and \
+              (sdata['cell_table'].shape[1] > 9) and \
+              (str(type(sdata['subs_table'])) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (sdata['subs_table'].shape[0] > 9) and \
+              (sdata['subs_table'].shape[1] == 2) and \
+              (sdata['subs_table'].obs.shape[0] > 9) and \
+              (sdata['subs_table'].obs.shape[1] == 11) and \
+              (len(sdata['subs_table'].uns) == 1)
+
+    def test_mcds_get_spatialdata_none(self):
+        mcds = pcdl.TimeStep(s_pathfile_3d, verbose=False)
+        sdata = mcds.get_spatialdata(images=set(), labels=set(), points=set(), shapes=set(), values=1, drop=set(), keep=set(), scale='maxabs')
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (str(type(sdata)) == "<class 'spatialdata._core.spatialdata.SpatialData'>") and \
+              (str(type(sdata['cell_table'])) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (sdata['cell_table'].shape[0] > 9) and \
+              (sdata['cell_table'].shape[1] > 9) and \
+              (str(type(sdata['subs_table'])) == "<class 'anndata._core.anndata.AnnData'>") and \
+              (sdata['subs_table'].shape[0] > 9) and \
+              (sdata['subs_table'].shape[1] ==2) and \
+              (sdata['subs_table'].obs.shape[0] > 9) and \
+              (sdata['subs_table'].obs.shape[1] == 11)
 

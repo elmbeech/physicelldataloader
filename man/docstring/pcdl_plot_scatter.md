@@ -2,11 +2,12 @@
 usage: pcdl_plot_scatter [-h] [--custom_data_type [CUSTOM_DATA_TYPE ...]]
                          [--microenv MICROENV] [--physiboss PHYSIBOSS]
                          [--settingxml SETTINGXML] [-v VERBOSE]
-                         [--z_slice Z_SLICE] [--z_axis Z_AXIS [Z_AXIS ...]]
-                         [--alpha ALPHA] [--cmap CMAP] [--title TITLE]
-                         [--grid GRID] [--legend_loc LEGEND_LOC]
-                         [--xlim XLIM [XLIM ...]] [--ylim YLIM [YLIM ...]]
-                         [--xyequal XYEQUAL] [--s S]
+                         [--cat_drop [CAT_DROP ...]]
+                         [--cat_keep [CAT_KEEP ...]] [--z_slice Z_SLICE]
+                         [--z_axis Z_AXIS [Z_AXIS ...]] [--alpha ALPHA]
+                         [--cmap CMAP] [--title TITLE] [--grid GRID]
+                         [--legend_loc LEGEND_LOC] [--xlim XLIM [XLIM ...]]
+                         [--ylim YLIM [YLIM ...]] [--xyequal XYEQUAL] [--s S]
                          [--figsizepx FIGSIZEPX [FIGSIZEPX ...]] [--ext EXT]
                          [--figbgcolor FIGBGCOLOR]
                          [path] [focus]
@@ -39,10 +40,20 @@ options:
                         type ID label mapping, is extracted, if this
                         information is not found in the output xml file. set
                         to None or False if the xml file is missing! default
-                        is PhysiCell_settings.xml.
+                        is False.
   -v VERBOSE, --verbose VERBOSE
                         setting verbose to False for less text output, while
                         processing. default is True.
+  --cat_drop [CAT_DROP ...]
+                        if focus is a categorical attribute, set of category
+                        labels, strings separated by space, to be dropped for
+                        the dataframe. Attention: when the cat_keep parameter
+                        is given, then the cat_drop parameter has to be an
+                        empty string! default is an empty string.
+  --cat_keep [CAT_KEEP ...]
+                        if focus is a categorical attribute, set of category
+                        labels, strings separated by space, to be kept in the
+                        dataframe. default is an empty string.
   --z_slice Z_SLICE     z-axis position to slice a 2D xy-plain out of the 3D
                         mesh. if z_slice position numeric but not an exact
                         mesh center coordinate, then z_slice will be adjusted

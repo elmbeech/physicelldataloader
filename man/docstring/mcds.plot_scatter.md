@@ -6,6 +6,16 @@
             focus: string; default is 'cell_type'
                 column name within cell dataframe.
 
+            cat_drop: set of strings; default is an empty set
+                if focus is a categorical attribute,
+                set of category labels to be dropped for the dataframe.
+                Attention: when the cat_keep parameter is given, then
+                the cat_drop parameter has to be an empty set!
+
+            cat_keep: set of strings; default is an empty set
+                if focus is a categorical attribute,
+                set of category labels to be kept in the dataframe.
+
             z_slice: floating point number; default is 0.0
                 z-axis position to slice a 2D xy-plain out of the
                 3D substrate concentration mesh. if z_slice position

@@ -18,9 +18,10 @@ jobs:
       fail-fast: false
       matrix:
         #python-version: ["3.14"]
-        python-version: ["3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.11", "3.12", "3.13"]
 
     env:
+      MPLBACKEND: Agg  # https://github.com/orgs/community/discussions/26434
       PYTHONPATH: D:\a\physicelldataloader\physicelldataloader
 
     steps:
@@ -33,7 +34,7 @@ jobs:
       run: |
         choco install ffmpeg imagemagick
         python -m pip install --upgrade pip
-        python -m pip install flake8 pytest anndata bioio matplotlib numpy pandas requests scipy vtk
+        python -m pip install flake8 pytest anndata bioio bioio-ome-tiff matplotlib neuroglancer numpy pandas requests scikit-image scipy vtk
         python -m pip install D:\a\physicelldataloader\physicelldataloader -v
         #echo 'set PYTHONPATH=D:\a\physicelldataloader\physicelldataloader' >> $GITHUB_ENV
         #if [ -f requirements.txt ]; then pip install -r requirements.txt; fi

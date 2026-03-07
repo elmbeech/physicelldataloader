@@ -146,7 +146,7 @@ def make_movie(path, interface='jpeg', framerate=12):
     f.close()
 
     # genearete movie
-    s_cmd = f'ffmpeg -y -r {framerate} -f concat -i ffmpeginput.txt -vcodec libx264 -pix_fmt yuv420p -strict -2 -tune animation -crf 15 -acodec none "{s_ofile}"'  # -safe 0
+    s_cmd = f'ffmpeg -f concat -i ffmpeginput.txt -y -r {framerate} -pix_fmt yuv420p -strict -2 -codec:v h264 -tune animation -crf 15 -codec:a none "{s_ofile}"'  # -safe 0
     if (os.system(s_cmd) != 0):
         sys.exit("Error @ make_movie : ffmpeg could not generatet the movie.")
     os.remove('ffmpeginput.txt')
@@ -161,12 +161,13 @@ def make_movie(path, interface='jpeg', framerate=12):
 ###########
 
 class TimeSeries:
-    def __init__(self, output_path='.', custom_data_type={}, load=True, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True):
+    def __init__(self, output_path='.', custom_data_type={}, load=True, microenv=True, graph=True, physiboss=True, settingxml=False, verbose=True):
         """
         input:
-            output_path: string, default '.'
+            output_path: string or list of mcds objects, default '.'
                 relative or absolute path to the directory where
-                the PhysiCell output files are stored.
+                the PhysiCell output files are stored or
+                a list of mcds timestep objects.
 
             custom_data_type: dictionary; default is {}
                 variable to specify custom_data variable types
@@ -190,7 +191,7 @@ class TimeSeries:
                 should physiboss state data be loaded, if found?
                 setting physiboss to False will use less memory and speed up processing.
 
-            settingxml: string; default PhysiCell_settings.xml
+            settingxml: string; default False
                 the settings.xml that is loaded, from which the cell type ID
                 label mapping, is extracted, if this information is not found
                 in the output xml file.
@@ -208,26 +209,66 @@ class TimeSeries:
             TimeSeries.__init__ generates a class instance the instance offers
             functions to process all time steps in the output_path directory.
         """
-        output_path = output_path.replace('\\','/')
-        while (output_path.find('//') > -1):
-            output_path = output_path.replace('//','/')
-        if (output_path.endswith('/')) and (len(output_path) > 1):
-            output_path = output_path[:-1]
-        if not os.path.isdir(output_path):
-            print(f'Error @ TimeSeries.__init__ : this is not a path! could not load {output_path}.')
-        self.path = output_path
-        self.ls_xmlfile = [s_pathfile.replace('\\','/').split('/')[-1] for s_pathfile in sorted(glob.glob(self.path + f'/output*.xml'))]  # bue 2022-10-22: is output*.xml always the correct pattern?
-        self.custom_data_type = custom_data_type
-        self.microenv = microenv
-        self.graph = graph
-        self.physiboss = physiboss
-        self.settingxml = settingxml
+        # set generic variables
         self.verbose = verbose
-        if load:
-            self.read_mcds()
-        else:
-            self.l_mcds = None
         self.l_annmcds = None
+        self.l_sdmcds = None
+
+        # load mcds timeseries from list if mcds timesteps
+        if (type(output_path) is list):
+            self.ls_xmlfile = None
+            self.l_mcds = output_path
+            self.custom_data_type = None
+            self.microenv = None
+            self.graph = None
+            self.physiboss = None
+            self.settingxml = None
+
+        # load mcds timrseries from physicell output directory
+        else:
+            output_path = output_path.replace('\\','/')
+            while (output_path.find('//') > -1):
+                output_path = output_path.replace('//','/')
+            if (output_path.endswith('/')) and (len(output_path) > 1):
+                output_path = output_path[:-1]
+            if not os.path.isdir(output_path):
+                sys.exit(f'Error @ TimeSeries.__init__ : this is not a path! could not load {output_path}.')
+            self.path = output_path
+            # bue 2022-10-22: is output*.xml always the correct pattern? i could add initial or final step.
+            self.ls_xmlfile = [s_pathfile.replace('\\','/').split('/')[-1] for s_pathfile in sorted(glob.glob(self.path + f'/output*.xml'))]
+            if (len(self.ls_xmlfile) == 0):
+                sys.exit(f'Error @ TimeSeries.__init__ : could not detect any output*.xml! is the given output_path correct? {output_path}')
+            self.custom_data_type = custom_data_type
+            self.microenv = microenv
+            self.graph = graph
+            self.physiboss = physiboss
+            self.settingxml = settingxml
+            if load:
+                self.read_mcds()
+            else:
+                self.l_mcds = None
+
+
+    def custom_data_astype(self, custom_data_type={}):
+        """
+        input:
+            custom_data_type: dictionary; default is {}
+                variable to specify custom_data variable types other than
+                floats (namely: int, bool, str) like this: {var: dtype, ...}.
+                downstream float and int will be handled as numeric,
+                bool as Boolean, and str as categorical data.
+
+        output:
+            self.data['cell']['df_cell']:
+                the dtype of columns as specified in the custom_data_type dictionary.
+
+        description:
+            function to set the dtype of custom_data variables,
+            even after the data is loaded.
+        """
+        # variable typing
+        for mcds in self.get_mcds_list():
+            mcds.custom_data_astype(custom_data_type=custom_data_type)
 
 
     def set_verbose_false(self):
@@ -851,13 +892,23 @@ class TimeSeries:
         return dl_variable_range
 
 
-    def plot_scatter(self, focus='cell_type', z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title='', grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, figsizepx=None, ext='jpeg', figbgcolor=None, **kwargs):
+    def plot_scatter(self, focus='cell_type', cat_drop=set(), cat_keep=set(), z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title='', grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, figsizepx=None, ext='jpeg', figbgcolor=None, **kwargs):
         """
         input:
             self: TimeSeries class instance
 
             focus: string; default is 'cell_type'
                 column name within cell dataframe.
+
+            cat_drop: set of strings; default is an empty set
+                if focus is a categorical attribute,
+                set of category labels to be dropped for the dataframe.
+                Attention: when the cat_keep parameter is given, then
+                the cat_drop parameter has to be an empty set!
+
+            cat_keep: set of strings; default is an empty set
+                if focus is a categorical attribute,
+                set of category labels to be kept in the dataframe.
 
             z_slice: floating point number; default is 0.0
                 z-axis position to slice a 2D xy-plain out of the 3D mesh.
@@ -951,6 +1002,8 @@ class TimeSeries:
             df_cell = mcds.get_cell_df()
             o_output = mcds.plot_scatter(
                 focus = focus,
+                cat_drop = cat_drop,
+                cat_keep = cat_keep,
                 z_slice = z_slice,
                 z_axis = z_axis,
                 alpha = alpha,
@@ -1141,7 +1194,7 @@ class TimeSeries:
 
     ## TIME SERIES RELATED FUNCTIONS ##
 
-    def plot_timeseries(self, focus_cat=None, focus_num=None, aggregate_num=np.nanmean, frame='cell', z_slice=None, logy=False, ylim=None, secondary_y=None, subplots=False, sharex=False, sharey=False, linestyle='-', linewidth=None, cmap=None, color=None, grid=True, legend=True, yunit=None, title=None, ax=None, figsizepx=[640, 480], ext=None, figbgcolor=None, **kwargs):
+    def plot_timeseries(self, focus_cat=None, focus_num=None, aggregate_num=np.nanmean, frame='cell', cat_drop=set(), cat_keep=(), z_slice=None, logy=False, ylim=None, secondary_y=None, subplots=False, sharex=False, sharey=False, linestyle='-', linewidth=None, cmap=None, color=None, grid=True, legend=True, yunit=None, title=None, ax=None, figsizepx=[640, 480], ext=None, figbgcolor=None, **kwargs):
         """
         input:
             self: TimeSeries class instance
@@ -1161,6 +1214,16 @@ class TimeSeries:
                 to specifies the data dataframe.
                 cell: dataframe will be retrieved through the mcds.get_cell_df function.
                 conc: dataframe will be retrieved through the mcds.get_conc_df function.
+
+            cat_drop: set of strings; default is an empty set
+                if focus is a categorical attribute,
+                set of category labels to be dropped for the dataframe.
+                Attention: when the cat_keep parameter is given, then
+                the cat_drop parameter has to be an empty set!
+
+            cat_keep: set of strings; default is an empty set
+                if focus is a categorical attribute,
+                set of category labels to be kept in the dataframe.
 
             z_slice: floating point number; default is None
                 z-axis position to slice a 2D xy-plain out of the 3D mesh.
@@ -1233,14 +1296,16 @@ class TimeSeries:
                 to be able to generate movies from the images.
 
             ext: string; default is None
-                output image format. possible formats are None, jpeg, png, and tiff.
-                if None then the matplotlib figure is returned by the function
-                and not written to file.
+                output format.
+                possible image formats are jpeg, jpg, png, tif, and tiff.
+                for retrieving a datafarme file use csv.
+                any other string or a number returns a pandas dataframe object.
+                None returnes a matplotlib figure object.
 
             figbgcolor: string; default is None which is transparent (png)
                 or white (jpeg, tiff).
                 figure background color.
-                only relevant if ext not is None.
+                only relevant if ext specifies an image file.
 
             **kwargs: possible additional keyword arguments input,
                 handled by the pandas series plot function.
@@ -1261,13 +1326,6 @@ class TimeSeries:
             https://en.wikipedia.org/wiki/Portable_Network_Graphics
             https://en.wikipedia.org/wiki/TIFF
         """
-        # handle focus
-        if focus_cat is None:
-            focus_cat  = 'total'
-        if focus_num is None:
-            focus_num = 'count'
-            aggregate_num = len
-
         # handle z_slice
         if not (z_slice is None):
             _, _, ar_p_axis = self.get_mcds_list()[0].get_mesh_mnp_axis()
@@ -1279,8 +1337,20 @@ class TimeSeries:
         # generate series dataframe
         df_series = None
         for mcds in self.get_mcds_list():
-            # fetch cell timestep dataframe
+
+            # cell agent
             if frame in {'cell', 'df_cell', 'cell_df', 'get_cell_df'}:
+
+                # handle focus
+                if focus_cat is None:
+                    focus_cat  = 'total'
+
+                if focus_num is None:
+                    focus_num = 'count'
+                    aggregate_num = len
+
+                # fetch timestep dataframe
+                b_verbose = mcds.verbose
                 mcds.set_verbose_false()
                 if (focus_cat == 'total') and (focus_num == 'count'):
                     df_frame = mcds.get_cell_df(values=1, keep={'time'})
@@ -1295,28 +1365,49 @@ class TimeSeries:
                 else:
                     df_frame = mcds.get_cell_df(values=1, keep={focus_cat,focus_num})
                 mcds.set_verbose_true()
-            # fetch conc timestep dataframe
+                mcds.verbose = b_verbose
+
+            # conc substrate
             elif frame in {'conc', 'df_conc', 'conc_df', 'get_conc_df'}:
+
+                # handle focus
+                if focus_cat is None:
+                    focus_cat  = 'substrate'
+
+                # fetch time step dataframe
+                b_verbose = mcds.verbose
                 mcds.set_verbose_false()
-                if (focus_cat == 'total') and (focus_num == 'count'):
-                    df_frame = mcds.get_conc_df(values=1, keep={'time'})
-                    df_frame['total'] = 'total'
-                    df_frame['count'] = 1
-                elif (focus_cat == 'total'):
-                    df_frame = mcds.get_conc_df(values=1, keep={focus_num})
-                    df_frame['total'] = 'total'
-                elif (focus_num == 'count'):
-                    df_frame = mcds.get_conc_df(values=1, keep={focus_cat})
-                    df_frame['count'] = 1
+                if (focus_cat == 'substrate'):  # and (focus_num == 'value'):
+                    if focus_num is None:
+                        focus_num = 'value'
+                    df_frame = mcds.get_conc_df(values=1).melt(
+                        id_vars = es_coor_conc.difference({'ID'}),
+                        var_name = 'substrate',
+                    )
+
                 else:
-                    df_frame = mcds.get_conc_df(values=1, keep={focus_cat,focus_num})
+                    if focus_num is None:
+                        sys.exit(f"Error @ TimeSeries.plot_timeseries : with --frame cons and focus_cat set, you have to set focus_num too. for example, choose a substrate.")
+                    df_frame = mcds.get_conc_df(values=1, keep={focus_num}) # focus_num
                 mcds.set_verbose_true()
+                mcds.verbose = b_verbose
+
             # error
             else:
                 sys.exit(f"Error @ TimeSeries.plot_timeseries : unknown frame {frame}. known are cell_df and conc_df.")
+
+            # filter categories
+            es_category = set(df_frame.loc[:, focus_cat])
+            if (len(cat_keep) > 0):
+                es_category = es_category.intersection(cat_keep)
+            else:
+                es_category = es_category.difference(cat_drop)
+            df_frame = df_frame.loc[df_frame.loc[:, focus_cat].isin(es_category),:]
+
             # handle z_slize
             if not (z_slice is None):
                 df_frame = df_frame.loc[(df_frame.mesh_center_p == z_slice),:]
+
             # calculate focus_num aggregate per focus_cat
             r_time = mcds.get_time()
             df_frame = df_frame.loc[:,[focus_cat, focus_num]]
@@ -1329,6 +1420,7 @@ class TimeSeries:
                 df_aggregate.columns = [r_time]
             else:
                 sys.exit(f'Error @ TimeSeries.plot_timeseries : {aggregate_num} calculation returns unexpected variable type {type(o_aggregate)}.\nthe expected type is a pandas Series or DataFrame.')
+
             # store result
             if (df_series is None):
                 df_series = df_aggregate
@@ -1340,91 +1432,109 @@ class TimeSeries:
                     right_index=True,
                     how='outer'
                 )
+
         # transpose dataframe
         df_series = df_series.T
+        df_series.index.name = 'time_min'
 
-        # handle ylabel
-        if (focus_num == 'count') and (yunit is None):
-            ylabel = focus_num
-        elif (focus_num == 'count'):
-            ylabel = f'focus_num [{yunit}]'
-        elif (yunit is None):
-            ylabel = f"{aggregate_num.__name__.replace('nan','')} {focus_num}"
+        # generate file name
+        if (focus_num == 'count'):
+            s_ofile = f'timeseries_{frame}_{focus_cat}_{focus_num}.{ext}'.replace(' ','_')
         else:
-            ylabel = f"{aggregate_num.__name__.replace('nan','')} {focus_num} [{yunit}]"
+            s_ofile = f"timeseries_{frame}_{focus_cat}_{focus_num}_{aggregate_num.__name__.replace('np.nan','')}.{ext}".replace(' ','_')
+        s_pathfile = self.path + '/' + s_ofile
 
-        # generate series line plot
-        if (ax is None):
-            # handle figure size
-            figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
-            figsizepx[1] = figsizepx[1] - (figsizepx[1] % 2)
-            r_px = 1 / plt.rcParams['figure.dpi']  # translate px to inch
-            figsize = [None, None]
-            figsize[0] = figsizepx[0] * r_px
-            figsize[1] = figsizepx[1] * r_px
-            if self.verbose:
-                print(f'inch figure size set to {figsize}.')
-            fig, ax = plt.subplots(figsize=figsize)
-        else:
-            fig = plt.gcf()
-        if not (cmap is None):
-            # if cmap
-            df_series.plot(
-                kind = 'line',
-                logy = logy,
-                ylim = ylim,
-                secondary_y = secondary_y,
-                subplots = subplots,
-                sharex = sharex,
-                sharey = sharey,
-                linestyle = linestyle,
-                linewidth = linewidth,
-                cmap = cmap,
-                grid = grid,
-                legend = legend,
-                ylabel = ylabel,
-                xlabel = f"time [{mcds.get_unit_dict()['time']}]",
-                title = title,
-                ax = ax,
-                **kwargs,
-            )
-        else:
-            # if color
-            df_series.plot(
-                kind = 'line',
-                logy = logy,
-                ylim = ylim,
-                secondary_y = secondary_y,
-                subplots = subplots,
-                sharex = sharex,
-                sharey = sharey,
-                linestyle = linestyle,
-                linewidth = linewidth,
-                color = color,
-                grid = grid,
-                legend = legend,
-                ylabel = ylabel,
-                xlabel = f"time [{mcds.get_unit_dict()['time']}]",
-                title = title,
-                ax = ax,
-                **kwargs,
-            )
+        # output dataframe object
+        if not (ext in {'csv', 'jpeg', 'jpg', 'png', 'tiff', 'tif', None}):
+            return df_series
 
-        # output
-        if (ext is None):
-            return fig
-        else:
-            if (focus_num == 'count'):
-                s_ofile = f'timeseries_{frame}_{focus_cat}_{focus_num}.{ext}'.replace(' ','_')
-            else:
-                s_ofile = f"timeseries_{frame}_{focus_cat}_{focus_num}_{aggregate_num.__name__.replace('np.nan','')}.{ext}".replace(' ','_')
-            s_pathfile = self.path + '/' + s_ofile
-            if figbgcolor is None:
-                figbgcolor = 'auto'
-            plt.tight_layout()
-            fig.savefig(s_pathfile, facecolor=figbgcolor)
-            plt.close(fig)
+        # output dataframe file
+        elif (ext == 'csv'):
+            df_series.to_csv(s_pathfile)
             return s_pathfile
+
+        # output image file
+        elif (ext in {'jpeg','jpg','png','tiff','tif', None}):
+            # handle ylabel
+            if (focus_num == 'count') and (yunit is None):
+                ylabel = focus_num
+            elif (focus_num == 'count'):
+                ylabel = f'focus_num [{yunit}]'
+            elif (yunit is None):
+                ylabel = f"{aggregate_num.__name__.replace('nan','')} {focus_num}"
+            else:
+                ylabel = f"{aggregate_num.__name__.replace('nan','')} {focus_num} [{yunit}]"
+
+            # generate series line plot
+            if (ax is None):
+                # handle figure size
+                figsizepx[0] = figsizepx[0] - (figsizepx[0] % 2)  # enforce even pixel number
+                figsizepx[1] = figsizepx[1] - (figsizepx[1] % 2)
+                r_px = 1 / plt.rcParams['figure.dpi']  # translate px to inch
+                figsize = [None, None]
+                figsize[0] = figsizepx[0] * r_px
+                figsize[1] = figsizepx[1] * r_px
+                if self.verbose:
+                    print(f'inch figure size set to {figsize}.')
+                fig, ax = plt.subplots(figsize=figsize)
+            else:
+                fig = plt.gcf()
+            if not (cmap is None):
+                # if cmap
+                df_series.plot(
+                    kind = 'line',
+                    logy = logy,
+                    ylim = ylim,
+                    secondary_y = secondary_y,
+                    subplots = subplots,
+                    sharex = sharex,
+                    sharey = sharey,
+                    linestyle = linestyle,
+                    linewidth = linewidth,
+                    cmap = cmap,
+                    grid = grid,
+                    legend = legend,
+                    ylabel = ylabel,
+                    xlabel = f"time [{mcds.get_unit_dict()['time']}]",
+                    title = title,
+                    ax = ax,
+                    **kwargs,
+                )
+            else:
+                # if color
+                df_series.plot(
+                    kind = 'line',
+                    logy = logy,
+                    ylim = ylim,
+                    secondary_y = secondary_y,
+                    subplots = subplots,
+                    sharex = sharex,
+                    sharey = sharey,
+                    linestyle = linestyle,
+                    linewidth = linewidth,
+                    color = color,
+                    grid = grid,
+                    legend = legend,
+                    ylabel = ylabel,
+                    xlabel = f"time [{mcds.get_unit_dict()['time']}]",
+                    title = title,
+                    ax = ax,
+                    **kwargs,
+                )
+
+
+            # save fig to file
+            if not (ext is None):
+                if figbgcolor is None:
+                    figbgcolor = 'auto'
+                plt.tight_layout()
+                fig.savefig(s_pathfile, facecolor=figbgcolor)
+                plt.close(fig)
+                return s_pathfile
+
+            # output matplotlib fig object
+            else:
+                return fig
 
 
     ## GRAPH RELATED FUNCTIONS ##
@@ -1646,3 +1756,110 @@ class TimeSeries:
             function returns a binding to the self.l_annmcds list of anndata mcds objects.
         """
         return self.l_annmcds
+
+
+    def get_spatialdata(self, images={'subs'}, labels=set(), points={'subs'}, shapes={'cell'}, values=1, drop=set(), keep=set(), scale='maxabs', keep_mcds=True):
+        """
+        input:
+            images: set of string; default {'subs'}
+                specify if from the subs or cell dataset
+                a multichannel image should be generate.
+                so far, only the subs image element is implemented.
+
+            labels: set of strings; default is an empty set
+                specify if from the subs or cell dataset
+                a label element should be generated.
+                so far, neither subs nor cell label elements are implemented.
+
+            points: set of string; default {'subs'}
+                specify if from the subs or cell dataset
+                a points element should be generated.
+                both, subs and cell point elements, are implemented.
+
+            shapes: set of string; default {'cell'}
+                specify if from the subs or cell dataset
+                a shape element should be generated.
+                so far, only the cell shape element is implemented.
+
+            values: integer; default is 1
+                minimal number of values a variable has to have to be outputted.
+                variables that have only 1 state carry no information.
+                None is a state too.
+
+            drop: set of strings; default is an empty set
+                set of column labels to be dropped for the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will never be dropped.
+                Attention: when the keep parameter is given, then
+                the drop parameter has to be an empty set!
+
+            keep: set of strings; default is an empty set
+                set of column labels to be kept in the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will always be kept.
+
+            scale: string; default 'maxabs'
+                specify how the data should be scaled.
+                possible values are None, maxabs, minmax, std.
+                for more input, check out: help(pcdl.scaler)
+
+            keep_mcds: boole; default True
+                should the loaded original mcds be kept in memory
+                after transformation?
+
+        output:
+            self.l_sdmcds: list of spatialdata objects.
+
+        description:
+            function to transform mcds time steps into
+            spatialdata objects for downstream analysis.
+        """
+        # variable triage
+        es_keep = set(self.get_cell_attribute(values=values, drop=drop, keep=keep, allvalues=False).keys())
+
+        # processing
+        lsd_mcds = []
+        i_mcds = len(self.l_mcds)
+        for i in range(i_mcds):
+            # fetch mcds
+            if keep_mcds:
+                mcds = self.l_mcds[i]
+            else:
+                mcds = self.l_mcds.pop(0)
+
+            # extract time and dataframes
+            r_time = round(mcds.get_time(),9)
+            if self.verbose:
+                print(f'\nprocessing: {i+1}/{i_mcds} {r_time}[min] mcds into spatialdata obj.')
+
+            # get spatialdata object
+            sd_mcds = mcds.get_spatialdata(
+                points = points,
+                shapes = shapes,
+                #values = 1,
+                #drop = set(),
+                keep = es_keep,
+                scale = scale,
+            )
+            lsd_mcds.append(sd_mcds)
+
+        # output
+        self.l_sdmcds = lsd_mcds
+        return self.l_sdmcds
+
+
+
+    def get_sdmcds_list(self):
+        """
+        input:
+            self: TimeSeries class instance.
+
+        output:
+            self.l_sdmcds: list of chronologically ordered spatialdata mcds objects.
+                watch out, this is a pointer to the
+                self.l_sdmcds list of spdata mcds objects, not a copy of self.l_sdmcds!
+
+        description:
+            function returns a binding to the self.l_sdmcds list of spdata mcds objects.
+        """
+        return self.l_sdmcds

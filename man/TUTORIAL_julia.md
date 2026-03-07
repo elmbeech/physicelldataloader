@@ -3,6 +3,37 @@
 [Julia](https://julialang.org/) is a scientific computing language.
 
 
+## &#x2728; Run pcdl within Julia
+
+We are using the [PyCall.js](https://github.com/JuliaPy/PyCall.jl) library
+to run pcdl within Julia.
+
+Make sure that the python3 environment is activated, which has pcdl installed.
+
+Fire up a Juila shell.
+```bash
+julia
+```
+
+Pakage installation.
+
+```julia
+using Pkg
+Pkdg.add("PyCall")
+```
+
+Run pcdl.
+
+```julia
+using PyCall
+
+pcdl = pyimport("pcdl")  # import the pcdl module.
+mcdsts = pcdl.TimeSeries("path/to/PhysiCell/output/")  # load an mcds time series.
+
+?mcdsts.get_cell_df()  # retrieve a function's docstring.
+df = mcdsts.get_cell_df()  # retrieve the cell dataframe.
+```
+
 ## &#x2728; Handle csv files
 
 ### Save pcdl data structures as csv files from the command line
@@ -98,7 +129,7 @@ pcdl_make_graph_gml output/output00000024.xml neighbor --node_attribute cell_typ
 
 ### Load gml files into a julia data structures
 
-&#x26A0; **bue 2024-09-04:** this is currently not working, since, for now, GraphIO cannot handle the graph, node, or edge metadata in the file.
+&#x26A0; **bue 2024-09-04:** this is currently not working, since, for now, GraphIO cannot handle the graph, node, or edge metadata in the file ( https://github.com/JuliaGraphs/GraphIO.jl/issues/46 ).
 
 We will use the [GraphIO.js](https://github.com/JuliaGraphs/GraphIO.jl) library,
 to load gml files.
@@ -142,7 +173,7 @@ pcdl_get_anndata output/
 
 ### Load h5ad files into a julia data structures
 
-We will use scver's [Muon.jl](https://github.com/scverse/Muon.jl) library,
+We will use scverse's [Muon.jl](https://github.com/scverse/Muon.jl) library,
 to load h5ad files.
 
 Package installation.
@@ -203,7 +234,6 @@ Load image file.
 
 ```julia
 using FileIO
-using Images
 ```
 ```julia
 omeimg = load("output/timeseries_ID.ome.tiff")

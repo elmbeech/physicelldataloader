@@ -1,15 +1,14 @@
 # PhysiCell Data Loader Tutorial: pcdl and Python and the scVerse
 
-[AnnData](https://anndata.readthedocs.io/en/latest/) is the data standard from the python single cell community.
-This means, PhysiCell output transformed into an AnnData object can be analyzed the same way  sc RNA seq data is analyzed.
+[AnnData](https://anndata.readthedocs.io/en/latest/) and [SpatialData](https://spatialdata.scverse.org/en/stable/) are data standards from the python single cell community.
+This means, PhysiCell output transformed into an AnnData and SpatialData objects can be analyzed the same way  sc RNA seq data is analyzed.
 The whole [scverse](https://scverse.org/) (single cell univers)  becomes accessible.
 
 This includes:
 + [scanpy](https://scanpy.readthedocs.io/en/latest/): for classic single cell analysis.
 + [squidpy](https://squidpy.readthedocs.io/en/stable/): for spatial single cell analysis.
 + [scvi-tools](https://scvi-tools.org/): for single cell machine learning.
-+ [muon](https://muon.readthedocs.io/en/latest/): for multimodal omics analysis.
-And there is a whole [ecosystem](https://scverse.org/packages/#ecosystem) of libraries, compatible with the AnnData format.
+And there is a whole [ecosystem](https://scverse.org/packages/#ecosystem) of libraries, compatible with the AnnData (and SpatialData) format.
 
 Whatever you d'like to do with your physicell data, it most probably was already done with single cell wet lab data.
 That's being said: PhysiCell data is different scdata than scRNA seq data!

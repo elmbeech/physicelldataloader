@@ -2,8 +2,9 @@
 usage: pcdl_plot_timeseries [-h] [--custom_data_type [CUSTOM_DATA_TYPE ...]]
                             [--microenv MICROENV] [--physiboss PHYSIBOSS]
                             [--settingxml SETTINGXML] [-v VERBOSE]
-                            [--frame FRAME] [--z_slice Z_SLICE] [--logy LOGY]
-                            [--ylim YLIM [YLIM ...]]
+                            [--frame FRAME] [--cat_drop [CAT_DROP ...]]
+                            [--cat_keep [CAT_KEEP ...]] [--z_slice Z_SLICE]
+                            [--logy LOGY] [--ylim YLIM [YLIM ...]]
                             [--secondary_y SECONDARY_Y [SECONDARY_Y ...]]
                             [--subplots SUBPLOTS] [--sharex SHAREX]
                             [--sharey SHAREY] [--linestyle LINESTYLE]
@@ -49,7 +50,7 @@ options:
                         type ID label mapping, is extracted, if this
                         information is not found in the output xml file. set
                         to None or False if the xml file is missing! default
-                        is PhysiCell_settings.xml.
+                        is False.
   -v VERBOSE, --verbose VERBOSE
                         setting verbose to False for less text output, while
                         processing. default is True.
@@ -57,6 +58,16 @@ options:
                         be retrieved through the mcds.get_cell_df function.
                         conc: dataframe will be retrieved through the
                         mcds.get_conc_df function. default is cell.
+  --cat_drop [CAT_DROP ...]
+                        if focus is a categorical attribute, set of category
+                        labels to be dropped for the dataframe. Attention:
+                        when the cat_keep parameter is given, then the
+                        cat_drop parameter has to be an empty string! default
+                        is an empty string.
+  --cat_keep [CAT_KEEP ...]
+                        if focus is a categorical attribute, set of category
+                        labels to be kept in the dataframe. default is an
+                        empty string.
   --z_slice Z_SLICE     z-axis position to slice a 2D xy-plain out of the 3D
                         mesh. if z_slice position numeric but not an exact
                         mesh center coordinate, then z_slice will be adjusted
@@ -84,7 +95,7 @@ options:
                         matplotlib line style {-, --, .-, :} string. default
                         is - .
   --linewidth LINEWIDTH
-                        line width in points, integer. default is None.
+                        line width in points, float. default is None.
   --cmap CMAP           matplotlib colormap string from https://matplotlib.org
                         /stable/tutorials/colors/colormaps.html . default is
                         None.
@@ -103,8 +114,9 @@ options:
                         x and y will be rounded to the nearest even number, to
                         be able to generate movies from the images. default is
                         640 480.
-  --ext EXT             output image format. possible formats are jpeg, png,
-                        and tiff. default is jpeg.
+  --ext EXT             output format. possible image formats are jpeg, jpg,
+                        png, tif, and tiff. for retrieving a datafarme file
+                        use csv. default is jpeg.
   --figbgcolor FIGBGCOLOR
                         figure background color. None is transparent (png) or
                         white (jpeg, tiff). default is None.
