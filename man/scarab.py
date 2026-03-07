@@ -128,6 +128,10 @@ docstring_md(
     s_header = "mcds = pcdl.TimeStep('path/to/outputnnnnnnnn.xml')"
 )
 docstring_md(
+    s_function = 'mcds.custom_data_astype',
+    ls_doc = pcdl.TimeStep.custom_data_astype.__doc__.split('\n'),
+)
+docstring_md(
     s_function = 'mcds.set_verbose_false',
     ls_doc = pcdl.TimeStep.set_verbose_false.__doc__.split('\n'),
 )
@@ -331,6 +335,10 @@ docstring_md(
     s_function = 'mcdsts.__init__',
     ls_doc = pcdl.TimeSeries.__init__.__doc__.split('\n'),
     s_header = "mcdsts = pcdl.TimeSeries('path/to/output')"
+)
+docstring_md(
+    s_function = 'mcdsts.custom_data_astype',
+    ls_doc = pcdl.TimeSeries.custom_data_astype.__doc__.split('\n'),
 )
 docstring_md(
     s_function = 'mcdsts.get_xmlfile_list',

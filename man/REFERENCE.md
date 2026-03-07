@@ -39,6 +39,7 @@ Basically, there are four types of functions:
 
 ### TimeStep initialize
 + [help(pcdl.TimeStep.\_\_init\_\_)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.__init__.md)  #! workhorse function
++ [help(mcds.custom_data_astype)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.custom_data_astype.md)  #! workhorse function
 + [help(mcds.set_verbose_false)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.set_verbose_false.md)  #! workhorse function
 + [help(mcds.set_verbose_true)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.set_verbose_true.md)  #! workhorse function
 
@@ -124,6 +125,7 @@ Basically, there are four types of functions:
 + [help(mcdsts.read_mcds)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.read_mcds.md)
 + [help(mcdsts.get_mcds_list)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_mcds_list.md)  #! workhose function
 + [help(mcdsts.get_annmcds_list)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_annmcds_list.md)  #! workhose function
++ [help(mcdsts.custom_data_astype)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.custom_data_astype.md)  #! workhorse function
 + [help(mcdsts.set_verbose_false)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.set_verbose_false.md)  #! workhorse function
 + [help(mcdsts.set_verbose_true)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.set_verbose_true.md)  #! workhorse function
 

@@ -225,6 +225,16 @@ class TestTimeStepInitSettingxmlNone(object):
               (df_cell.shape[1] == 122)
 
 
+class TestTimeStepInitCustomdataastype(object):
+    ''' tests for loading a pcdl.TimeStep data and run custom_data_astype function. '''
+    mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)
+
+    def test_mcds_custom_data_astype(self, mcds=mcds):
+        mcds.custom_data_astype({'sample': bool})
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (mcds.data['cell']['df_cell']['sample'].dtype == bool)
+
+
 class TestTimeStepInitVerboseTrue(object):
     ''' tests for loading a pcdl.TimeStep data set and set_verbose_false function. '''
     mcds = pcdl.TimeStep(xmlfile=s_file_2d, output_path=s_path_2d, custom_data_type={}, microenv=True, graph=True, physiboss=True, settingxml='PhysiCell_settings.xml', verbose=True)

@@ -33,7 +33,8 @@ python3 -c"import pathlib, pcdl, shutil; pcdl.install_data(); s_ipath=str(pathli
 By default, all data related to the snapshot is loaded.
 For speed and less memory usage, it is however possible to only load the essential (output xml and cell mat data),
 and exclude microenvironment, graph data, PhysiBoss data, and the PhysiCell\_settings.xml cell type ID label mapping. \
-For custom\_data variables it is possible to specify data types, apart from the generic float type, namely: int, bool, and str. \
+For custom\_data variables it is possible to specify data types, apart from the generic float type, namely: int, bool, and str.
+This can be done too, after the data is loaded, using the mcds.custom\_data\_astype function. \
 For paths, in general, unix (slash) and windows (backslash) notation will work.
 
 The basic way to load a mcds time step object:

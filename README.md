@@ -129,6 +129,10 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 
 
 ## Release Notes:
++ version 4.2.0 (2026-03-06): elmbeech/physicelldataloader
+    + new TimeStep class and TimeSeries class function **custom_data_astype** to set the dtype of custom\_data variables even after the timestep or timeseries is loaded.
+    + the TimeSeries \_\_init\_\_ function can now handle a list of TimeStep objects as input instead of a path.
+
 + version 4.1.1 (2026-02-28): elmbeech/physicelldataloader
     + reduce memory footprint.
 

@@ -3,9 +3,10 @@
 
 ## input:
 ```
-            output_path: string, default '.'
+            output_path: string or list of mcds objects, default '.'
                 relative or absolute path to the directory where
-                the PhysiCell output files are stored.
+                the PhysiCell output files are stored or
+                a list of mcds timestep objects.
 
             custom_data_type: dictionary; default is {}
                 variable to specify custom_data variable types
