@@ -96,7 +96,7 @@ def get_version():
         settingxml = None,
         verbose = True if args.verbose.lower().startswith('t') else False
     )
-    s_version = f'version:\n{mcds.get_physicell_version()}\n{mcds.get_multicellds_version()}\npcdl_{pcdl.__version__}'
+    s_version = f'version:\n{mcds.get_physicell_version()}\n{mcds.get_multicellds_version()}\npcdl_{mcds.get_pcdl_version()}'
     # going home
     print(s_version)
     return 0

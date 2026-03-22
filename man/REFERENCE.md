@@ -46,6 +46,7 @@ Basically, there are four types of functions:
 ### TimeStep medata
 *version*
 + [help(mcds.get_multicellds_version)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_multicellds_version.md)  #! workhorse function
++ [help(mcds.get_pcdl_version)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_pcdl_version.md)  #! workhorse function
 + [help(mcds.get_physicell_version)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_physicell_version.md)  #! workhorse function
 
 *time*

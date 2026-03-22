@@ -129,6 +129,10 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 
 
 ## Release Notes:
++ version 4.1.3 (2026-03-21):
+    + new **pcdl.pccmap** color map. this is an adaptation of the physicell pathology paint by number color map.
+    + new TimeStep **get_pcdl_version** function.
+
 + version 4.1.2 (2026-03-06): elmbeech/physicelldataloader
     + new  **custom_data_astype** TimeStep class and TimeSeries class function to set the dtype of custom\_data variables even after the timestep or timeseries is loaded.
     + TimeSeries \_\_init\_\_ function can now handle a list of TimeStep objects as input instead of a path.

@@ -275,6 +275,12 @@ class TestTimeStepMetadata(object):
               (str(type(s_mcdsversion)) == "<class 'str'>") and \
               (s_mcdsversion == 'MultiCellDS_2')
 
+    def test_mcds_get_pcdl_version(self, mcds=mcds):
+        s_pcdlversion = mcds.get_pcdl_version()
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (str(type(s_pcdlversion)) == "<class 'str'>") and \
+              (s_pcdlversion == f'pcdl_{pcdl.__version__}')
+
     def test_mcds_get_physicell_version(self, mcds=mcds):
         s_pcversion = mcds.get_physicell_version()
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
@@ -652,7 +658,7 @@ class TestTimeStepCell(object):
             xlim = None,  # test if
             ylim = None,  # test if
             xyequal = True,  # test if
-            #s = None,  # matplotlib
+            s = 1.1,  # test calculation
             ax = None,  # generate matplotlib figure
             figsizepx = None,  # test if case ax none
             ext = None,  # test fig case
@@ -677,7 +683,7 @@ class TestTimeStepCell(object):
             xlim = [-31, 301],  # jump over if
             ylim = [-21, 201],  # jump over if
             xyequal = False,  # jump over if
-            #s = None,  # matplotlib
+            #s = 1.0,  # test calculation
             ax = None,  # use axis from existing matplotlib figure
             figsizepx = [701, 501],  # jump over if case ax none
             ext = 'tiff',  # test file case
@@ -698,14 +704,14 @@ class TestTimeStepCell(object):
             z_slice = 0,  # jump over if
             z_axis = {'default'},  # test else case categorical
             #alpha = 1,  # matplotlib
-            cmap = 'viridis',  # test else case es_categorical
+            cmap = {'default': [0.5, 0.0, 0.0]},  # maroon test else case es_categorical
             title ='test_mcds_plot_scatter_else2',  # matplotlib
             #grid = True,  # matplotlib
             #legend_loc = 'lower left',  # matplotlib
             xlim = None,  # test if
             ylim = None,  # test if
             xyequal = True,  # test if
-            #s = None,  # matplotlib
+            #s = 1.0,  # test calculation
             ax = ax,  # use axis from existing matplotlib figure
             #figsizepx = None,  # test case ax ax
             #ext = None,  # test fig case
@@ -731,7 +737,7 @@ class TestTimeStepCell(object):
             xlim = None,  # test if
             ylim = None,  # test if
             #xyequal = True,  # test if
-            #s = None,  # matplotlib
+            #s = 1.0,  # matplotlib
             #ax = None,  # generate matplotlib figure
             #figsizepx = None,  # test if
             #ext = None,  # test fig case

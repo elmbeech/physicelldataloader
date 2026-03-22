@@ -116,6 +116,9 @@ Fetch the data's MultiCellDS version, and the PhysiCell version the data was gen
 mcds.get_multicellds_version()  # will return a string like MultiCellDS_2 or MultiCellDS_0.5
 ```
 ```python
+mcds.get_pcdl_version()  # will return a string like pcdl_4.1.3
+```
+```python
 mcds.get_physicell_version()  # will return a string like PhysiCell_1.10.4 or BioFVM_1.1.7
 ```
 

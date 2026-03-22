@@ -26,6 +26,7 @@ import os
 import pandas as pd
 from pcdl import render_neuroglancer
 from pcdl.timestep import TimeStep, es_coor_cell, es_coor_conc, _anndextract
+from pcdl.VERSION import __version__
 import platform
 import sys
 
@@ -216,6 +217,16 @@ class TimeSeries:
 
         # load mcds timeseries from list if mcds timesteps
         if (type(output_path) is list):
+            # check mcds pcdl version
+            try:
+                s_mcdsv = output_path[0].get_pcdl_version()
+            except AttributeError:
+                s_mcdsv = 'pcdl_<4.1.3'
+            except IndexError:
+                sys.exit(f'Error @ TimeSeries.__init__ : {output_path}. mcds list is empty!')
+            if (f'pcdl_{__version__}' != s_mcdsv):
+                print(f'Warning @ TimeSeries.__init__ : pcdl_{__version__} != {s_mcdsv}. the installed pcdl version and the pcdl version the mcds were generated from are not the same.\n the TimeSeries functions might or might not work.')
+            # set variables
             self.ls_xmlfile = None
             self.l_mcds = output_path
             self.custom_data_type = None

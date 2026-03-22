@@ -146,6 +146,10 @@ docstring_md(
     ls_doc = pcdl.TimeStep.get_multicellds_version.__doc__.split('\n'),
 )
 docstring_md(
+    s_function = 'mcds.get_pcdl_version',
+    ls_doc = pcdl.TimeStep.get_pcdl_version.__doc__.split('\n'),
+)
+docstring_md(
     s_function = 'mcds.get_physicell_version',
     ls_doc = pcdl.TimeStep.get_physicell_version.__doc__.split('\n'),
 )

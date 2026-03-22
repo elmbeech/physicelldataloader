@@ -59,7 +59,6 @@ ds_death_model = {
     '102' : 'autophagy_death_model',
     '9999' : 'custom_cycle_model',
 }
-
 ds_cycle_phase = {
     '0' : 'Ki67_positive_premitotic',
     '1' : 'Ki67_positive_postmitotic',
@@ -89,6 +88,23 @@ ds_death_phase = {
     '103' : 'necrotic',
     '104' : 'debris',
 }
+
+pccmap = [
+    'Gray', #colors.to_hex([0.5, 0.5, 0.5]),
+    'Red', #colors.to_hex([1, 0, 0]),
+    'Gold', #colors.to_hex([1, 1, 0]),  # x11 yellow
+    'Green', #colors.to_hex([0, 1, 0]),
+    'Blue', #colors.to_hex([0, 0, 1]),
+    'Magenta', #colors.to_hex([1, 0, 1]),
+    'Orange', #colors.to_hex([1, 0.65, 0]),
+    'Lime', #colors.to_hex([0.2, 0.8, 0.2]),
+    'Cyan', #colors.to_hex([0, 1, 1]),
+    'Purple', #colors.to_hex([1, 0.41, 0.71]),  # x11 hot pink
+    'Maroon', #colors.to_hex([1, 0.85, 0.73]),  # x11 peach puff
+    'Teal', #colors.to_hex([143/255, 188/255, 143/255]),  # x11 dark sea green
+    'Navy', #colors.to_hex([135/255, 206/255, 250/255]),  # x11 light sky blue
+]
+
 
 # const physicell variable names
 es_var_subs = {  # variable size=1 (check for the s at the end of the label)
@@ -602,7 +618,7 @@ class TimeStep:
 
         output:
             s_version : sting
-                MultiCellDS xml version which stored the data.
+                MultiCellDS xml version that stored the data.
 
         description:
             function returns as a string the MultiCellDS xml version
@@ -611,13 +627,29 @@ class TimeStep:
         return self.data['metadata']['multicellds_version']
 
 
+    def get_pcdl_version(self):
+        """
+        input:
+
+        output:
+            s_version : sting
+                physicell data loader version that was used
+                to loaded the data.
+
+        description:
+            function returns as a string the physicell data loader version
+            that was used to load the mcds time step.
+        """
+        return self.data['metadata']['pcdl_version']
+
+
     def get_physicell_version(self):
         """
         input:
 
         output:
             s_version : sting
-                PhysiCell version which generated the data.
+                PhysiCell version that generated the data.
 
         description:
             function returns as a string the PhysiCell version
@@ -1574,9 +1606,10 @@ class TimeStep:
                 alpha channel transparency value
                 between 1 (not transparent at all) and 0 (totally transparent).
 
-            cmap: dictionary of strings or string; default viridis.
-                dictionary that maps labels to colors strings.
-                matplotlib colormap string.
+            cmap: string or dictionary of strings or list of list of floats; default viridis.
+                matplotlib colormap string. e.g viridis
+                dictionary that maps labels to color or #hex strings. e.g. {'default': 'maroon'}
+                dictionary that maps labels to list of rgb floats. e.g. {'default': [0.5,0.0,0.0]}
                 https://matplotlib.org/stable/tutorials/colors/colormaps.html
 
             title: string; default None
@@ -1590,7 +1623,7 @@ class TimeStep:
                 possible strings are: best,
                 upper right, upper center, upper left, center left,
                 lower left, lower center, lower right, center right,
-                center.
+                center, None, and False.
 
             xlim: tuple of two floats; default is None
                 x axis min and max value.
@@ -1605,8 +1638,7 @@ class TimeStep:
 
             s: floating point number; default is 1.0
                 scatter plot dot size scale factor.
-                with figsizepx extracted from initial.svg, scale factor 1.0
-                should be ok. adjust if necessary.
+                adjust if necessary.
 
             ax: matplotlib axis object; default setting is None
                 the ax object, which will be used as a canvas for plotting.
@@ -1684,7 +1716,8 @@ class TimeStep:
         df_cell = df_cell.loc[(df_cell.mesh_center_p == z_slice),:]
 
         # calculate marker size
-        df_cell.loc[:,'s'] = ((6 * df_cell.total_volume) / np.pi)**(2/3)  # diamter of a sphere and plt.rcParams['lines.markersize']**2.
+        # default s is in matplotlib plt.rcParams['lines.markersize']**2.
+        df_cell.loc[:,'s'] = ((6 * df_cell.total_volume) / np.pi)**(2/3) * s # diamter of a sphere times s
 
         # handle z_axis categorical cases
         if (str(df_cell.loc[:,focus].dtype) in {'bool', 'object'}):
@@ -1740,9 +1773,12 @@ class TimeStep:
         if not (es_category is None):
             s_focus_color = focus + '_color'
             # use specified category color dictionary
-            if type(cmap) is dict:
+            if type(cmap) == dict:
+                if type(list(cmap.values())[0]) == list:
+                    for s_category, lr_color in cmap.items():
+                        cmap[s_category] = colors.to_hex(lr_color)
                 ds_color = cmap
-                df_cell[s_focus_color] = 'gray'
+                df_cell[s_focus_color] = 'silver'
                 for s_category, s_color in ds_color.items():
                     df_cell.loc[(df_cell.loc[:,focus] == s_category), s_focus_color] = s_color
             # generate category color dictionary
@@ -1791,13 +1827,13 @@ class TimeStep:
         )
 
         # plot categorical data legen
-        if not (es_category is None):
-            pdplt.ax_colorlegend(
-                ax = ax,
-                ds_color = ds_color,
-                s_loc = legend_loc,
-                s_fontsize = 'small',
-            )
+        if not (es_category is None) and not (legend_loc in {None, False}):
+                pdplt.ax_colorlegend(
+                    ax = ax,
+                    ds_color = ds_color,
+                    s_loc = legend_loc,
+                    s_fontsize = 'small',
+                )
 
         # finalize
         if (ext is None):
@@ -2732,6 +2768,9 @@ class TimeStep:
 
         ## get multicellds xml version
         d_mcds['metadata']['multicellds_version'] = f"MultiCellDS_{x_root.get('version')}"
+
+        ## get pcdl version
+        d_mcds['metadata']['pcdl_version'] = f"pcdl_{__version__}"
 
         ## get physicell software version
         x_software = x_metadata.find('software')

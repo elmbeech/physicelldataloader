@@ -426,7 +426,7 @@ class TestTimeStep3dCellWorkhorse(object):
             z_slice = 0,  # jump over if
             z_axis = {'default'},  # test else case categorical
             #alpha = 1,  # matplotlib
-            cmap = 'viridis',  # test else case es_categorical
+            cmap = {'default': '#800000'},  # maroon test else case es_categorical
             title ='test_mcds_plot_scatter_else2',  # matplotlib
             #grid = True,  # matplotlib
             #legend_loc = 'lower left',  # matplotlib

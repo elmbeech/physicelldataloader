@@ -32,9 +32,10 @@
                 alpha channel transparency value
                 between 1 (not transparent at all) and 0 (totally transparent).
 
-            cmap: dictionary of strings or string; default viridis.
-                dictionary that maps labels to colors strings.
-                matplotlib colormap string.
+            cmap: string or dictionary of strings or list of list of floats; default viridis.
+                matplotlib colormap string. e.g viridis
+                dictionary that maps labels to color or #hex strings. e.g. {'default': 'maroon'}
+                dictionary that maps labels to list of rgb floats. e.g. {'default': [0.5,0.0,0.0]}
                 https://matplotlib.org/stable/tutorials/colors/colormaps.html
 
             title: string; default None
@@ -48,7 +49,7 @@
                 possible strings are: best,
                 upper right, upper center, upper left, center left,
                 lower left, lower center, lower right, center right,
-                center.
+                center, None, and False.
 
             xlim: tuple of two floats; default is None
                 x axis min and max value.
@@ -63,8 +64,7 @@
 
             s: floating point number; default is 1.0
                 scatter plot dot size scale factor.
-                with figsizepx extracted from initial.svg, scale factor 1.0
-                should be ok. adjust if necessary.
+                adjust if necessary.
 
             ax: matplotlib axis object; default setting is None
                 the ax object, which will be used as a canvas for plotting.

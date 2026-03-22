@@ -111,9 +111,10 @@ class TestTimeSeries3dInit(object):
               (mcdsts.l_mcds == l_mcds)
 
     def test_mcdsts_form_list_of_mcds(self):
-        mcdsts = pcdl.TimeSeries([])
+        mcdsts = pcdl.TimeSeries(s_path_3d, load=True, verbose=True)
+        mcdsts = pcdl.TimeSeries(mcdsts.l_mcds)
         assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
-              (len(mcdsts.l_mcds) == 0)
+              (len(mcdsts.l_mcds) == 25)
 
 
 ## micro environment related functions ##
@@ -313,7 +314,7 @@ class TestTimeSeries3dCell(object):
             xlim = None,  # test if
             ylim = None,  # test if
             #xyequal = True,  # TimeStep
-            s = None,  # test if
+            s = 0.1,  # test calculation
             figsizepx = None,  # case extract from initial.svg
             ext = 'jpeg',
             figbgcolor = None,  # test if
@@ -344,7 +345,7 @@ class TestTimeSeries3dCell(object):
             xlim = None,  # test if
             ylim = None,  # test if
             #xyequal = True,  # TimeStep
-            s = None,  # test if
+            #s = 1.0,  # test calculation
             figsizepx = [641, 481],  # test case non even pixel number
             ext = None,
             figbgcolor = 'cyan',  # jump over if
