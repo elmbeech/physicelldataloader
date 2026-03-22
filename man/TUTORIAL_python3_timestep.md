@@ -2,7 +2,7 @@
 
 In this chapter, we will load the pcdl library and use its TimeStep class to load the data snapshot output/00000012, from the 2D time series test dataset (https://github.com/elmbeech/physicelldataloader/blob/master/output_2d.tar.gz).
 
-First, please install the latest version of physicelldataloader (pcdl),
+First, please install the latest version of physicell data loader (pcdl),
 as described in the [HowTo](https://github.com/elmbeech/physicelldataloader/blob/master/man/HOWTO.md) chapter.
 
 And, if not already done so, have a quick read through the pcdl [background](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_introduction.md) information.

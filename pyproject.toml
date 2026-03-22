@@ -14,7 +14,7 @@
 # 1. git add pcdl/VERSION.py
 # 2. python3 man/scarab.py
 # 3. git status
-# 4. git commit -m'@ physicelldataloader : next release.'
+# 4. git commit -m'@ physicell data loader : next release.'
 # 5. git tag -a v0.0.0 -m'version 0.0.0'
 # 6. rm -r dist
 # 7. python3 -c "import pcdl; pcdl.uninstall_data()"
