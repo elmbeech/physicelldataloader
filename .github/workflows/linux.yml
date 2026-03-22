@@ -32,6 +32,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: install dependencies
       run: |
+        sudo apt update
         sudo apt install ffmpeg imagemagick
         python -m pip install --upgrade pip
         python -m pip install flake8 pytest anndata bioio bioio-ome-tiff matplotlib neuroglancer numpy pandas requests scikit-image scipy vtk
