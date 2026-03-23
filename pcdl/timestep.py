@@ -22,6 +22,10 @@ import geopandas as gpd
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib import colors
+try:
+    import muspan as ms
+except ModuleNotFoundError:
+    ms = None
 import neuroglancer
 import numpy as np
 import os
@@ -479,7 +483,7 @@ def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, 
         elif str(se_cell.dtype).startswith('object'):
             des_type['str'].add(se_cell.name)
         else:
-            print(f'Error @ TimeSeries._anndextract : column {se_cell.name} detected with unknown dtype {str(se_cell.dtype)}.')
+            sys.exit(f'Error @ TimeStep._anndextract : column {se_cell.name} detected with unknown dtype {str(se_cell.dtype)}.')
 
     # build on obs and X anndata object
     df_cat = df_cell.loc[:,sorted(des_type['str'])].copy()
@@ -2062,7 +2066,6 @@ class TimeStep:
             except KeyError:
                 pass
 
-
         # get cell data
         df_cell = self.get_cell_df().reset_index()
 
@@ -2395,6 +2398,7 @@ class TimeStep:
             scale = scale,
             graph_attached = self.get_attached_graph_dict(),
             graph_neighbor = self.get_neighbor_graph_dict(),
+            graph_spring = self.get_spring_graph_dict(),
             graph_method = self.get_physicell_version(),
         )
         annmcds = ad.AnnData(
@@ -2661,6 +2665,154 @@ class TimeStep:
         if self.verbose:
             print('done!')
         return sdata
+
+
+    ## MUSPAN RELATED FUNCTIONS ##
+
+    def get_muspan(self, z_slice=None, values=1, drop=set(), keep=set()):
+        """
+        input:
+            z_slice: floating point number; default is None
+                z-axis position to slice a 2D xy-plain out of the
+                3D mesh. if None the whole 3D mesh will be returned.
+
+            values: integer; default is 1
+                minimal number of values a variable has to have to be outputted.
+                variables that have only 1 state carry no information.
+                None is a state too.
+
+            drop: set of strings; default is an empty set
+                set of column labels to be dropped for the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will never be dropped.
+                Attention: when the keep parameter is given, then
+                the drop parameter has to be an empty set!
+
+            keep: set of strings; default is an empty set
+                set of column labels to be kept in the dataframe.
+                set values=1 to be sure that all variables are kept.
+                don't worry: essential columns like ID, coordinates
+                and time will always be kept.
+
+        output:
+            do_domain:  dictionary of muspa domains, one for each z-layer.
+
+        description:
+            function returns a dictionary of muspa domains, containg a
+            cell and subs collection with disrcete and continuous labels.
+            + https://www.muspan.co.uk
+            + https://docs.muspan.co.uk/latest/Documentation.html
+        """
+        # check if muspan library is installed
+        if muspan is None:
+            sys.exit(f'Error @ TimeStep.get_muspa : the muspan Multi Spatial Analysis python3 library is not installed!\nfor instructions check out : https://www.muspan.co.uk/')
+
+        # get conc and cell dataframe
+        i_zmax = self.data['substrate']['df_conc'].voxel_k.max()
+        i_zdigit = len(str(i_zmax))
+        df_conc = self.get_conc_df(z_slice=z_slice, halt=False, values=values, drop=drop, keep=keep)
+        df_cell = self.get_cell_df(values=values, drop=drop, keep=keep)
+
+        # for each z layer generate a muspa domain
+        do_domain = {}
+        for z_layer in sorted(df_conc.voxel_k.unique()):
+
+            # processing
+            if self.verbose:
+                print(f'processing: {self.xmlfile} mcds {z_layer + 1}/{i_zmax + 1} z-layer into muspan obj.')
+
+            ## generate muspan domain
+            s_domain = f"{self.xmlfile.replace('.xml','')}_z{str(z_layer).zfill(i_zdigit)}"
+            o_domain = ms.domain(
+                name = s_domain,
+                unit_of_length = 'um',
+            )
+
+            ## handle subs collection
+            df_zconc = df_conc.loc[df_conc.voxel_k == z_layer,:]
+            o_domain.add_points(
+                points = df_zconc.loc[:,['mesh_center_m','mesh_center_n']].values,
+                collection_name = 'subs'
+            )
+            # drop this data
+            es_drop = set(df_zconc.columns).intersection({
+                'voxel_i', 'voxel_j', 'voxel_k',
+                'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
+                'time', 'runtime', 'xmlfile',
+            })
+            df_zconc = df_zconc.drop(es_drop, axis=1)
+            # add numerical data (no scaling)
+            for s_num in sorted(df_zconc.columns):
+                o_domain.add_labels(
+                    label_name = s_num,
+                    labels = df_zconc.loc[:,s_num],
+                    add_labels_to = 'subs',
+                    label_type = 'continuous',
+                )
+
+            ## handle cell collection
+            df_zcell = df_cell.loc[df_cell.voxel_k == z_layer,:]
+            o_domain.add_points(
+                points = df_zcell.loc[:,['position_x','position_y']].values,
+                collection_name = 'cell'
+            )
+            # drop this data
+            es_drop = set(df_zcell.columns).intersection({
+                'voxel_i', 'voxel_j', 'voxel_k',
+                'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
+                'position_x', 'position_y','position_z',
+                'time', 'runtime', 'xmlfile',
+            })
+            df_zcell = df_zcell.drop(es_drop, axis=1)
+            # dectect variable types
+            des_type = {'float': set(), 'int': set(), 'bool': set(), 'str': set()}
+            for _, se_zcell in df_zcell.items():
+                if str(se_zcell.dtype).startswith('float'):
+                    des_type['float'].add(se_zcell.name)
+                elif str(se_zcell.dtype).startswith('int'):
+                    des_type['int'].add(se_zcell.name)
+                elif str(se_zcell.dtype).startswith('bool'):
+                    des_type['bool'].add(se_zcell.name)
+                elif str(se_zcell.dtype).startswith('object'):
+                    des_type['str'].add(se_zcell.name)
+                else:
+                    sys.exit(f'Error @ TimeStep.get_muspa : column {se_zcell.name} detected with unknown dtype {str(se_zcell.dtype)}.')
+            # add categorical data
+            for s_cat in sorted(des_type['str'].union(des_type['bool'])):
+                o_domain.add_labels(
+                    label_name = s_cat,
+                    labels = df_zcell.loc[:,s_cat],
+                    add_labels_to = 'cell',
+                    label_type = 'categorical',
+                )
+            # add numerical data (no scaling)
+            for s_num in sorted(des_type['float'].union(des_type['int'])):
+                o_domain.add_labels(
+                    label_name = s_num,
+                    labels = df_zcell.loc[:,s_num],
+                    add_labels_to = 'cell',
+                    label_type = 'continuous',
+                )
+
+            # add graphs
+            # BUE: HERE I AM
+
+            ## set domain boundary (have to be done last!)
+            o_domain.estimate_boundary(
+                method='specify',
+                specify_boundary_coords=(
+                    (self.get_xyz_range()[0][0], self.get_xyz_range()[1][0]),
+                    (self.get_xyz_range()[0][0], self.get_xyz_range()[1][1]),
+                    (self.get_xyz_range()[0][1], self.get_xyz_range()[1][1]),
+                    (self.get_xyz_range()[0][1], self.get_xyz_range()[1][0])
+                )
+            )
+
+            # update output
+            do_domain.update({s_domain : o_domain})
+
+        # output
+        return do_domain
 
 
     ## LOAD DATA  ##
