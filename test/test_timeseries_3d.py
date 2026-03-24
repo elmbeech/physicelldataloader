@@ -793,7 +793,7 @@ class TestTimeSeries3dAnnData(object):
               (ann.X.shape[0] > 9) and \
               (ann.X.shape[1] == 105) and \
               (ann.obs.shape[0] > 9) and \
-              (ann.obs.shape[1] == 8) and \
+              (ann.obs.shape[1] == 7) and \
               (ann.obsm['spatial'].shape[0] > 9) and \
               (ann.obsm['spatial'].shape[1] == 3) and \
               (len(ann.obsp) == 0) and \
@@ -812,7 +812,7 @@ class TestTimeSeries3dAnnData(object):
               (ann.X.shape[0] > 9) and \
               (ann.X.shape[1] == 56) and \
               (ann.obs.shape[0] > 9) and \
-              (ann.obs.shape[1] == 7) and \
+              (ann.obs.shape[1] == 6) and \
               (ann.obsm['spatial'].shape[0] > 9) and \
               (ann.obsm['spatial'].shape[1] == 3) and \
               (len(ann.obsp) == 0) and \
@@ -851,7 +851,7 @@ class TestTimeSeries3dAnnData(object):
               (ann.X.shape[0] > 9) and \
               (ann.X.shape[1] == 105) and \
               (ann.obs.shape[0] > 9) and \
-              (ann.obs.shape[1] == 8) and \
+              (ann.obs.shape[1] == 7) and \
               (ann.obsm['spatial'].shape[0] > 9) and \
               (ann.obsm['spatial'].shape[1] == 3) and \
               (len(ann.obsp) == 0) and \

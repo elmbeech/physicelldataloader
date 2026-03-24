@@ -317,6 +317,7 @@ def scaler(df_x, scale='maxabs'):
     + https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.minmax_scale.html
     + https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.scale.html
     """
+    # nop
     if scale is None:
         pass
     # -1,1
@@ -387,19 +388,22 @@ def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, 
         and one dictionary of string (d_uns),
         which downstream might be transformed into an anndata object.
     """
+    # make a copy of the input
+    df_cell = df_cell.copy()
+
     # transform index to string
-    df_coor = df_cell.loc[:,['position_x','position_y','position_z']].copy()
+    df_coor = df_cell.loc[:,['position_x','position_y','position_z']]
     df_cell.index = df_cell.index.astype(str)
 
     # build obs anndata object (annotation of observations)
-    df_obs = df_cell.loc[:,['mesh_center_p','time']].copy()
+    df_obs = df_cell.loc[:,['mesh_center_p','time']]
     df_obs.columns = ['z_layer', 'time']
 
     # buil obsm anndata object spatial (multi-dimensional annotation of observations)
     if (len(set(df_cell.position_z)) == 1):
-        df_obsm = df_cell.loc[:,['position_x','position_y']].copy()
+        df_obsm = df_cell.loc[:,['position_x','position_y']]
     else:
-        df_obsm = df_cell.loc[:,['position_x','position_y','position_z']].copy()
+        df_obsm = df_cell.loc[:,['position_x','position_y','position_z']]
     d_obsm = {"spatial": df_obsm.values}
 
     # build obsp and uns anndata object graph (pairwise annotation of obeservation) and (unstructured data)
@@ -460,6 +464,7 @@ def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, 
 
     # extract discrete cell data
     es_drop = set(df_cell.columns).intersection({
+        'ID',
         'voxel_i', 'voxel_j', 'voxel_k',
         'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
         'position_x', 'position_y','position_z',

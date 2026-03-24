@@ -688,7 +688,7 @@ class TimeSeries:
                 print(f'ylim set to {ylim}.')
 
         # handle output path
-        s_path = self.path + f'/conc_{focus}_z{round(z_slice,9)}/'
+        s_path = self.path + f'/conc_{focus}_z{round(z_slice,3)}/'
 
         # plotting
         lo_output = []
@@ -701,7 +701,7 @@ class TimeSeries:
                 alpha = alpha,
                 fill = fill,
                 cmap = cmap,
-                title = f'{title}{focus} z{round(z_slice,9)}\n{round(mcds.get_time(),9)}[min]',
+                title = f'{title}{focus} z{round(z_slice,3)}\n{round(mcds.get_time(),3)}[min]',
                 grid = grid,
                 xlim = xlim,
                 ylim = ylim,
@@ -1019,7 +1019,7 @@ class TimeSeries:
                 z_axis = z_axis,
                 alpha = alpha,
                 cmap = cmap,
-                title = f'{title}{focus} z{round(z_slice,9)}\n{df_cell.shape[0]}[agent] {round(mcds.get_time(),9)}[min]',
+                title = f'{title}{focus} z{round(z_slice,3)}\n{df_cell.shape[0]}[agent] {round(mcds.get_time(),3)}[min]',
                 grid = grid,
                 legend_loc = legend_loc,
                 xlim = xlim,
@@ -1659,66 +1659,59 @@ class TimeSeries:
             ls_column = sorted(es_coor_cell.difference({'ID'}))
             ls_column.extend(sorted(self.get_cell_attribute(values=values, drop=drop, keep=keep, allvalues=False).keys()))
 
-        # collapse warning
+        # package collapse
         if collapse and self.verbose:
+            # warning
             print('Warning @ mcdsts.get_anndata : only df_cell data, but not graph data, can be collapsed.')
+            df_cell = self.get_cell_df(values=values, drop=drop, keep=keep, collapse=True)
 
-        # processing
-        lann_mcds = []
-        i_mcds = len(self.l_mcds)
-        for i in range(i_mcds):
-            # fetch mcds
-            if keep_mcds:
-                mcds = self.l_mcds[i]
-            else:
-                mcds = self.l_mcds.pop(0)
-            # extract physicell version
-            s_physicellv = mcds.get_physicell_version(),
-            # extract time and dataframes
-            r_time = round(mcds.get_time(),9)
-            if self.verbose:
-                print(f'processing: {i+1}/{i_mcds} {r_time}[min] mcds into anndata obj.')
-            df_cell = mcds.get_cell_df()
-            df_cell = df_cell.loc[:,ls_column]
+            # extract
+            df_count, df_obs, d_obsm, d_obsp, d_uns = _anndextract(
+                df_cell=df_cell,
+                scale = scale,
+                #graph_attached = {},
+                #graph_neighbor = {},
+                #graph_spring = {},
+                #graph_method = s_physicellv,
+            )
 
-            # pack collapsed
-            if collapse:
-                # extract
-                df_count, df_obs, d_obsm, d_obsp, d_uns = _anndextract(
-                    df_cell=df_cell,
-                    scale = scale,
-                    #graph_attached = {},
-                    #graph_neighbor = {},
-                    #graph_spring = {},
-                    #graph_method = s_physicellv,
-                )
-                # count
-                df_count.reset_index(inplace=True)
-                df_count.index = df_count.ID + f'id_{r_time}min'
-                df_count.index.name = 'id_time'
-                df_count.drop('ID', axis=1, inplace=True)
-                if df_anncount is None:
-                    df_anncount = df_count
-                else:
-                    df_anncount = pd.concat([df_anncount, df_count], axis=0)
-                # obs
-                df_obs.reset_index(inplace=True)
-                df_obs.index = df_obs.ID + f'id_{r_time}min'
-                df_obs.index.name = 'id_time'
-                if df_annobs is None:
-                    df_annobs = df_obs
-                else:
-                    df_annobs = pd.concat([df_annobs, df_obs], axis=0)
-                # obsm (spatial)
-                if ar_annobsm is None:
-                    ar_annobsm = d_obsm['spatial']
-                else:
-                    ar_annobsm = np.vstack([ar_annobsm, d_obsm['spatial']])
-                # obsp: nop (graph)
-                # uns: nop (graph)
+            # fuse to anndata object
+            ann_mcdsts = ad.AnnData(
+                X = df_count,
+                obs = df_obs,
+                obsm = d_obsm,
+                #obsp = d_obsp,  # nop (graph)
+                #uns = d_uns,  # nop (graph)
+            )
 
-            # pack not collapsed
-            else:
+            # mcds
+            if not keep_mcds:
+                self.l_mcds = []
+
+            # output
+            return ann_mcdsts
+
+        # pack not collapsed
+        else:
+            # processing
+            lann_mcds = []
+            i_mcds = len(self.l_mcds)
+            for i in range(i_mcds):
+                # fetch mcds
+                if keep_mcds:
+                    mcds = self.l_mcds[i]
+                else:
+                    mcds = self.l_mcds.pop(0)
+
+                # extract physicell version
+                s_physicellv = mcds.get_physicell_version(),
+
+                # extract time and dataframes
+                if self.verbose:
+                    print(f'processing: {i+1}/{i_mcds} {mcds.get_time()}[min] mcds into anndata obj.')
+                df_cell = mcds.get_cell_df()
+                df_cell = df_cell.loc[:,ls_column]
+
                 # extract
                 df_count, df_obs, d_obsm, d_obsp, d_uns = _anndextract(
                     df_cell=df_cell,
@@ -1728,6 +1721,7 @@ class TimeSeries:
                     graph_spring = mcds.get_spring_graph_dict(),
                     graph_method = s_physicellv,
                 )
+
                 # annmcds
                 ann_mcds = ad.AnnData(
                     X = df_count,
@@ -1738,20 +1732,9 @@ class TimeSeries:
                 )
                 lann_mcds.append(ann_mcds)
 
-        # output
-        if collapse:
-            ann_mcdsts = ad.AnnData(
-                X = df_anncount,
-                obs = df_annobs,
-                obsm = {'spatial': ar_annobsm},
-                #obsp = d_obsp,
-                #uns = d_uns
-            )
-            return ann_mcdsts
-        else:
+            # output
             self.l_annmcds = lann_mcds
             return self.l_annmcds
-
 
     def get_annmcds_list(self):
         """
@@ -1839,9 +1822,8 @@ class TimeSeries:
                 mcds = self.l_mcds.pop(0)
 
             # extract time and dataframes
-            r_time = round(mcds.get_time(),9)
             if self.verbose:
-                print(f'\nprocessing: {i+1}/{i_mcds} {r_time}[min] mcds into spatialdata obj.')
+                print(f'\nprocessing: {i+1}/{i_mcds} {mcds.get_time()}[min] mcds into spatialdata obj.')
 
             # get spatialdata object
             sd_mcds = mcds.get_spatialdata(
