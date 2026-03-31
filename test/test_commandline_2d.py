@@ -313,7 +313,8 @@ class TestCommandLineInterfacePlotContour(object):
     # + verbose (true, _false_) nop
     # + focus (_oxygen_) ok
     # + z_slize (0.0, _1.1_) ok
-    # + extrema (none, _0.0 40.0_) ok
+    # + vmin (none, _0.0_) ok
+    # + vmax (none, _40.0_) ok
     # + alpha (1.0, _0.2_) ok
     # + fill (true, _false_)
     # + cmp (viridis, _magma_)
@@ -341,7 +342,8 @@ class TestCommandLineInterfacePlotContour(object):
         o_result = subprocess.run([
             'pcdl_plot_contour', s_pathfile_2d, 'oxygen',
             '--z_slice', '1.1',
-            '--extrema', '0.0', '40.0',
+            '--vmin', '0.0',
+            '--vmax', '40.0',
             '--alpha', '0.5',
             '--fill', 'false',
             '--cmap', 'magma',

@@ -243,7 +243,8 @@ class TestTimeSeriesMicroenv(object):
         ls_pathfile = mcdsts.plot_contour(
             focus = 'oxygen',
             z_slice = -3.333,  # test if
-            extrema = None,  # test if and for loop
+            vmin = None, # test if and for loop
+            vmax = None, # test if and for loop
             #alpha = 1,  # pyMCD
             #fill = True,  # pyMCD
             #cmap = 'viridis',  # pyMCD
@@ -272,7 +273,8 @@ class TestTimeSeriesMicroenv(object):
         l_fig = mcdsts.plot_contour(
             focus = 'oxygen',
             z_slice = 0.0,  # jump over if
-            extrema = [0, 38],  # jump over if
+            vmin = 0,  # jump over if
+            vmax = 38,  # jump over if
             #alpha = 1,  # TimeStep
             #fill = True,  # TimeStep
             #cmap = 'viridis',  # TimeStep

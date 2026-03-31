@@ -489,6 +489,7 @@ def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, 
     # build on obs and X anndata object
     df_cat = df_cell.loc[:,sorted(des_type['str'])].copy()
     df_obs = pd.merge(df_obs, df_cat, left_index=True, right_index=True)
+    df_obs = df_obs.astype('category')
     es_num = des_type['float'].union(des_type['int'].union(des_type['bool']))
     df_count = df_cell.loc[:,sorted(es_num)].copy()
     for s_col in des_type['bool']:
@@ -1726,30 +1727,32 @@ class TimeStep:
 
         # handle z_axis categorical cases
         if (str(df_cell.loc[:,focus].dtype) in {'bool', 'object'}):
-            lr_extrema = [None, None]
+            vmin = None
+            vmax = None
             if (z_axis is None):
                 # extract set of labels from data
                 es_category = set(df_cell.loc[:,focus])
                 if (str(df_cell.loc[:,focus].dtype) in {'bool'}):
                     es_category = es_category.union({True, False})
+                ls_category = sorted(es_category)
             else:
-                es_category = z_axis
+                ls_category = z_axis
 
         # handle z_axis numerical cases
         else:  # df_cell.loc[:,focus].dtype is numeric
-            es_category = None
+            ls_category = None
             if (z_axis is None):
                 # extract min and max values from data
-                r_zmin = df_cell.loc[:,focus].min()
-                r_zmax = df_cell.loc[:,focus].max()
-                lr_extrema = [r_zmin, r_zmax]
+                vmin = df_cell.loc[:,focus].min()
+                vmax = df_cell.loc[:,focus].max()
             else:
-                lr_extrema = z_axis
+                vmin = z_axis[0]
+                vmax = z_axis[1]
 
         # handle z_axis summary
         if self.verbose:
-            print(f'categories found: {es_category}.')
-            print(f'min max extrema set to: {lr_extrema}.')
+            print(f'categories found: {ls_category}.')
+            print(f'min max z-axis set to: {vmin} [vmax].')
 
         # handle xlim and ylim
         if (xlim is None):
@@ -1775,7 +1778,7 @@ class TimeStep:
             ax.axis('equal')
 
         # handle categorical variable
-        if not (es_category is None):
+        if not (ls_category is None):
             s_focus_color = focus + '_color'
             # use specified category color dictionary
             if type(cmap) == dict:
@@ -1791,17 +1794,17 @@ class TimeStep:
                 ds_color = pdplt.df_label_to_color(
                     df_abc = df_cell,
                     s_focus = focus,
-                    es_label = es_category,
-                    s_nolabel = 'gray',
+                    ls_label = ls_category,
+                    s_nolabel = 'silver',
                     s_cmap = cmap,
                     b_shuffle = False,
                 )
             # filter categories
             es_cat = set()
             if (len(cat_keep) > 0):
-                es_cat = es_category.intersection(cat_keep)
+                es_cat = set(ls_category).intersection(cat_keep)
             else:
-                es_cat = es_category.difference(cat_drop)
+                es_cat = set(ls_category).difference(cat_drop)
             df_cell= df_cell.loc[df_cell.loc[:,focus].isin(es_cat),:]
             # generate color list
             c = list(df_cell.loc[:, s_focus_color].values)
@@ -1818,8 +1821,8 @@ class TimeStep:
             x = 'position_x',
             y = 'position_y',
             c = c,
-            vmin = lr_extrema[0],
-            vmax = lr_extrema[1],
+            vmin = vmin,
+            vmax = vmax,
             alpha = alpha,
             cmap = s_cmap,
             title = title,
@@ -1832,10 +1835,11 @@ class TimeStep:
         )
 
         # plot categorical data legen
-        if not (es_category is None) and not (legend_loc in {None, False}):
+        if not (ls_category is None) and not (legend_loc in {None, False}):
                 pdplt.ax_colorlegend(
                     ax = ax,
                     ds_color = ds_color,
+                    ls_label = ls_category,
                     s_loc = legend_loc,
                     s_fontsize = 'small',
                 )

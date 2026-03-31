@@ -222,6 +222,8 @@ class TimeSeries:
                 s_mcdsv = output_path[0].get_pcdl_version()
             except AttributeError:
                 s_mcdsv = 'pcdl_<4.1.3'
+            except KeyError:
+                s_mcdsv = 'pcdl_<4.1.3'
             except IndexError:
                 sys.exit(f'Error @ TimeSeries.__init__ : {output_path}. mcds list is empty!')
             if (f'pcdl_{__version__}' != s_mcdsv):
@@ -229,6 +231,7 @@ class TimeSeries:
             # set variables
             self.ls_xmlfile = None
             self.l_mcds = output_path
+            self.path = '.'
             self.custom_data_type = None
             self.microenv = None
             self.graph = None
@@ -573,7 +576,7 @@ class TimeSeries:
         return dlr_variable_range
 
 
-    def plot_contour(self, focus, z_slice=0.0, extrema=None, alpha=1, fill=True, cmap='viridis', title='', grid=True, xlim=None, ylim=None, xyequal=True, figsizepx=None, ext='jpeg', figbgcolor=None, **kwargs):
+    def plot_contour(self, focus, z_slice=0.0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', title='', grid=True, xlim=None, ylim=None, xyequal=True, figsizepx=None, ext='jpeg', figbgcolor=None, **kwargs):
         """
         input:
             self: TimeSeries class instance
@@ -588,8 +591,15 @@ class TimeSeries:
                 will be adjusted to the nearest mesh center value,
                 the smaller one, if the coordinate lies on a saddle point.
 
-            extrema: tuple of two floats; default is None
-                default takes min and max from data, from the whole time series.
+            vmin: floating point number; default is None
+                color scale min value.
+                None will take the min value from the whole time series
+                found in the data.
+
+            vmax: floating point number; default is None
+                color scale max value.
+                None will take the min value from the whole time series
+                found in the data.
 
             alpha: floating point number; default is 1
                 alpha channel transparency value
@@ -663,19 +673,18 @@ class TimeSeries:
             if self.verbose:
                 print(f'z_slice set to {z_slice}.')
 
-        # handle extrema
-        if extrema == None:
-            extrema = [None, None]
+        # handle z-axis
+        if (vmin is None) or (vmax is None):
             for mcds in self.get_mcds_list():
                 df_conc = mcds.get_conc_df()
                 r_min = df_conc.loc[:,focus].min()
                 r_max = df_conc.loc[:,focus].max()
-                if (extrema[0] is None) or (extrema[0] > r_min):
-                    extrema[0] = np.floor(r_min)
-                if (extrema[1] is None) or (extrema[1] < r_max):
-                    extrema[1] = np.ceil(r_max)
+                if (vmin is None) or (vmin > r_min):
+                    vmin = np.floor(r_min)
+                if (vmax is None) or (vmax < r_max):
+                    vmax = np.ceil(r_max)
             if self.verbose:
-                print(f'min max extrema set to {extrema}.')
+                print(f'z-axis min max set to {vmin} {vmax}.')
 
         # handle xlim and ylim
         if (xlim is None):
@@ -696,8 +705,8 @@ class TimeSeries:
             o_output = mcds.plot_contour(
                 focus = focus,
                 z_slice = z_slice,
-                vmin = extrema[0],
-                vmax = extrema[1],
+                vmin = vmin,
+                vmax = vmax,
                 alpha = alpha,
                 fill = fill,
                 cmap = cmap,

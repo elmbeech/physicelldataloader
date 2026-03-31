@@ -129,6 +129,9 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 
 
 ## Release Notes:
++ version 4.1.4 (2026-04)
+    + pyMCDSts **mcdsts.make_contour** extrema parameter is replaced by vmin and vmax to be compatible with mcds.make_contour and plt.contour.
+
 + version 4.1.3 (2026-03-21):
     + new **pcdl.pccmap** color map. this is an adaptation of the physicell pathology paint by number color map.
     + new TimeStep **get_pcdl_version** function.
