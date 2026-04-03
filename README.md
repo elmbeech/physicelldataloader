@@ -129,8 +129,9 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 
 
 ## Release Notes:
-+ version 4.1.4 (2026-04)
-    + pyMCDSts **mcdsts.make_contour** extrema parameter is replaced by vmin and vmax to be compatible with mcds.make_contour and plt.contour.
++ version 4.1.4 (2026-04-)
+    + pyMCDSts **mcdsts.make_contour** extrema parameter is replaced by vmin and vmax to be compatible with mcds.make\_contour and plt.contour.
+    + **make_cell_vtk** and **make_conc_vtk** now offer an ext parameter, allowing to manually specify the exact file extension. special thanks to Danyon Gedris!
 
 + version 4.1.3 (2026-03-21):
     + new **pcdl.pccmap** color map. this is an adaptation of the physicell pathology paint by number color map.
@@ -150,7 +151,7 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
     + **settingxml** default is now set to False, because the cell\_type id label mapping can, in recent PhysiCell output, be retrieved from output\*.xml too.
     + **plot_scatter** and **plot_timeseries** now additionally have a cat\_drop and cat\_keep argument to filter categorical data.
     + **plot_timeseries(frame=conc)** now plots by default all substrate concentrations over time.
-    + **plot_timeseries(ext=)** parameter offers to return a dataframe object, dafaframe csv file, image file, or a matplotlib fig object. special thanks to John Nardini and Edward Young.
+    + **plot_timeseries(ext=)** parameter offers to return a dataframe object, dafaframe csv file, image file, or a matplotlib fig object. special thanks to John Nardini and Edward Young!
 
 + version 4.0.4 (2025-07-23): elmbeech/physicelldataloader
     + command line commands now return **error code 0** if the command runs successfully.

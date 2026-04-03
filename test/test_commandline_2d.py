@@ -381,6 +381,16 @@ class TestCommandLineInterfaceConcVtk(object):
             os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_conc.vtr')
         assert o_result.returncode == 0
 
+    def test_pcdl_make_conc_vtk_timeseries_ext(self):
+        o_result = subprocess.run(['pcdl_make_conc_vtk', s_path_2d, '--ext', '.vtr'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}.vtr')
+        assert o_result.returncode == 0
+
     def test_pcdl_make_conc_vtk_timestep_default(self):
         o_result = subprocess.run(['pcdl_make_conc_vtk', s_pathfile_2d], check=False, capture_output=True)
         print(f'o_result: {o_result}\n')
@@ -388,6 +398,15 @@ class TestCommandLineInterfaceConcVtk(object):
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
         os.remove(f'{s_path_2d}/output00000024_conc.vtr')
+        assert o_result.returncode == 0
+
+    def test_pcdl_make_conc_vtk_timestep_ext(self):
+        o_result = subprocess.run(['pcdl_make_conc_vtk', s_pathfile_2d, '--ext', '.vtr'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/output00000024.vtr')
         assert o_result.returncode == 0
 
 
@@ -1335,6 +1354,16 @@ class TestCommandLineInterfaceCellVtk(object):
             os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_cell.vtp')
         assert o_result.returncode == 0
 
+    def test_pcdl_make_cell_vtk_timeseries_ext(self):
+        o_result = subprocess.run(['pcdl_make_cell_vtk', s_path_2d, '--ext', '.vtp'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}.vtp')
+        assert o_result.returncode == 0
+
     def test_pcdl_make_cell_vtk_timestep_default(self):
         o_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d], check=False, capture_output=True)
         print(f'o_result: {o_result}\n')
@@ -1396,6 +1425,15 @@ class TestCommandLineInterfaceCellVtk(object):
         print(f'o_result.stdout: {o_result.stdout}\n')
         print(f'o_result.stderr: {o_result.stderr}\n')
         os.remove(f'{s_path_2d}/output00000024_cell.vtp')
+        assert o_result.returncode == 0
+
+    def test_pcdl_make_cell_vtk_timestep_ext(self):
+        o_result = subprocess.run(['pcdl_make_cell_vtk', s_pathfile_2d, '--ext', '.vtp'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/output00000024.vtp')
         assert o_result.returncode == 0
 
 

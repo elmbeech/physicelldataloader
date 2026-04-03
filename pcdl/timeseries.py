@@ -727,9 +727,11 @@ class TimeSeries:
         return lo_output
 
 
-    def make_conc_vtk(self):
+    def make_conc_vtk(self, ext='_conc.vtr'):
         """
         input:
+            ext: string; default '_conc.vtr'.
+                file extension.
 
         output:
             ls_vtkpathfile: one vtk file per mcds time step that contains
@@ -747,7 +749,7 @@ class TimeSeries:
         # processing
         ls_vtkpathfile = []
         for mcds in self.get_mcds_list():
-            s_vtkpathfile = mcds.make_conc_vtk()
+            s_vtkpathfile = mcds.make_conc_vtk(ext=ext)
             ls_vtkpathfile.append(s_vtkpathfile)
 
         # output
@@ -1047,11 +1049,14 @@ class TimeSeries:
         return lo_output
 
 
-    def make_cell_vtk(self, attribute=['cell_type']):
+    def make_cell_vtk(self, attribute=['cell_type'], ext='_cell.vtp'):
         """
         input:
             attribute: list of strings; default is ['cell_type']
                 column name within cell dataframe.
+
+            ext: string; default '_cell.vtp'.
+                file extension.
 
         output:
             ls_vtkpathfile: one 3D glyph vtk file per mcds time step
@@ -1070,6 +1075,7 @@ class TimeSeries:
         for mcds in self.get_mcds_list():
             s_vtkpathfile = mcds.make_cell_vtk(
                 attribute = attribute,
+                ext = ext,
             )
             ls_vtkpathfile.append(s_vtkpathfile)
 

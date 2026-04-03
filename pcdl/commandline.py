@@ -757,6 +757,12 @@ def make_conc_vtk():
         default = 'true',
         help = 'setting verbose to False for less text output, while processing. default is True.',
     )
+    # make_conc_vtk file extension
+    parser.add_argument(
+        '--ext',
+        default = '_conc.vtr',
+        help = 'file extension for the vtk rectilinear grid file.',
+    )
 
     # parse arguments
     args = parser.parse_args()
@@ -788,7 +794,9 @@ def make_conc_vtk():
             settingxml = None,
             verbose = False if args.verbose.lower().startswith('f') else True
         )
-        s_opathfile = mcds.make_conc_vtk()
+        s_opathfile = mcds.make_conc_vtk(
+            ext = args.ext,
+        )
         # going home
         print(s_opathfile)
 
@@ -803,7 +811,9 @@ def make_conc_vtk():
             settingxml = None,
             verbose = False if args.verbose.lower().startswith('f') else True,
         )
-        ls_opathfile = mcdsts.make_conc_vtk()
+        ls_opathfile = mcdsts.make_conc_vtk(
+            ext = args.ext,
+        )
         # going home
         print(ls_opathfile)
 
@@ -1899,6 +1909,12 @@ def make_cell_vtk():
         default = ['cell_type'],
         help = 'listing of mcds.get_cell_df dataframe column names, used for cell attributes. default is a single term: cell_type.',
     )
+    # make_cell_vtk file extension
+    parser.add_argument(
+        '--ext',
+        default = '_cell.vtp',
+        help = 'set file extension for the vtk polydata file. for example, the blender BVTKNodes plugin needs a simplified .vtp file extension to be able to load timeseries directly.',
+    )
 
     # parse arguments
     args = parser.parse_args()
@@ -1944,6 +1960,7 @@ def make_cell_vtk():
         )
         s_opathfile = mcds.make_cell_vtk(
             attribute = args.attribute,
+            ext = args.ext,
         )
         # going home
         print(s_opathfile)
@@ -1961,6 +1978,7 @@ def make_cell_vtk():
         )
         ls_opathfile = mcdsts.make_cell_vtk(
             attribute = args.attribute,
+            ext = args.ext,
         )
         # going home
         print(ls_opathfile)

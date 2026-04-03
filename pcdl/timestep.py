@@ -1382,9 +1382,11 @@ class TimeStep:
             return s_pathfile
 
 
-    def make_conc_vtk(self):
+    def make_conc_vtk(self, ext='_conc.vtr'):
         """
         input:
+            ext: string; default '_conc.vtr'.
+                file extension.
 
         output:
             s_vtkpathfile: vtk rectilinear grid file that contains
@@ -1398,7 +1400,7 @@ class TimeStep:
             https://www.paraview.org/
         """
         # off we go.
-        s_vtkfile = self.xmlfile.replace('.xml','_conc.vtr')
+        s_vtkfile = self.xmlfile.replace('.xml', ext)
         if self.verbose:
             print(f'processing: {s_vtkfile} ...')
 
@@ -1869,11 +1871,14 @@ class TimeStep:
         return fig
 
 
-    def make_cell_vtk(self, attribute=['cell_type']):
+    def make_cell_vtk(self, attribute=['cell_type'], ext='_cell.vtp'):
         """
         input:
             attribute: list of strings; default is ['cell_type']
                 column name within cell dataframe.
+
+            ext: string; default '_cell.vtp'.
+                file extension.
 
         output:
             s_vtkpathfile: vtk 3D glyph polynomial data file that contains cells.
@@ -1887,7 +1892,7 @@ class TimeStep:
             https://www.paraview.org/
         """
         # off we go.
-        s_vtkfile = self.xmlfile.replace('.xml','_cell.vtp')
+        s_vtkfile = self.xmlfile.replace('.xml', ext)
         if self.verbose:
             print(f'processing: {s_vtkfile} ...')
 
