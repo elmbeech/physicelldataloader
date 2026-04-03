@@ -222,6 +222,8 @@ class TimeSeries:
                 s_mcdsv = output_path[0].get_pcdl_version()
             except AttributeError:
                 s_mcdsv = 'pcdl_<4.1.3'
+            except KeyError:
+                s_mcdsv = 'pcdl_<4.1.3'
             except IndexError:
                 sys.exit(f'Error @ TimeSeries.__init__ : {output_path}. mcds list is empty!')
             if (f'pcdl_{__version__}' != s_mcdsv):
@@ -229,6 +231,7 @@ class TimeSeries:
             # set variables
             self.ls_xmlfile = None
             self.l_mcds = output_path
+            self.path = '.'
             self.custom_data_type = None
             self.microenv = None
             self.graph = None
@@ -573,7 +576,7 @@ class TimeSeries:
         return dlr_variable_range
 
 
-    def plot_contour(self, focus, z_slice=0.0, extrema=None, alpha=1, fill=True, cmap='viridis', title='', grid=True, xlim=None, ylim=None, xyequal=True, figsizepx=None, ext='jpeg', figbgcolor=None, **kwargs):
+    def plot_contour(self, focus, z_slice=0.0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', title='', grid=True, xlim=None, ylim=None, xyequal=True, figsizepx=None, ext='jpeg', figbgcolor=None, **kwargs):
         """
         input:
             self: TimeSeries class instance
@@ -588,8 +591,15 @@ class TimeSeries:
                 will be adjusted to the nearest mesh center value,
                 the smaller one, if the coordinate lies on a saddle point.
 
-            extrema: tuple of two floats; default is None
-                default takes min and max from data, from the whole time series.
+            vmin: floating point number; default is None
+                color scale min value.
+                None will take the min value from the whole time series
+                found in the data.
+
+            vmax: floating point number; default is None
+                color scale max value.
+                None will take the min value from the whole time series
+                found in the data.
 
             alpha: floating point number; default is 1
                 alpha channel transparency value
@@ -663,19 +673,18 @@ class TimeSeries:
             if self.verbose:
                 print(f'z_slice set to {z_slice}.')
 
-        # handle extrema
-        if extrema == None:
-            extrema = [None, None]
+        # handle z-axis
+        if (vmin is None) or (vmax is None):
             for mcds in self.get_mcds_list():
                 df_conc = mcds.get_conc_df()
                 r_min = df_conc.loc[:,focus].min()
                 r_max = df_conc.loc[:,focus].max()
-                if (extrema[0] is None) or (extrema[0] > r_min):
-                    extrema[0] = np.floor(r_min)
-                if (extrema[1] is None) or (extrema[1] < r_max):
-                    extrema[1] = np.ceil(r_max)
+                if (vmin is None) or (vmin > r_min):
+                    vmin = np.floor(r_min)
+                if (vmax is None) or (vmax < r_max):
+                    vmax = np.ceil(r_max)
             if self.verbose:
-                print(f'min max extrema set to {extrema}.')
+                print(f'z-axis min max set to {vmin} {vmax}.')
 
         # handle xlim and ylim
         if (xlim is None):
@@ -688,7 +697,7 @@ class TimeSeries:
                 print(f'ylim set to {ylim}.')
 
         # handle output path
-        s_path = self.path + f'/conc_{focus}_z{round(z_slice,9)}/'
+        s_path = self.path + f'/conc_{focus}_z{round(z_slice,3)}/'
 
         # plotting
         lo_output = []
@@ -696,12 +705,12 @@ class TimeSeries:
             o_output = mcds.plot_contour(
                 focus = focus,
                 z_slice = z_slice,
-                vmin = extrema[0],
-                vmax = extrema[1],
+                vmin = vmin,
+                vmax = vmax,
                 alpha = alpha,
                 fill = fill,
                 cmap = cmap,
-                title = f'{title}{focus} z{round(z_slice,9)}\n{round(mcds.get_time(),9)}[min]',
+                title = f'{title}{focus} z{round(z_slice,3)}\n{round(mcds.get_time(),3)}[min]',
                 grid = grid,
                 xlim = xlim,
                 ylim = ylim,
@@ -718,9 +727,11 @@ class TimeSeries:
         return lo_output
 
 
-    def make_conc_vtk(self):
+    def make_conc_vtk(self, ext='_conc.vtr'):
         """
         input:
+            ext: string; default '_conc.vtr'.
+                file extension.
 
         output:
             ls_vtkpathfile: one vtk file per mcds time step that contains
@@ -738,7 +749,7 @@ class TimeSeries:
         # processing
         ls_vtkpathfile = []
         for mcds in self.get_mcds_list():
-            s_vtkpathfile = mcds.make_conc_vtk()
+            s_vtkpathfile = mcds.make_conc_vtk(ext=ext)
             ls_vtkpathfile.append(s_vtkpathfile)
 
         # output
@@ -1019,7 +1030,7 @@ class TimeSeries:
                 z_axis = z_axis,
                 alpha = alpha,
                 cmap = cmap,
-                title = f'{title}{focus} z{round(z_slice,9)}\n{df_cell.shape[0]}[agent] {round(mcds.get_time(),9)}[min]',
+                title = f'{title}{focus} z{round(z_slice,3)}\n{df_cell.shape[0]}[agent] {round(mcds.get_time(),3)}[min]',
                 grid = grid,
                 legend_loc = legend_loc,
                 xlim = xlim,
@@ -1038,11 +1049,14 @@ class TimeSeries:
         return lo_output
 
 
-    def make_cell_vtk(self, attribute=['cell_type']):
+    def make_cell_vtk(self, attribute=['cell_type'], ext='_cell.vtp'):
         """
         input:
             attribute: list of strings; default is ['cell_type']
                 column name within cell dataframe.
+
+            ext: string; default '_cell.vtp'.
+                file extension.
 
         output:
             ls_vtkpathfile: one 3D glyph vtk file per mcds time step
@@ -1061,6 +1075,7 @@ class TimeSeries:
         for mcds in self.get_mcds_list():
             s_vtkpathfile = mcds.make_cell_vtk(
                 attribute = attribute,
+                ext = ext,
             )
             ls_vtkpathfile.append(s_vtkpathfile)
 
@@ -1659,66 +1674,59 @@ class TimeSeries:
             ls_column = sorted(es_coor_cell.difference({'ID'}))
             ls_column.extend(sorted(self.get_cell_attribute(values=values, drop=drop, keep=keep, allvalues=False).keys()))
 
-        # collapse warning
+        # package collapse
         if collapse and self.verbose:
+            # warning
             print('Warning @ mcdsts.get_anndata : only df_cell data, but not graph data, can be collapsed.')
+            df_cell = self.get_cell_df(values=values, drop=drop, keep=keep, collapse=True)
 
-        # processing
-        lann_mcds = []
-        i_mcds = len(self.l_mcds)
-        for i in range(i_mcds):
-            # fetch mcds
-            if keep_mcds:
-                mcds = self.l_mcds[i]
-            else:
-                mcds = self.l_mcds.pop(0)
-            # extract physicell version
-            s_physicellv = mcds.get_physicell_version(),
-            # extract time and dataframes
-            r_time = round(mcds.get_time(),9)
-            if self.verbose:
-                print(f'processing: {i+1}/{i_mcds} {r_time}[min] mcds into anndata obj.')
-            df_cell = mcds.get_cell_df()
-            df_cell = df_cell.loc[:,ls_column]
+            # extract
+            df_count, df_obs, d_obsm, d_obsp, d_uns = _anndextract(
+                df_cell=df_cell,
+                scale = scale,
+                #graph_attached = {},
+                #graph_neighbor = {},
+                #graph_spring = {},
+                #graph_method = s_physicellv,
+            )
 
-            # pack collapsed
-            if collapse:
-                # extract
-                df_count, df_obs, d_obsm, d_obsp, d_uns = _anndextract(
-                    df_cell=df_cell,
-                    scale = scale,
-                    #graph_attached = {},
-                    #graph_neighbor = {},
-                    #graph_spring = {},
-                    #graph_method = s_physicellv,
-                )
-                # count
-                df_count.reset_index(inplace=True)
-                df_count.index = df_count.ID + f'id_{r_time}min'
-                df_count.index.name = 'id_time'
-                df_count.drop('ID', axis=1, inplace=True)
-                if df_anncount is None:
-                    df_anncount = df_count
-                else:
-                    df_anncount = pd.concat([df_anncount, df_count], axis=0)
-                # obs
-                df_obs.reset_index(inplace=True)
-                df_obs.index = df_obs.ID + f'id_{r_time}min'
-                df_obs.index.name = 'id_time'
-                if df_annobs is None:
-                    df_annobs = df_obs
-                else:
-                    df_annobs = pd.concat([df_annobs, df_obs], axis=0)
-                # obsm (spatial)
-                if ar_annobsm is None:
-                    ar_annobsm = d_obsm['spatial']
-                else:
-                    ar_annobsm = np.vstack([ar_annobsm, d_obsm['spatial']])
-                # obsp: nop (graph)
-                # uns: nop (graph)
+            # fuse to anndata object
+            ann_mcdsts = ad.AnnData(
+                X = df_count,
+                obs = df_obs,
+                obsm = d_obsm,
+                #obsp = d_obsp,  # nop (graph)
+                #uns = d_uns,  # nop (graph)
+            )
 
-            # pack not collapsed
-            else:
+            # mcds
+            if not keep_mcds:
+                self.l_mcds = []
+
+            # output
+            return ann_mcdsts
+
+        # pack not collapsed
+        else:
+            # processing
+            lann_mcds = []
+            i_mcds = len(self.l_mcds)
+            for i in range(i_mcds):
+                # fetch mcds
+                if keep_mcds:
+                    mcds = self.l_mcds[i]
+                else:
+                    mcds = self.l_mcds.pop(0)
+
+                # extract physicell version
+                s_physicellv = mcds.get_physicell_version(),
+
+                # extract time and dataframes
+                if self.verbose:
+                    print(f'processing: {i+1}/{i_mcds} {mcds.get_time()}[min] mcds into anndata obj.')
+                df_cell = mcds.get_cell_df()
+                df_cell = df_cell.loc[:,ls_column]
+
                 # extract
                 df_count, df_obs, d_obsm, d_obsp, d_uns = _anndextract(
                     df_cell=df_cell,
@@ -1728,6 +1736,7 @@ class TimeSeries:
                     graph_spring = mcds.get_spring_graph_dict(),
                     graph_method = s_physicellv,
                 )
+
                 # annmcds
                 ann_mcds = ad.AnnData(
                     X = df_count,
@@ -1738,20 +1747,9 @@ class TimeSeries:
                 )
                 lann_mcds.append(ann_mcds)
 
-        # output
-        if collapse:
-            ann_mcdsts = ad.AnnData(
-                X = df_anncount,
-                obs = df_annobs,
-                obsm = {'spatial': ar_annobsm},
-                #obsp = d_obsp,
-                #uns = d_uns
-            )
-            return ann_mcdsts
-        else:
+            # output
             self.l_annmcds = lann_mcds
             return self.l_annmcds
-
 
     def get_annmcds_list(self):
         """
@@ -1839,9 +1837,8 @@ class TimeSeries:
                 mcds = self.l_mcds.pop(0)
 
             # extract time and dataframes
-            r_time = round(mcds.get_time(),9)
             if self.verbose:
-                print(f'\nprocessing: {i+1}/{i_mcds} {r_time}[min] mcds into spatialdata obj.')
+                print(f'\nprocessing: {i+1}/{i_mcds} {mcds.get_time()}[min] mcds into spatialdata obj.')
 
             # get spatialdata object
             sd_mcds = mcds.get_spatialdata(

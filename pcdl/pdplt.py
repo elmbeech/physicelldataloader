@@ -32,13 +32,15 @@ import random
 
 
 # plot stuff
-def df_label_to_color(df_abc, s_focus, es_label=None, s_nolabel='gray', s_cmap='viridis', b_shuffle=False):
+def df_label_to_color(df_abc=None, s_focus=None, ls_label=None, s_nolabel='silver', s_cmap='viridis', b_shuffle=False):
     '''
     input:
         df_abc: dataframe to which the color column will be added.
-        s_focus: column name with sample labels for which a color column will be generated.
-        es_label: set of labels to color. if None, es_label will be extracted for the s_focus column.
-        s_nolabel: color for labels not defined in es_label.
+        s_focus: column name with sample labels for which a color column
+            will be generated.
+        ls_label: ordered list of labels to color. if None,
+            ls_label will be extracted for the s_focus column.
+        s_nolabel: color for labels not defined in ls_label.
         s_cmap:  matplotlib color map label.
             https://matplotlib.org/stable/tutorials/colors/colormaps.html
         b_shuffle: should colors be given by alphabetical order,
@@ -52,29 +54,39 @@ def df_label_to_color(df_abc, s_focus, es_label=None, s_nolabel='gray', s_cmap='
         function adds for the selected label column
         a color column to the df_abc dataframe.
     '''
-    if (es_label is None):
-        es_label = set(df_abc.loc[:,s_focus])
+    # map labels to color
+    if (ls_label is None):
+        ls_label = sorted(set(df_abc.loc[:,s_focus]))
     if b_shuffle:
-       ls_label = list(es_label)
        random.shuffle(ls_label)
+    as_color = np.apply_along_axis(
+        colors.to_hex,
+        axis=1,
+        arr=plt.get_cmap(s_cmap)(np.linspace(0, 1, len(ls_label))),
+    )
+    ds_color = dict(zip(ls_label, as_color))
+    # process no data frame
+    if (df_abc is None) and (s_focus is None):
+        pass
+    # process data frame
+    elif (not (df_abc is None)) and (not (s_focus is None)):
+        df_abc[f'{s_focus}_color'] = s_nolabel
+        for s_category, s_color in ds_color.items():
+            df_abc.loc[(df_abc.loc[:,s_focus] == s_category), f'{s_focus}_color'] = s_color
+    # error handling
     else:
-       ls_label = sorted(es_label)
-    a_color = plt.get_cmap(s_cmap)(np.linspace(0, 1, len(ls_label)))
-    do_color = dict(zip(ls_label, a_color))
-    df_abc[f'{s_focus}_color'] = s_nolabel
-    ds_color = {}
-    for s_category, o_color in do_color.items():
-        s_color = colors.to_hex(o_color)
-        ds_color.update({s_category : s_color})
-        df_abc.loc[(df_abc.loc[:,s_focus] == s_category), f'{s_focus}_color'] = s_color
+        sys.exit('Error @ both, df_abc and s_focus, have either to be None or not None!')
     # output
     return(ds_color)
 
-def ax_colorlegend(ax, ds_color, s_loc='lower left', s_fontsize='small'):
+
+def ax_colorlegend(ax, ds_color, ls_label=None, s_loc='lower left', s_fontsize='small'):
     '''
     input:
         ax: matplotlib axis object to which a color legend will be added.
         ds_color: lables to color strings mapping dictionary
+        ls_label: ordered list of labels to color. if None, ls_label
+            will be extracted from ds_color and sortred alphabetically.
         s_loc: the location of the legend.
             possible strings are: best,
             upper right, upper center, upper left, center left,
@@ -89,15 +101,20 @@ def ax_colorlegend(ax, ds_color, s_loc='lower left', s_fontsize='small'):
     description:
         function to add color legend to a figure.
     '''
+    # manimupate input
+    if (ls_label is None):
+        ls_label = sorted(ds_color.keys())
+    # processing
     lo_patch = []
-    for s_label, s_color in sorted(ds_color.items()):
-        o_patch = mpatches.Patch(color=s_color, label=s_label)
+    for s_label in ls_label:
+        o_patch = mpatches.Patch(color=ds_color[s_label], label=s_label)
         lo_patch.append(o_patch)
     ax.legend(
         handles = lo_patch,
         loc = s_loc,
         fontsize = s_fontsize
     )
+
 
 def ax_colorbar(ax, r_vmin, r_vmax, s_cmap='viridis', s_text=None, o_fontsize='medium', b_axis_erase=False):
     '''

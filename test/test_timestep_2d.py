@@ -580,9 +580,9 @@ class TestTimeStepMicroenv(object):
         os.remove(s_pathfile)
 
     def test_mcds_make_conc_vtk(self, mcds=mcds):
-        s_pathfile = mcds.make_conc_vtk()
+        s_pathfile = mcds.make_conc_vtk(ext='.vtr')  # test set ext parameter.
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (s_pathfile.replace('\\','/').endswith('/pcdl/output_2d/output00000024_conc.vtr')) and \
+              (s_pathfile.replace('\\','/').endswith('/pcdl/output_2d/output00000024.vtr')) and \
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
@@ -775,6 +775,7 @@ class TestTimeStepCell(object):
     def test_mcds_make_cell_vtk_attribute_default(self, mcds=mcds):
         s_pathfile = mcds.make_cell_vtk(
             #attribute=['cell_type'],
+            #ext='_cell.vtp',
         )
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (s_pathfile.replace('\\','/').endswith('/pcdl/output_2d/output00000024_cell.vtp')) and \
@@ -783,9 +784,12 @@ class TestTimeStepCell(object):
         os.remove(s_pathfile)
 
     def test_mcds_make_cell_vtk_attribute_zero(self, mcds=mcds):
-        s_pathfile = mcds.make_cell_vtk(attribute=[])
+        s_pathfile = mcds.make_cell_vtk(
+            attribute=[],
+            ext='.vtp',  # test set ext parameter
+        )
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (s_pathfile.replace('\\','/').endswith('/pcdl/output_2d/output00000024_cell.vtp')) and \
+              (s_pathfile.replace('\\','/').endswith('/pcdl/output_2d/output00000024.vtp')) and \
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
@@ -793,6 +797,7 @@ class TestTimeStepCell(object):
     def test_mcds_make_cell_vtk_attribute_many(self, mcds=mcds):
         s_pathfile = mcds.make_cell_vtk(
             attribute=['dead', 'cell_count_voxel', 'pressure', 'cell_type'],
+            #ext='_cell.vtp',  # test default ext parameter
         )
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (s_pathfile.replace('\\','/').endswith('/pcdl/output_2d/output00000024_cell.vtp')) and \

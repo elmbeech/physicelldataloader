@@ -1,9 +1,9 @@
 ```
-usage: pcdl_plot_contour [-h] [-v VERBOSE] [--z_slice Z_SLICE]
-                         [--extrema EXTREMA [EXTREMA ...]] [--alpha ALPHA]
-                         [--fill FILL] [--cmap CMAP] [--title TITLE]
-                         [--grid GRID] [--xlim XLIM [XLIM ...]]
-                         [--ylim YLIM [YLIM ...]] [--xyequal XYEQUAL]
+usage: pcdl_plot_contour [-h] [-v VERBOSE] [--z_slice Z_SLICE] [--vmin VMIN]
+                         [--vmax VMAX] [--alpha ALPHA] [--fill FILL]
+                         [--cmap CMAP] [--title TITLE] [--grid GRID]
+                         [--xlim XLIM [XLIM ...]] [--ylim YLIM [YLIM ...]]
+                         [--xyequal XYEQUAL]
                          [--figsizepx FIGSIZEPX [FIGSIZEPX ...]] [--ext EXT]
                          [--figbgcolor FIGBGCOLOR]
                          [path] [focus]
@@ -26,9 +26,8 @@ options:
                         mesh center coordinate, then z_slice will be adjusted
                         to the nearest mesh center value, the smaller one, if
                         the coordinate lies on a saddle point. default is 0.0.
-  --extrema EXTREMA [EXTREMA ...]
-                        listing of two floats. None takes min and max from
-                        data. default is None.
+  --vmin VMIN           float. None takes min from data. default is None.
+  --vmax VMAX           float. None takes max from data. default is None.
   --alpha ALPHA         alpha channel transparency value between 1 (not
                         transparent at all) and 0 (totally transparent).
                         default is 1.0.

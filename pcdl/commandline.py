@@ -520,12 +520,17 @@ def plot_contour():
         type = float,
         help = 'z-axis position to slice a 2D xy-plain out of the 3D mesh. if z_slice position numeric but not an exact mesh center coordinate, then z_slice will be adjusted to the nearest mesh center value, the smaller one, if the coordinate lies on a saddle point. default is 0.0.',
     )
-    # plot_contour extrema
+    # plot_contour vmin
     parser.add_argument(
-        '--extrema',
-        nargs = '+',
-        default = ['none'],
-        help = 'listing of two floats. None takes min and max from data. default is None.',
+        '--vmin',
+        default = 'none',
+        help = 'float. None takes min from data. default is None.',
+    )
+    # plot_contour vmax
+    parser.add_argument(
+        '--vmax',
+        default = 'none',
+        help = 'float. None takes max from data. default is None.',
     )
     # plot_contour alpha
     parser.add_argument(
@@ -632,16 +637,23 @@ def plot_contour():
             settingxml = None,
             verbose = False if args.verbose.lower().startswith('f') else True
         )
-        # handle extrema
-        if (args.extrema[0].lower() == 'none'):
+        # handle z-axis
+        if (args.vmin.lower() == 'none') or (args.vmax.lower() == 'none'):
             df_conc = mcds.get_conc_df()
+        # vmin
+        if (args.vmin.lower() == 'none'):
             r_zmin = df_conc.loc[:, args.focus].min()
+            if mcds.verbose:
+                print(f'vmin set to {r_zmin}.')
+        else:
+            r_zmin = float(args.vmin)
+         # vmax
+        if (args.vmax.lower() == 'none'):
             r_zmax = df_conc.loc[:, args.focus].max()
             if mcds.verbose:
-                print(f'min max extrema set to {r_zmin} {r_zmax}.')
+                print(f'vmax set to {r_zmax}.')
         else:
-            r_zmin = args.extrema[0]
-            r_zmax = args.extrema[1]
+            r_zmax = float(args.vmax)
         # plot
         s_opathfile = mcds.plot_contour(
             focus = args.focus,
@@ -675,11 +687,29 @@ def plot_contour():
             settingxml = None,
             verbose = False if args.verbose.lower().startswith('f') else True,
         )
+        # handle z-axis
+        if (args.vmin.lower() == 'none') or (args.vmax.lower() == 'none'):
+            df_conc = mcdsts.get_conc_df()
+        # vmin
+        if (args.vmin.lower() == 'none'):
+            r_zmin = df_conc.loc[:, args.focus].min()
+            if mcdsts.verbose:
+                print(f'vmin set to {r_zmin}.')
+        else:
+            r_zmin = float(args.vmin)
+         # vmax
+        if (args.vmax.lower() == 'none'):
+            r_zmax = df_conc.loc[:, args.focus].max()
+            if mcdsts.verbose:
+                print(f'vmax set to {r_zmax}.')
+        else:
+            r_zmax = float(args.vmax)
         # plot
         ls_opathfile = mcdsts.plot_contour(
             focus = args.focus,
             z_slice = args.z_slice,
-            extrema = None if (args.extrema[0].lower() == 'none') else args.extrema,
+            vmin = r_zmin,
+            vmax = r_zmax,
             alpha = args.alpha,
             fill = False if args.fill.lower().startswith('f') else True,
             cmap = args.cmap,
@@ -727,6 +757,12 @@ def make_conc_vtk():
         default = 'true',
         help = 'setting verbose to False for less text output, while processing. default is True.',
     )
+    # make_conc_vtk file extension
+    parser.add_argument(
+        '--ext',
+        default = '_conc.vtr',
+        help = 'file extension for the vtk rectilinear grid file.',
+    )
 
     # parse arguments
     args = parser.parse_args()
@@ -758,7 +794,9 @@ def make_conc_vtk():
             settingxml = None,
             verbose = False if args.verbose.lower().startswith('f') else True
         )
-        s_opathfile = mcds.make_conc_vtk()
+        s_opathfile = mcds.make_conc_vtk(
+            ext = args.ext,
+        )
         # going home
         print(s_opathfile)
 
@@ -773,7 +811,9 @@ def make_conc_vtk():
             settingxml = None,
             verbose = False if args.verbose.lower().startswith('f') else True,
         )
-        ls_opathfile = mcdsts.make_conc_vtk()
+        ls_opathfile = mcdsts.make_conc_vtk(
+            ext = args.ext,
+        )
         # going home
         print(ls_opathfile)
 
@@ -1869,6 +1909,12 @@ def make_cell_vtk():
         default = ['cell_type'],
         help = 'listing of mcds.get_cell_df dataframe column names, used for cell attributes. default is a single term: cell_type.',
     )
+    # make_cell_vtk file extension
+    parser.add_argument(
+        '--ext',
+        default = '_cell.vtp',
+        help = 'set file extension for the vtk polydata file. for example, the blender BVTKNodes plugin needs a simplified .vtp file extension to be able to load timeseries directly.',
+    )
 
     # parse arguments
     args = parser.parse_args()
@@ -1914,6 +1960,7 @@ def make_cell_vtk():
         )
         s_opathfile = mcds.make_cell_vtk(
             attribute = args.attribute,
+            ext = args.ext,
         )
         # going home
         print(s_opathfile)
@@ -1931,6 +1978,7 @@ def make_cell_vtk():
         )
         ls_opathfile = mcdsts.make_cell_vtk(
             attribute = args.attribute,
+            ext = args.ext,
         )
         # going home
         print(ls_opathfile)
