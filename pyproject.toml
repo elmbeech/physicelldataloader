@@ -75,6 +75,7 @@ dependencies = [
     "bioio-ome-tiff",
     "geopandas>=0.14",  # spatialdata
     "matplotlib",
+    "networkx",
     "neuroglancer",
     "numpy",
     "pandas>=2.2.2",

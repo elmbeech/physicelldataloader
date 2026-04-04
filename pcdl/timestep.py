@@ -26,6 +26,7 @@ try:
     import muspan as ms
 except ModuleNotFoundError:
     ms = None
+import networkx as nx
 import neuroglancer
 import numpy as np
 import os
@@ -2718,7 +2719,7 @@ class TimeStep:
             + https://docs.muspan.co.uk/latest/Documentation.html
         """
         # check if muspan library is installed
-        if muspan is None:
+        if ms is None:
             sys.exit(f'Error @ TimeStep.get_muspa : the muspan Multi Spatial Analysis python3 library is not installed!\nfor instructions check out : https://www.muspan.co.uk/')
 
         # get conc and cell dataframe
@@ -2770,6 +2771,10 @@ class TimeStep:
                 points = df_zcell.loc[:,['position_x','position_y']].values,
                 collection_name = 'cell'
             )
+            # get a physicell cell_id to muspan object id mapping
+            df_coor = df_zcell.loc[:,['position_x', 'position_y','position_z']]
+            df_coor['muspan_id'] = o_domain.collections['cell']['objects']
+            di_cellid = df_coor['muspan_id'].to_dict()
             # drop this data
             es_drop = set(df_zcell.columns).intersection({
                 'voxel_i', 'voxel_j', 'voxel_k',
@@ -2807,9 +2812,29 @@ class TimeStep:
                     add_labels_to = 'cell',
                     label_type = 'continuous',
                 )
-
-            # add graphs
-            # BUE: HERE I AM
+            ## add graphs
+            ei_pccellid = set(df_zcell.index)
+            for s_graph, dei_graph in [
+                    ('neighbor', self.get_neighbor_graph_dict()),
+                    ('attached', self.get_attached_graph_dict()),
+                    ('spring', self.get_spring_graph_dict()),
+                ]:
+                # transform graph dict into weighted edge list
+                lt_wedge = []
+                for i_src, ei_dst in sorted(dei_graph.items()):
+                    for i_dst in ei_dst:
+                        if (i_src in ei_pccellid) and (i_dst in ei_pccellid):
+                            r_distance = ((df_coor.loc[i_src, ['position_x','position_y','position_z']].values -  df_coor.loc[i_dst, ['position_x','position_y','position_z']].values)**2).sum()**(1/2)
+                            lt_wedge.append((di_cellid[i_src], di_cellid[i_dst], r_distance))
+                # generate graph
+                G = nx.Graph()
+                # dump the edges into the network
+                G.add_weighted_edges_from(lt_wedge, weight='Distance')
+                G.add_weighted_edges_from(lt_wedge, weight='Inverse Distance')
+                # add the network to the dictionary of networks
+                o_domain.networks[s_graph] = G
+            # clean up the domain
+            ms.helpers.clean_up(o_domain)
 
             ## set domain boundary (have to be done last!)
             o_domain.estimate_boundary(
