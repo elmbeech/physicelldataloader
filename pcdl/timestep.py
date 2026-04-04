@@ -2724,28 +2724,32 @@ class TimeStep:
             sys.exit(f'Error @ TimeStep.get_muspa : the muspan Multi Spatial Analysis python3 library is not installed!\nfor instructions check out : https://www.muspan.co.uk/')
 
         # get conc and cell dataframe
-        i_zmax = self.data['substrate']['df_conc'].voxel_k.max()
-        i_zdigit = len(str(i_zmax))
-        df_conc = self.get_conc_df(z_slice=z_slice, halt=False, values=values, drop=drop, keep=keep)
+        df_conc = self.get_conc_df(values=values, drop=drop, keep=keep)
         df_cell = self.get_cell_df(values=values, drop=drop, keep=keep)
+        i_kmax = df_conc.voxel_k.max()
+        i_kdigit = len(str(i_kmax))
+        if (z_slice == None):
+          li_klayer = [self.get_voxel_ijk(x=0,y=0, z=z_slice)]
+        else:
+          li_klayer = sorted(df_conc.voxel_k.unique())
 
         # for each z layer generate a muspa domain
         do_domain = {}
-        for z_layer in sorted(df_conc.voxel_k.unique()):
+        for i_klayer in li_klayer:
 
             # processing
             if self.verbose:
-                print(f'processing: {self.xmlfile} mcds {z_layer + 1}/{i_zmax + 1} z-layer into muspan obj.')
+                print(f'processing: {self.xmlfile} mcds {i_klayer + 1}/{i_kmax + 1} z-stack layer to muspan obj.')
 
             ## generate muspan domain
-            s_domain = f"{self.xmlfile.replace('.xml','')}_z{str(z_layer).zfill(i_zdigit)}"
+            s_domain = f"{self.xmlfile.replace('.xml','')}_z{str(i_klayer).zfill(i_kdigit)}"
             o_domain = ms.domain(
                 name = s_domain,
                 unit_of_length = 'um',
             )
 
             ## handle subs collection
-            df_zconc = df_conc.loc[df_conc.voxel_k == z_layer,:]
+            df_zconc = df_conc.loc[df_conc.voxel_k == i_klayer,:]
             o_domain.add_points(
                 points = df_zconc.loc[:,['mesh_center_m','mesh_center_n']].values,
                 collection_name = 'subs'
@@ -2767,7 +2771,7 @@ class TimeStep:
                 )
 
             ## handle cell collection
-            df_zcell = df_cell.loc[df_cell.voxel_k == z_layer,:]
+            df_zcell = df_cell.loc[df_cell.voxel_k == i_klayer,:]
             o_domain.add_points(
                 points = df_zcell.loc[:,['position_x','position_y']].values,
                 collection_name = 'cell'
