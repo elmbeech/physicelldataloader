@@ -861,6 +861,46 @@ class TestTimeSeries3dAnnData(object):
               (len(ann.uns) == 0)
 
 
+## muspan time series related functions ##
+class TestTimeSeriesMuspan(object):
+    ''' test for pcdl.TimeSeries class. '''
+
+    ## get_muspan command ##
+    def test_mcdsts_get_muspan_default(self):
+        try:
+            import muspan as ms
+            mcdsts = pcdl.TimeSeries(s_path_3d, verbose=False)
+            do_domain = mcdsts.get_muspan(z_slice=None, values=1, drop=set(), keep=set())
+            s_key = sorted(do_domain.keys())[-1]
+            assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+                  (type(do_domain) == dict) and \
+                  (len(do_domain) == 275) and \
+                  (str(type(do_domain[s_key])) == "<class 'muspan.domain.domain'>") and \
+                  (len(do_domain[s_key].collections) == 2) and \
+                  (len(do_domain[s_key].networks) == 3) and \
+                  (len(do_domain[s_key].objects) > 9)
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestTimeSeriesMuspan : muspan module not installed.')
+            assert True
+
+    def test_mcdsts_get_muspan_zslice(self):
+        try:
+            import muspan as ms
+            mcdsts = pcdl.TimeSeries(s_path_3d, verbose=False)
+            do_domain = mcdsts.get_muspan(z_slice=0.0, values=1, drop=set(), keep=set())
+            s_key = sorted(do_domain.keys())[-1]
+            assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+                  (type(do_domain) == dict) and \
+                  (len(do_domain) == 25) and \
+                  (str(type(do_domain[s_key])) == "<class 'muspan.domain.domain'>") and \
+                  (len(do_domain[s_key].collections) == 2) and \
+                  (len(do_domain[s_key].networks) == 3) and \
+                  (len(do_domain[s_key].objects) > 9)
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestTimeSeriesMuspan : muspan module not installed.')
+            assert True
+
+
 ## spatialdata time seris related functions ##
 class TestTimeSeriesSpatialData(object):
     ''' test for pcdl.TestSeries class. '''

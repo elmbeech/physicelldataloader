@@ -2050,15 +2050,15 @@ def get_muspan():
     )
     # get_muspan z_slice
     parser.add_argument(
-        '--z_slice',
+        'z_slice',
+        nargs = '?',
         default = 0.0,
         type = float,
         help = 'z-axis position to slice a 2D xy-plain out of the 3D mesh. if z_slice position numeric but not an exact mesh center coordinate, then z_slice will be adjusted to the nearest mesh center value, the smaller one, if the coordinate lies on a saddle point. default is 0.0.',
     )
     # get_muspan values
     parser.add_argument(
-        'values',
-        nargs = '?',
+        '--values',
         default = 1,
         type = int,
         help = 'minimal number of values a variable has to have in any of the mcds time steps to be outputted. variables that have only 1 state carry no information. None is a state too. default is 1.'

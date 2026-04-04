@@ -1441,6 +1441,234 @@ class TestCommandLineInterfaceCellVtk(object):
 # substrate and cell agenat test code #
 #######################################
 
+class TestCommandLineInterfaceMuspan(object):
+    ''' tests for one  pcdl command line interface  function. '''
+
+    # timestep and timeseries:
+    # + path nop
+    # + customtype ([], _sample:bool_) ok
+    # + microenv (true, _false_) ok
+    # + graph (true, _false_) ok
+    # + physiboss (true, _false_) ok
+    # + settingxml (string, _none_, _false_) ok
+    # + verbose (true, _false_) nop
+    # + z_slize (0.0, _1.1_) ok
+    # + values (int) ok
+    # + drop (cell_type oxygen) ok
+    # + keep (cell_type oxygen) ok
+
+    # timeseries
+    def test_pcdl_get_muspan_timeseries(self):
+        o_result = subprocess.run(['pcdl_get_muspan', s_path_2d], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_muspan_timeseries_customtype(self):
+        o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '--custom_data_type', 'sample:bool'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_muspan_timeseries_microenv(self):
+        o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_muspan_timeseries_graph(self):
+        o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '--graph', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_muspan_timeseries_physiboss(self):
+        o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_muspan_timeseries_settingxmlfalse(self):
+        o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '--settingxml', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_muspan_timeseries_settingxmlnone(self):
+        o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '--settingxml', 'none'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timeseries_zslice(self):
+        o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '1.1'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timeseries_value(self):
+        o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '--value', '2'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timeseries_drop(self):
+        o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '--drop', 'cell_type', 'oxygen'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timeseries_keep(self):
+        o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '--keep', 'cell_type', 'oxygen'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        for i_step in range(25):
+            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
+        assert o_result.returncode == 0
+
+    # timestep
+    def test_pcdl_get_spatialdata_timestep(self):
+        o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/output00000024_z0.muspan')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timestep_customtype(self):
+        o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '--custom_data_type', 'sample:bool'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/output00000024_z0.muspan')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timestep_microenv(self):
+        o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '--microenv', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/output00000024_z0.muspan')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timestep_graph(self):
+        o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '--graph', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/output00000024_z0.muspan')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timestep_physiboss(self):
+        o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '--physiboss', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/output00000024_z0.muspan')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timestep_settingxmlfalse(self):
+        o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '--settingxml', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/output00000024_z0.muspan')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timestep_settingxmlnone(self):
+        o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '--settingxml', 'none'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/output00000024_z0.muspan')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timestep_zslice(self):
+        o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '1.1'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/output00000024_z0.muspan')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timestep_value(self):
+        o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '--value', '2'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/output00000024_z0.muspan')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timestep_drop(self):
+        o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '--drop', 'cell_type', 'oxygen'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/output00000024_z0.muspan')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_spatialdata_timestep_keep(self):
+        o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '--keep', 'cell_type', 'oxygen'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        os.remove(f'{s_path_2d}/output00000024_z0.muspan')
+        assert o_result.returncode == 0
+
+
 class TestCommandLineInterfaceSpatialdata(object):
     ''' tests for one  pcdl command line interface  function. '''
 

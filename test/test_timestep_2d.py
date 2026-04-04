@@ -1098,9 +1098,49 @@ class TestTimeStepAnnData(object):
               (ann.obs.shape[1] == 7) and \
               (ann.obsm['spatial'].shape[0] > 9) and \
               (ann.obsm['spatial'].shape[1] == 2) and \
-              (len(ann.obsp) == 2) and \
+              (len(ann.obsp) == 4) and \
               (ann.var.shape == (105, 0)) and \
-              (len(ann.uns) == 1)
+              (len(ann.uns) == 2)
+
+
+## muspan time step related functions ##
+class TestTimeStepMuspan(object):
+    ''' test for pcdl.TimeStep class. '''
+
+    ## get_muspan command ##
+    def test_mcds_get_muspan_default(self):
+        try:
+            import muspan as ms
+            mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
+            do_domain = mcds.get_muspan(z_slice=None, values=1, drop=set(), keep=set())
+            s_key = sorted(do_domain.keys())[-1]
+            assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+                  (type(do_domain) == dict) and \
+                  (len(do_domain) == 1) and \
+                  (str(type(do_domain[s_key])) == "<class 'muspan.domain.domain'>") and \
+                  (len(do_domain[s_key].collections) == 2) and \
+                  (len(do_domain[s_key].networks) == 3) and \
+                  (len(do_domain[s_key].objects) > 9)
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestTimeStepMuspan : muspan module not installed.')
+            assert True
+
+    def test_mcds_get_muspan_zslice(self):
+        try:
+            import muspan as ms
+            mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
+            do_domain = mcds.get_muspan(z_slice=0.0, values=1, drop=set(), keep=set())
+            s_key = sorted(do_domain.keys())[-1]
+            assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+                  (type(do_domain) == dict) and \
+                  (len(do_domain) == 1) and \
+                  (str(type(do_domain[s_key])) == "<class 'muspan.domain.domain'>") and \
+                  (len(do_domain[s_key].collections) == 2) and \
+                  (len(do_domain[s_key].networks) == 3) and \
+                  (len(do_domain[s_key].objects) > 9)
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestTimeStepMuspan : muspan module not installed.')
+            assert True
 
 
 ## spatialdata time step related functions ##

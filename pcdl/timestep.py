@@ -2728,10 +2728,10 @@ class TimeStep:
         df_cell = self.get_cell_df(values=values, drop=drop, keep=keep)
         i_kmax = df_conc.voxel_k.max()
         i_kdigit = len(str(i_kmax))
-        if (z_slice == None):
-          li_klayer = [self.get_voxel_ijk(x=0,y=0, z=z_slice)]
+        if (z_slice is None):
+            li_klayer = sorted(df_conc.voxel_k.unique())
         else:
-          li_klayer = sorted(df_conc.voxel_k.unique())
+            li_klayer = [self.get_voxel_ijk(x=0,y=0, z=z_slice)[2]]
 
         # for each z layer generate a muspa domain
         do_domain = {}
