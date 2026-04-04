@@ -2714,7 +2714,8 @@ class TimeStep:
 
         description:
             function returns a dictionary of muspa domains, containg a
-            cell and subs collection with disrcete and continuous labels.
+            cell and subs collection with disrcete and continuous labels
+            and all the graph as networks.
             + https://www.muspan.co.uk
             + https://docs.muspan.co.uk/latest/Documentation.html
         """
