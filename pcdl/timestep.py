@@ -22,6 +22,11 @@ import geopandas as gpd
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib import colors
+try:
+    import muspan as ms
+except ModuleNotFoundError:
+    ms = None
+import networkx as nx
 import neuroglancer
 import numpy as np
 import os
@@ -59,7 +64,6 @@ ds_death_model = {
     '102' : 'autophagy_death_model',
     '9999' : 'custom_cycle_model',
 }
-
 ds_cycle_phase = {
     '0' : 'Ki67_positive_premitotic',
     '1' : 'Ki67_positive_postmitotic',
@@ -89,6 +93,23 @@ ds_death_phase = {
     '103' : 'necrotic',
     '104' : 'debris',
 }
+
+pccmap = [
+    'Gray', #colors.to_hex([0.5, 0.5, 0.5]),
+    'Red', #colors.to_hex([1, 0, 0]),
+    'Gold', #colors.to_hex([1, 1, 0]),  # x11 yellow
+    'Green', #colors.to_hex([0, 1, 0]),
+    'Blue', #colors.to_hex([0, 0, 1]),
+    'Magenta', #colors.to_hex([1, 0, 1]),
+    'Orange', #colors.to_hex([1, 0.65, 0]),
+    'Lime', #colors.to_hex([0.2, 0.8, 0.2]),
+    'Cyan', #colors.to_hex([0, 1, 1]),
+    'Purple', #colors.to_hex([1, 0.41, 0.71]),  # x11 hot pink
+    'Maroon', #colors.to_hex([1, 0.85, 0.73]),  # x11 peach puff
+    'Teal', #colors.to_hex([143/255, 188/255, 143/255]),  # x11 dark sea green
+    'Navy', #colors.to_hex([135/255, 206/255, 250/255]),  # x11 light sky blue
+]
+
 
 # const physicell variable names
 es_var_subs = {  # variable size=1 (check for the s at the end of the label)
@@ -301,6 +322,7 @@ def scaler(df_x, scale='maxabs'):
     + https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.minmax_scale.html
     + https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.scale.html
     """
+    # nop
     if scale is None:
         pass
     # -1,1
@@ -371,19 +393,22 @@ def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, 
         and one dictionary of string (d_uns),
         which downstream might be transformed into an anndata object.
     """
+    # make a copy of the input
+    df_cell = df_cell.copy()
+
     # transform index to string
-    df_coor = df_cell.loc[:,['position_x','position_y','position_z']].copy()
+    df_coor = df_cell.loc[:,['position_x','position_y','position_z']]
     df_cell.index = df_cell.index.astype(str)
 
     # build obs anndata object (annotation of observations)
-    df_obs = df_cell.loc[:,['mesh_center_p','time']].copy()
+    df_obs = df_cell.loc[:,['mesh_center_p','time']]
     df_obs.columns = ['z_layer', 'time']
 
     # buil obsm anndata object spatial (multi-dimensional annotation of observations)
     if (len(set(df_cell.position_z)) == 1):
-        df_obsm = df_cell.loc[:,['position_x','position_y']].copy()
+        df_obsm = df_cell.loc[:,['position_x','position_y']]
     else:
-        df_obsm = df_cell.loc[:,['position_x','position_y','position_z']].copy()
+        df_obsm = df_cell.loc[:,['position_x','position_y','position_z']]
     d_obsm = {"spatial": df_obsm.values}
 
     # build obsp and uns anndata object graph (pairwise annotation of obeservation) and (unstructured data)
@@ -444,6 +469,7 @@ def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, 
 
     # extract discrete cell data
     es_drop = set(df_cell.columns).intersection({
+        'ID',
         'voxel_i', 'voxel_j', 'voxel_k',
         'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
         'position_x', 'position_y','position_z',
@@ -463,11 +489,12 @@ def _anndextract(df_cell, scale='maxabs', graph_attached={}, graph_neighbor={}, 
         elif str(se_cell.dtype).startswith('object'):
             des_type['str'].add(se_cell.name)
         else:
-            print(f'Error @ TimeSeries._anndextract : column {se_cell.name} detected with unknown dtype {str(se_cell.dtype)}.')
+            sys.exit(f'Error @ TimeStep._anndextract : column {se_cell.name} detected with unknown dtype {str(se_cell.dtype)}.')
 
     # build on obs and X anndata object
     df_cat = df_cell.loc[:,sorted(des_type['str'])].copy()
     df_obs = pd.merge(df_obs, df_cat, left_index=True, right_index=True)
+    df_obs = df_obs.astype('category')
     es_num = des_type['float'].union(des_type['int'].union(des_type['bool']))
     df_count = df_cell.loc[:,sorted(es_num)].copy()
     for s_col in des_type['bool']:
@@ -602,7 +629,7 @@ class TimeStep:
 
         output:
             s_version : sting
-                MultiCellDS xml version which stored the data.
+                MultiCellDS xml version that stored the data.
 
         description:
             function returns as a string the MultiCellDS xml version
@@ -611,13 +638,29 @@ class TimeStep:
         return self.data['metadata']['multicellds_version']
 
 
+    def get_pcdl_version(self):
+        """
+        input:
+
+        output:
+            s_version : sting
+                physicell data loader version that was used
+                to loaded the data.
+
+        description:
+            function returns as a string the physicell data loader version
+            that was used to load the mcds time step.
+        """
+        return self.data['metadata']['pcdl_version']
+
+
     def get_physicell_version(self):
         """
         input:
 
         output:
             s_version : sting
-                PhysiCell version which generated the data.
+                PhysiCell version that generated the data.
 
         description:
             function returns as a string the PhysiCell version
@@ -1344,9 +1387,11 @@ class TimeStep:
             return s_pathfile
 
 
-    def make_conc_vtk(self):
+    def make_conc_vtk(self, ext='_conc.vtr'):
         """
         input:
+            ext: string; default '_conc.vtr'.
+                file extension.
 
         output:
             s_vtkpathfile: vtk rectilinear grid file that contains
@@ -1360,7 +1405,7 @@ class TimeStep:
             https://www.paraview.org/
         """
         # off we go.
-        s_vtkfile = self.xmlfile.replace('.xml','_conc.vtr')
+        s_vtkfile = self.xmlfile.replace('.xml', ext)
         if self.verbose:
             print(f'processing: {s_vtkfile} ...')
 
@@ -1574,9 +1619,10 @@ class TimeStep:
                 alpha channel transparency value
                 between 1 (not transparent at all) and 0 (totally transparent).
 
-            cmap: dictionary of strings or string; default viridis.
-                dictionary that maps labels to colors strings.
-                matplotlib colormap string.
+            cmap: string or dictionary of strings or list of list of floats; default viridis.
+                matplotlib colormap string. e.g viridis
+                dictionary that maps labels to color or #hex strings. e.g. {'default': 'maroon'}
+                dictionary that maps labels to list of rgb floats. e.g. {'default': [0.5,0.0,0.0]}
                 https://matplotlib.org/stable/tutorials/colors/colormaps.html
 
             title: string; default None
@@ -1590,7 +1636,7 @@ class TimeStep:
                 possible strings are: best,
                 upper right, upper center, upper left, center left,
                 lower left, lower center, lower right, center right,
-                center.
+                center, None, and False.
 
             xlim: tuple of two floats; default is None
                 x axis min and max value.
@@ -1605,8 +1651,7 @@ class TimeStep:
 
             s: floating point number; default is 1.0
                 scatter plot dot size scale factor.
-                with figsizepx extracted from initial.svg, scale factor 1.0
-                should be ok. adjust if necessary.
+                adjust if necessary.
 
             ax: matplotlib axis object; default setting is None
                 the ax object, which will be used as a canvas for plotting.
@@ -1684,34 +1729,37 @@ class TimeStep:
         df_cell = df_cell.loc[(df_cell.mesh_center_p == z_slice),:]
 
         # calculate marker size
-        df_cell.loc[:,'s'] = ((6 * df_cell.total_volume) / np.pi)**(2/3)  # diamter of a sphere and plt.rcParams['lines.markersize']**2.
+        # default s is in matplotlib plt.rcParams['lines.markersize']**2.
+        df_cell.loc[:,'s'] = ((6 * df_cell.total_volume) / np.pi)**(2/3) * s # diamter of a sphere times s
 
         # handle z_axis categorical cases
         if (str(df_cell.loc[:,focus].dtype) in {'bool', 'object'}):
-            lr_extrema = [None, None]
+            vmin = None
+            vmax = None
             if (z_axis is None):
                 # extract set of labels from data
                 es_category = set(df_cell.loc[:,focus])
                 if (str(df_cell.loc[:,focus].dtype) in {'bool'}):
                     es_category = es_category.union({True, False})
+                ls_category = sorted(es_category)
             else:
-                es_category = z_axis
+                ls_category = z_axis
 
         # handle z_axis numerical cases
         else:  # df_cell.loc[:,focus].dtype is numeric
-            es_category = None
+            ls_category = None
             if (z_axis is None):
                 # extract min and max values from data
-                r_zmin = df_cell.loc[:,focus].min()
-                r_zmax = df_cell.loc[:,focus].max()
-                lr_extrema = [r_zmin, r_zmax]
+                vmin = df_cell.loc[:,focus].min()
+                vmax = df_cell.loc[:,focus].max()
             else:
-                lr_extrema = z_axis
+                vmin = z_axis[0]
+                vmax = z_axis[1]
 
         # handle z_axis summary
         if self.verbose:
-            print(f'categories found: {es_category}.')
-            print(f'min max extrema set to: {lr_extrema}.')
+            print(f'categories found: {ls_category}.')
+            print(f'min max z-axis set to: {vmin} [vmax].')
 
         # handle xlim and ylim
         if (xlim is None):
@@ -1737,12 +1785,15 @@ class TimeStep:
             ax.axis('equal')
 
         # handle categorical variable
-        if not (es_category is None):
+        if not (ls_category is None):
             s_focus_color = focus + '_color'
             # use specified category color dictionary
-            if type(cmap) is dict:
+            if type(cmap) == dict:
+                if type(list(cmap.values())[0]) == list:
+                    for s_category, lr_color in cmap.items():
+                        cmap[s_category] = colors.to_hex(lr_color)
                 ds_color = cmap
-                df_cell[s_focus_color] = 'gray'
+                df_cell[s_focus_color] = 'silver'
                 for s_category, s_color in ds_color.items():
                     df_cell.loc[(df_cell.loc[:,focus] == s_category), s_focus_color] = s_color
             # generate category color dictionary
@@ -1750,17 +1801,17 @@ class TimeStep:
                 ds_color = pdplt.df_label_to_color(
                     df_abc = df_cell,
                     s_focus = focus,
-                    es_label = es_category,
-                    s_nolabel = 'gray',
+                    ls_label = ls_category,
+                    s_nolabel = 'silver',
                     s_cmap = cmap,
                     b_shuffle = False,
                 )
             # filter categories
             es_cat = set()
             if (len(cat_keep) > 0):
-                es_cat = es_category.intersection(cat_keep)
+                es_cat = set(ls_category).intersection(cat_keep)
             else:
-                es_cat = es_category.difference(cat_drop)
+                es_cat = set(ls_category).difference(cat_drop)
             df_cell= df_cell.loc[df_cell.loc[:,focus].isin(es_cat),:]
             # generate color list
             c = list(df_cell.loc[:, s_focus_color].values)
@@ -1777,8 +1828,8 @@ class TimeStep:
             x = 'position_x',
             y = 'position_y',
             c = c,
-            vmin = lr_extrema[0],
-            vmax = lr_extrema[1],
+            vmin = vmin,
+            vmax = vmax,
             alpha = alpha,
             cmap = s_cmap,
             title = title,
@@ -1791,13 +1842,14 @@ class TimeStep:
         )
 
         # plot categorical data legen
-        if not (es_category is None):
-            pdplt.ax_colorlegend(
-                ax = ax,
-                ds_color = ds_color,
-                s_loc = legend_loc,
-                s_fontsize = 'small',
-            )
+        if not (ls_category is None) and not (legend_loc in {None, False}):
+                pdplt.ax_colorlegend(
+                    ax = ax,
+                    ds_color = ds_color,
+                    ls_label = ls_category,
+                    s_loc = legend_loc,
+                    s_fontsize = 'small',
+                )
 
         # finalize
         if (ext is None):
@@ -1824,11 +1876,14 @@ class TimeStep:
         return fig
 
 
-    def make_cell_vtk(self, attribute=['cell_type']):
+    def make_cell_vtk(self, attribute=['cell_type'], ext='_cell.vtp'):
         """
         input:
             attribute: list of strings; default is ['cell_type']
                 column name within cell dataframe.
+
+            ext: string; default '_cell.vtp'.
+                file extension.
 
         output:
             s_vtkpathfile: vtk 3D glyph polynomial data file that contains cells.
@@ -1842,7 +1897,7 @@ class TimeStep:
             https://www.paraview.org/
         """
         # off we go.
-        s_vtkfile = self.xmlfile.replace('.xml','_cell.vtp')
+        s_vtkfile = self.xmlfile.replace('.xml', ext)
         if self.verbose:
             print(f'processing: {s_vtkfile} ...')
 
@@ -2025,7 +2080,6 @@ class TimeStep:
                 df_conc.loc[(df_conc.loc[:, s_channel] <= conc_cutoff[s_channel]), s_channel] = 0
             except KeyError:
                 pass
-
 
         # get cell data
         df_cell = self.get_cell_df().reset_index()
@@ -2359,6 +2413,7 @@ class TimeStep:
             scale = scale,
             graph_attached = self.get_attached_graph_dict(),
             graph_neighbor = self.get_neighbor_graph_dict(),
+            graph_spring = self.get_spring_graph_dict(),
             graph_method = self.get_physicell_version(),
         )
         annmcds = ad.AnnData(
@@ -2627,6 +2682,183 @@ class TimeStep:
         return sdata
 
 
+    ## MUSPAN RELATED FUNCTIONS ##
+
+    def get_muspan(self, z_slice=None, values=1, drop=set(), keep=set()):
+        """
+        input:
+            z_slice: floating point number; default is None
+                z-axis position to slice a 2D xy-plain out of the
+                3D mesh. if None the whole 3D mesh will be returned.
+
+            values: integer; default is 1
+                minimal number of values a variable has to have to be outputted.
+                variables that have only 1 state carry no information.
+                None is a state too.
+
+            drop: set of strings; default is an empty set
+                set of column labels to be dropped for the dataframe.
+                don't worry: essential columns like ID, coordinates
+                and time will never be dropped.
+                Attention: when the keep parameter is given, then
+                the drop parameter has to be an empty set!
+
+            keep: set of strings; default is an empty set
+                set of column labels to be kept in the dataframe.
+                set values=1 to be sure that all variables are kept.
+                don't worry: essential columns like ID, coordinates
+                and time will always be kept.
+
+        output:
+            do_domain:  dictionary of muspa domains, one for each z-layer.
+
+        description:
+            function returns a dictionary of muspa domains, containg a
+            cell and subs collection with disrcete and continuous labels
+            and all the graph as networks.
+            + https://www.muspan.co.uk
+            + https://docs.muspan.co.uk/latest/Documentation.html
+        """
+        # check if muspan library is installed
+        if ms is None:
+            sys.exit(f'Error @ TimeStep.get_muspa : the muspan Multi Spatial Analysis python3 library is not installed!\nfor instructions check out : https://www.muspan.co.uk/')
+
+        # get conc and cell dataframe
+        df_conc = self.get_conc_df(values=values, drop=drop, keep=keep)
+        df_cell = self.get_cell_df(values=values, drop=drop, keep=keep)
+        i_kmax = df_conc.voxel_k.max()
+        i_kdigit = len(str(i_kmax))
+        if (z_slice is None):
+            li_klayer = sorted(df_conc.voxel_k.unique())
+        else:
+            li_klayer = [self.get_voxel_ijk(x=0,y=0, z=z_slice)[2]]
+
+        # for each z layer generate a muspa domain
+        do_domain = {}
+        for i_klayer in li_klayer:
+
+            # processing
+            if self.verbose:
+                print(f'processing: {self.xmlfile} mcds {i_klayer + 1}/{i_kmax + 1} z-stack layer to muspan obj.')
+
+            ## generate muspan domain
+            s_domain = f"{self.xmlfile.replace('.xml','')}_z{str(i_klayer).zfill(i_kdigit)}"
+            o_domain = ms.domain(
+                name = s_domain,
+                unit_of_length = 'um',
+            )
+
+            ## handle subs collection
+            df_zconc = df_conc.loc[df_conc.voxel_k == i_klayer,:]
+            o_domain.add_points(
+                points = df_zconc.loc[:,['mesh_center_m','mesh_center_n']].values,
+                collection_name = 'subs'
+            )
+            # drop this data
+            es_drop = set(df_zconc.columns).intersection({
+                'voxel_i', 'voxel_j', 'voxel_k',
+                'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
+                'time', 'runtime', 'xmlfile',
+            })
+            df_zconc = df_zconc.drop(es_drop, axis=1)
+            # add numerical data (no scaling)
+            for s_num in sorted(df_zconc.columns):
+                o_domain.add_labels(
+                    label_name = s_num,
+                    labels = df_zconc.loc[:,s_num],
+                    add_labels_to = 'subs',
+                    label_type = 'continuous',
+                )
+
+            ## handle cell collection
+            df_zcell = df_cell.loc[df_cell.voxel_k == i_klayer,:]
+            o_domain.add_points(
+                points = df_zcell.loc[:,['position_x','position_y']].values,
+                collection_name = 'cell'
+            )
+            # get a physicell cell_id to muspan object id mapping
+            df_coor = df_zcell.loc[:,['position_x', 'position_y','position_z']]
+            df_coor['muspan_id'] = o_domain.collections['cell']['objects']
+            di_cellid = df_coor['muspan_id'].to_dict()
+            # drop this data
+            es_drop = set(df_zcell.columns).intersection({
+                'voxel_i', 'voxel_j', 'voxel_k',
+                'mesh_center_m', 'mesh_center_n', 'mesh_center_p',
+                'position_x', 'position_y','position_z',
+                'time', 'runtime', 'xmlfile',
+            })
+            df_zcell = df_zcell.drop(es_drop, axis=1)
+            # dectect variable types
+            des_type = {'float': set(), 'int': set(), 'bool': set(), 'str': set()}
+            for _, se_zcell in df_zcell.items():
+                if str(se_zcell.dtype).startswith('float'):
+                    des_type['float'].add(se_zcell.name)
+                elif str(se_zcell.dtype).startswith('int'):
+                    des_type['int'].add(se_zcell.name)
+                elif str(se_zcell.dtype).startswith('bool'):
+                    des_type['bool'].add(se_zcell.name)
+                elif str(se_zcell.dtype).startswith('object'):
+                    des_type['str'].add(se_zcell.name)
+                else:
+                    sys.exit(f'Error @ TimeStep.get_muspa : column {se_zcell.name} detected with unknown dtype {str(se_zcell.dtype)}.')
+            # add categorical data
+            for s_cat in sorted(des_type['str'].union(des_type['bool'])):
+                o_domain.add_labels(
+                    label_name = s_cat,
+                    labels = df_zcell.loc[:,s_cat],
+                    add_labels_to = 'cell',
+                    label_type = 'categorical',
+                )
+            # add numerical data (no scaling)
+            for s_num in sorted(des_type['float'].union(des_type['int'])):
+                o_domain.add_labels(
+                    label_name = s_num,
+                    labels = df_zcell.loc[:,s_num],
+                    add_labels_to = 'cell',
+                    label_type = 'continuous',
+                )
+            ## add graphs
+            ei_pccellid = set(df_zcell.index)
+            for s_graph, dei_graph in [
+                    ('neighbor', self.get_neighbor_graph_dict()),
+                    ('attached', self.get_attached_graph_dict()),
+                    ('spring', self.get_spring_graph_dict()),
+                ]:
+                # transform graph dict into weighted edge list
+                lt_wedge = []
+                for i_src, ei_dst in sorted(dei_graph.items()):
+                    for i_dst in ei_dst:
+                        if (i_src in ei_pccellid) and (i_dst in ei_pccellid):
+                            r_distance = ((df_coor.loc[i_src, ['position_x','position_y','position_z']].values -  df_coor.loc[i_dst, ['position_x','position_y','position_z']].values)**2).sum()**(1/2)
+                            lt_wedge.append((di_cellid[i_src], di_cellid[i_dst], r_distance))
+                # generate graph
+                G = nx.Graph()
+                # dump the edges into the network
+                G.add_weighted_edges_from(lt_wedge, weight='Distance')
+                G.add_weighted_edges_from(lt_wedge, weight='Inverse Distance')
+                # add the network to the dictionary of networks
+                o_domain.networks[s_graph] = G
+            # clean up the domain
+            ms.helpers.clean_up(o_domain)
+
+            ## set domain boundary (have to be done last!)
+            o_domain.estimate_boundary(
+                method='specify',
+                specify_boundary_coords=(
+                    (self.get_xyz_range()[0][0], self.get_xyz_range()[1][0]),
+                    (self.get_xyz_range()[0][0], self.get_xyz_range()[1][1]),
+                    (self.get_xyz_range()[0][1], self.get_xyz_range()[1][1]),
+                    (self.get_xyz_range()[0][1], self.get_xyz_range()[1][0])
+                )
+            )
+
+            # update output
+            do_domain.update({s_domain : o_domain})
+
+        # output
+        return do_domain
+
+
     ## LOAD DATA  ##
 
     def _read_xml(self, xmlfile, output_path='.'):
@@ -2732,6 +2964,9 @@ class TimeStep:
 
         ## get multicellds xml version
         d_mcds['metadata']['multicellds_version'] = f"MultiCellDS_{x_root.get('version')}"
+
+        ## get pcdl version
+        d_mcds['metadata']['pcdl_version'] = f"pcdl_{__version__}"
 
         ## get physicell software version
         x_software = x_metadata.find('software')

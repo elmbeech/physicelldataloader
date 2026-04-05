@@ -6,6 +6,9 @@
             attribute: list of strings; default is ['cell_type']
                 column name within cell dataframe.
 
+            ext: string; default '_cell.vtp'.
+                file extension.
+
 ```
 
 ## output:

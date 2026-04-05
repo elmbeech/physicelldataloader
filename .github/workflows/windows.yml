@@ -25,16 +25,16 @@ jobs:
       PYTHONPATH: D:\a\physicelldataloader\physicelldataloader
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@main
     - name: set up python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@main
       with:
         python-version: ${{ matrix.python-version }}
     - name: install dependencies
       run: |
         choco install ffmpeg imagemagick
         python -m pip install --upgrade pip
-        python -m pip install flake8 pytest anndata bioio bioio-ome-tiff matplotlib neuroglancer numpy pandas requests scikit-image scipy vtk
+        python -m pip install flake8 pytest anndata bioio bioio-ome-tiff matplotlib networkx neuroglancer numpy pandas requests scikit-image scipy vtk "ome-zarr<0.14.0"
         python -m pip install D:\a\physicelldataloader\physicelldataloader -v
         #echo 'set PYTHONPATH=D:\a\physicelldataloader\physicelldataloader' >> $GITHUB_ENV
         #if [ -f requirements.txt ]; then pip install -r requirements.txt; fi

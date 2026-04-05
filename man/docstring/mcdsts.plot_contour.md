@@ -15,8 +15,15 @@
                 will be adjusted to the nearest mesh center value,
                 the smaller one, if the coordinate lies on a saddle point.
 
-            extrema: tuple of two floats; default is None
-                default takes min and max from data, from the whole time series.
+            vmin: floating point number; default is None
+                color scale min value.
+                None will take the min value from the whole time series
+                found in the data.
+
+            vmax: floating point number; default is None
+                color scale max value.
+                None will take the min value from the whole time series
+                found in the data.
 
             alpha: floating point number; default is 1
                 alpha channel transparency value

@@ -1,7 +1,7 @@
 ```
 usage: pcdl_make_cell_vtk [-h] [--custom_data_type [CUSTOM_DATA_TYPE ...]]
                           [--microenv MICROENV] [--physiboss PHYSIBOSS]
-                          [--settingxml SETTINGXML] [-v VERBOSE]
+                          [--settingxml SETTINGXML] [-v VERBOSE] [--ext EXT]
                           [path] [attribute ...]
 
 function that generates 3D glyph vtk file for cells. cells can have specified
@@ -39,6 +39,10 @@ options:
   -v VERBOSE, --verbose VERBOSE
                         setting verbose to False for less text output, while
                         processing. default is True.
+  --ext EXT             set file extension for the vtk polydata file. for
+                        example, the blender BVTKNodes plugin needs a
+                        simplified .vtp file extension to be able to load
+                        timeseries directly.
 
 homepage: https://github.com/elmbeech/physicelldataloader
 ```

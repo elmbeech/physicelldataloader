@@ -146,6 +146,10 @@ docstring_md(
     ls_doc = pcdl.TimeStep.get_multicellds_version.__doc__.split('\n'),
 )
 docstring_md(
+    s_function = 'mcds.get_pcdl_version',
+    ls_doc = pcdl.TimeStep.get_pcdl_version.__doc__.split('\n'),
+)
+docstring_md(
     s_function = 'mcds.get_physicell_version',
     ls_doc = pcdl.TimeStep.get_physicell_version.__doc__.split('\n'),
 )
@@ -304,6 +308,10 @@ docstring_md(
 
 # write TimeStep microenvironment and cells function markdown files
 docstring_md(
+    s_function = 'mcds.get_muspan',
+    ls_doc = pcdl.TimeStep.get_muspan.__doc__.split('\n'),
+)
+docstring_md(
     s_function = 'mcds.get_spatialdata',
     ls_doc = pcdl.TimeStep.get_spatialdata.__doc__.split('\n'),
 )
@@ -413,6 +421,10 @@ docstring_md(
 )
 
 # write TimeSeries microenvironment and cells function makdown files
+docstring_md(
+    s_function = 'mcdsts.get_muspan',
+    ls_doc = pcdl.TimeSeries.get_muspan.__doc__.split('\n'),
+)
 docstring_md(
     s_function = 'mcdsts.get_spatialdata',
     ls_doc = pcdl.TimeSeries.get_spatialdata.__doc__.split('\n'),

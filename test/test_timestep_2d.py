@@ -275,6 +275,12 @@ class TestTimeStepMetadata(object):
               (str(type(s_mcdsversion)) == "<class 'str'>") and \
               (s_mcdsversion == 'MultiCellDS_2')
 
+    def test_mcds_get_pcdl_version(self, mcds=mcds):
+        s_pcdlversion = mcds.get_pcdl_version()
+        assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+              (str(type(s_pcdlversion)) == "<class 'str'>") and \
+              (s_pcdlversion == f'pcdl_{pcdl.__version__}')
+
     def test_mcds_get_physicell_version(self, mcds=mcds):
         s_pcversion = mcds.get_physicell_version()
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
@@ -574,9 +580,9 @@ class TestTimeStepMicroenv(object):
         os.remove(s_pathfile)
 
     def test_mcds_make_conc_vtk(self, mcds=mcds):
-        s_pathfile = mcds.make_conc_vtk()
+        s_pathfile = mcds.make_conc_vtk(ext='.vtr')  # test set ext parameter.
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (s_pathfile.replace('\\','/').endswith('/pcdl/output_2d/output00000024_conc.vtr')) and \
+              (s_pathfile.replace('\\','/').endswith('/pcdl/output_2d/output00000024.vtr')) and \
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
@@ -652,7 +658,7 @@ class TestTimeStepCell(object):
             xlim = None,  # test if
             ylim = None,  # test if
             xyequal = True,  # test if
-            #s = None,  # matplotlib
+            s = 1.1,  # test calculation
             ax = None,  # generate matplotlib figure
             figsizepx = None,  # test if case ax none
             ext = None,  # test fig case
@@ -677,7 +683,7 @@ class TestTimeStepCell(object):
             xlim = [-31, 301],  # jump over if
             ylim = [-21, 201],  # jump over if
             xyequal = False,  # jump over if
-            #s = None,  # matplotlib
+            #s = 1.0,  # test calculation
             ax = None,  # use axis from existing matplotlib figure
             figsizepx = [701, 501],  # jump over if case ax none
             ext = 'tiff',  # test file case
@@ -698,14 +704,14 @@ class TestTimeStepCell(object):
             z_slice = 0,  # jump over if
             z_axis = {'default'},  # test else case categorical
             #alpha = 1,  # matplotlib
-            cmap = 'viridis',  # test else case es_categorical
+            cmap = {'default': [0.5, 0.0, 0.0]},  # maroon test else case es_categorical
             title ='test_mcds_plot_scatter_else2',  # matplotlib
             #grid = True,  # matplotlib
             #legend_loc = 'lower left',  # matplotlib
             xlim = None,  # test if
             ylim = None,  # test if
             xyequal = True,  # test if
-            #s = None,  # matplotlib
+            #s = 1.0,  # test calculation
             ax = ax,  # use axis from existing matplotlib figure
             #figsizepx = None,  # test case ax ax
             #ext = None,  # test fig case
@@ -731,7 +737,7 @@ class TestTimeStepCell(object):
             xlim = None,  # test if
             ylim = None,  # test if
             #xyequal = True,  # test if
-            #s = None,  # matplotlib
+            #s = 1.0,  # matplotlib
             #ax = None,  # generate matplotlib figure
             #figsizepx = None,  # test if
             #ext = None,  # test fig case
@@ -769,6 +775,7 @@ class TestTimeStepCell(object):
     def test_mcds_make_cell_vtk_attribute_default(self, mcds=mcds):
         s_pathfile = mcds.make_cell_vtk(
             #attribute=['cell_type'],
+            #ext='_cell.vtp',
         )
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (s_pathfile.replace('\\','/').endswith('/pcdl/output_2d/output00000024_cell.vtp')) and \
@@ -777,9 +784,12 @@ class TestTimeStepCell(object):
         os.remove(s_pathfile)
 
     def test_mcds_make_cell_vtk_attribute_zero(self, mcds=mcds):
-        s_pathfile = mcds.make_cell_vtk(attribute=[])
+        s_pathfile = mcds.make_cell_vtk(
+            attribute=[],
+            ext='.vtp',  # test set ext parameter
+        )
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
-              (s_pathfile.replace('\\','/').endswith('/pcdl/output_2d/output00000024_cell.vtp')) and \
+              (s_pathfile.replace('\\','/').endswith('/pcdl/output_2d/output00000024.vtp')) and \
               (os.path.exists(s_pathfile)) and \
               (os.path.getsize(s_pathfile) > 2**10)
         os.remove(s_pathfile)
@@ -787,6 +797,7 @@ class TestTimeStepCell(object):
     def test_mcds_make_cell_vtk_attribute_many(self, mcds=mcds):
         s_pathfile = mcds.make_cell_vtk(
             attribute=['dead', 'cell_count_voxel', 'pressure', 'cell_type'],
+            #ext='_cell.vtp',  # test default ext parameter
         )
         assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
               (s_pathfile.replace('\\','/').endswith('/pcdl/output_2d/output00000024_cell.vtp')) and \
@@ -1087,9 +1098,49 @@ class TestTimeStepAnnData(object):
               (ann.obs.shape[1] == 7) and \
               (ann.obsm['spatial'].shape[0] > 9) and \
               (ann.obsm['spatial'].shape[1] == 2) and \
-              (len(ann.obsp) == 2) and \
+              (len(ann.obsp) == 4) and \
               (ann.var.shape == (105, 0)) and \
-              (len(ann.uns) == 1)
+              (len(ann.uns) == 2)
+
+
+## muspan time step related functions ##
+class TestTimeStepMuspan(object):
+    ''' test for pcdl.TimeStep class. '''
+
+    ## get_muspan command ##
+    def test_mcds_get_muspan_default(self):
+        try:
+            import muspan as ms
+            mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
+            do_domain = mcds.get_muspan(z_slice=None, values=1, drop=set(), keep=set())
+            s_key = sorted(do_domain.keys())[-1]
+            assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+                  (type(do_domain) == dict) and \
+                  (len(do_domain) == 1) and \
+                  (str(type(do_domain[s_key])) == "<class 'muspan.domain.domain'>") and \
+                  (len(do_domain[s_key].collections) == 2) and \
+                  (len(do_domain[s_key].networks) == 3) and \
+                  (len(do_domain[s_key].objects) > 9)
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestTimeStepMuspan : muspan module not installed.')
+            assert True
+
+    def test_mcds_get_muspan_zslice(self):
+        try:
+            import muspan as ms
+            mcds = pcdl.TimeStep(s_pathfile_2d, verbose=False)
+            do_domain = mcds.get_muspan(z_slice=0.0, values=1, drop=set(), keep=set())
+            s_key = sorted(do_domain.keys())[-1]
+            assert(str(type(mcds)) == "<class 'pcdl.timestep.TimeStep'>") and \
+                  (type(do_domain) == dict) and \
+                  (len(do_domain) == 1) and \
+                  (str(type(do_domain[s_key])) == "<class 'muspan.domain.domain'>") and \
+                  (len(do_domain[s_key].collections) == 2) and \
+                  (len(do_domain[s_key].networks) == 3) and \
+                  (len(do_domain[s_key].objects) > 9)
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestTimeStepMuspan : muspan module not installed.')
+            assert True
 
 
 ## spatialdata time step related functions ##

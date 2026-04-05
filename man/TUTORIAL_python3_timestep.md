@@ -2,7 +2,7 @@
 
 In this chapter, we will load the pcdl library and use its TimeStep class to load the data snapshot output/00000012, from the 2D time series test dataset (https://github.com/elmbeech/physicelldataloader/blob/master/output_2d.tar.gz).
 
-First, please install the latest version of physicelldataloader (pcdl),
+First, please install the latest version of physicell data loader (pcdl),
 as described in the [HowTo](https://github.com/elmbeech/physicelldataloader/blob/master/man/HOWTO.md) chapter.
 
 And, if not already done so, have a quick read through the pcdl [background](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_introduction.md) information.
@@ -114,6 +114,9 @@ Fetch the data's MultiCellDS version, and the PhysiCell version the data was gen
 
 ```python
 mcds.get_multicellds_version()  # will return a string like MultiCellDS_2 or MultiCellDS_0.5
+```
+```python
+mcds.get_pcdl_version()  # will return a string like pcdl_4.1.3
 ```
 ```python
 mcds.get_physicell_version()  # will return a string like PhysiCell_1.10.4 or BioFVM_1.1.7

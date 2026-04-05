@@ -2,7 +2,7 @@
 
 ## Abstract:
 
-physicelldataloader (pcdl) provides a platform-independent (Windows, MacOSX, Linux), python3 based, [pip](https://en.wikipedia.org/wiki/Pip_(package_manager))-installable set of commands
+physicell data loader (pcdl) provides a platform-independent (Windows, MacOSX, Linux), python3 based, [pip](https://en.wikipedia.org/wiki/Pip_(package_manager))-installable set of commands
 to load output, generated with the [PhysiCell](https://github.com/MathCancer/PhysiCell) agent-based modeling and diffusion solver framework,
 into [python3](https://en.wikipedia.org/wiki/Python_(programming_language)) or transform PhysiCell output into more widely used data formats.
 pcdl can be loaded as a python3 module or run straight from the command line.
@@ -23,7 +23,7 @@ The pcdl python3 library maintains four branches:
 ## Header:
 
 + Language: python [>= 3.11](https://devguide.python.org/versions/)
-+ Library dependencies: anndata, bioio, geopandas, matplotlib, neuroglancer, numpy, pandas, (requests), scikit-image, scipy, shapely, spatialdata, vtk
++ Library dependencies: anndata, bioio, geopandas, matplotlib, networkx, neuroglancer, numpy, pandas, (requests), scikit-image, scipy, shapely, spatialdata, vtk
 + Date of origin original PhysiCell-Tools python-loader: 2019-09-02
 + Date of origin pcdl fork: 2022-08-30
 + Doi: https://doi.org/10.5281/ZENODO.8176399
@@ -49,7 +49,8 @@ Basics Tutorials:
 Extras tutorials python3 language:
 + [pcdl and python3 and json](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_json.md)
 + [pcdl and python3 and pandas](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_pandas.md)
-+ [pcdl and python3 and scipy and scanpy](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_scverse.md)
++ [pcdl and python3 and scanpy and squidpy](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_scverse.md)
++ [pcdl and python3 and muspan](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_muspan.md)
 + [pcdl and python3 and graphs](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_graph.md)
 + [pcdl and python3 and matplotlib](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_matplotlib.md)
 + [pcdl and python3 and vtk](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_vtk.md)
@@ -129,6 +130,18 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 
 
 ## Release Notes:
++ version 4.1.5 (2026-04-05)
+    + bugfix library dependencies and library versions.
+
++ version 4.1.4 (2026-04-04)
+    + pyMCDSts **mcdsts.make_contour** extrema parameter is replaced by vmin and vmax to be compatible with mcds.make\_contour and plt.contour.
+    + **make_cell_vtk** and **make_conc_vtk** now offer an ext parameter, allowing to manually specify the exact file extension. special thanks to Danyon Gedris!
+    + new **make_muspan** TimeStep class and TimeSeris class function and **pcdl_get_muspan** command line command. special thanks to Joshua Moore and Joshua Bull!
+
++ version 4.1.3 (2026-03-21):
+    + new **pcdl.pccmap** color map. this is an adaptation of the physicell pathology paint by number color map.
+    + new TimeStep **get_pcdl_version** function.
+
 + version 4.1.2 (2026-03-06): elmbeech/physicelldataloader
     + new  **custom_data_astype** TimeStep class and TimeSeries class function to set the dtype of custom\_data variables even after the timestep or timeseries is loaded.
     + TimeSeries \_\_init\_\_ function can now handle a list of TimeStep objects as input instead of a path.
@@ -137,13 +150,14 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
     + reduced memory footprint.
 
 + version 4.1.0 (2025-12-31): elmbeech/physicelldataloader
-    + new **get_spatialdata** TimeStep class and TimeSeris class function and **pcdl_get_spatialdata** command line command.
+    + new **get_spatialdata** TimeStep class and TimeSeris class function and **pcdl_get_spatialdata** command line command. special thanks to Luca Marconato!
+    + with this release, pcdl officially became an [scverse ecosystem](https://scverse.org/packages/#ecosystem) package.
 
 + version 4.0.5 (2025-10-22): elmbeech/physicelldataloader
     + **settingxml** default is now set to False, because the cell\_type id label mapping can, in recent PhysiCell output, be retrieved from output\*.xml too.
     + **plot_scatter** and **plot_timeseries** now additionally have a cat\_drop and cat\_keep argument to filter categorical data.
     + **plot_timeseries(frame=conc)** now plots by default all substrate concentrations over time.
-    + **plot_timeseries(ext=)** parameter offers to return a dataframe object, dafaframe csv file, image file, or a matplotlib fig object. special thanks to John Nardini and Edward Young.
+    + **plot_timeseries(ext=)** parameter offers to return a dataframe object, dafaframe csv file, image file, or a matplotlib fig object. special thanks to John Nardini and Edward Young!
 
 + version 4.0.4 (2025-07-23): elmbeech/physicelldataloader
     + command line commands now return **error code 0** if the command runs successfully.

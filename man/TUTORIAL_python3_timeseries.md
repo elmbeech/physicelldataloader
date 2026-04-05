@@ -1,6 +1,6 @@
 # PhysiCell Data Loader Tutorial: pcdl and Python and MCDS TimeSeries
 
-If not already done so, please install the latest version of physicelldataloader (pcdl), as described in the [HowTo](https://github.com/elmbeech/physicelldataloader/blob/master/man/HOWTO.md) section.
+If not already done so, please install the latest version of physicell data loader (pcdl), as described in the [HowTo](https://github.com/elmbeech/physicelldataloader/blob/master/man/HOWTO.md) section.
 And maybe read about the pcdl [background](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_introduction.md) information.
 And perhaps, work thorough the [TUTORIAL_python3_timestep.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_timestep.md)
 

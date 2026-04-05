@@ -9,7 +9,7 @@
 ## output:
 ```
             s_version : sting
-                MultiCellDS xml version which stored the data.
+                MultiCellDS xml version that stored the data.
 
 ```
 

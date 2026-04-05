@@ -10,13 +10,16 @@ And there exists a bioxel nodes plugin, that lets us load ome tiff files.
 
 The blender bvtk nodes plugin allows us to load vtk files into blender.
 
+Note, to be able to load whole time series, the blender bvtk nodes plugin needs a simplified output00000000.vtp file name and extension (which is different from the pcdl default output00000000\_cell.vtp).
+This is why the ext parameter explicitly has to be set.
+
 ### Generate vtk files from the command line
 
 ```bash
 pcdl_make_conc_vtk output
 ```
 ```bash
-pcdl_make_cell_vtk output
+pcdl_make_cell_vtk output --ext .vtp  # blender bvtk nodes compatible filename and extension.
 ```
 
 ### Generate vtk files from within python
@@ -26,7 +29,7 @@ import pcdl
 
 mcdsts = pcdl.TimeSeries('output/')
 mcdsts.make_conc_vtk()
-mcdsts.make_cell_vtk()
+mcdsts.make_cell_vtk(ext='.vtp')  # blender bvtk nodes compatible filename and extension.
 ```
 
 ### Blender vtk nodes plugin installation

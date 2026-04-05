@@ -249,7 +249,7 @@ Further readings:
 
 From the whole time series or from a single time step, generate h5ad [anndata](https://anndata.readthedocs.io/en/latest/) [hd5](https://en.wikipedia.org/wiki/Hierarchical_Data_Format) files.
 
-Anndata is the standard data format in the python single cell community.
+Anndata is the standard data format in the python3 single cell community.
 Data stored in this format can be analyzed the same way as usually sc RNA seq data is analyzed.
 
 ```bash
@@ -337,12 +337,33 @@ Further readings:
 
 ## Microenvironment and cell agent related commands
 
+### &#x2728; pcdl\_get\_muspan
+
+From time series and single time steps, generate [muspan](https://www.muspan.co.uk/) domain files.
+One file per time step and z-layer.
+
+Muspan is a sphisticated python3 libaray for multiscale spatial data analysis, develop by researchers at the University of Oxford.
+
+```bash
+pcdl_get_muspan output/output00000000.xml
+```
+```bash
+pcdl_get_muspan output
+```
+```bash
+pcdl_get_muspand -h
+```
+
+Further readings:
++ [TUTORIAL_python3_muspan.md](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_muspan.md)
+
+
 ### &#x2728; pcdl\_get\_spatialdata
 
 From a single time step, generate [spatialdata](https://spatialdata.scverse.org/en/stable/) [zarr](https://zarr.dev/) files.
 The spatialdata format should, in the long run, become comaptibel with the [OME-NGFF](https://ngff.openmicroscopy.org/latest/index.html) data format.
 
-Spatialdata is the standard data format in the python spatial single cell community.
+Spatialdata is the standard data format in the python3 spatial single cell community.
 Data stored in this format can be analyzed the same way as spatial sc RNA seq data is analyzed.
 
 ```bash

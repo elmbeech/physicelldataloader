@@ -14,7 +14,7 @@
 # 1. git add pcdl/VERSION.py
 # 2. python3 man/scarab.py
 # 3. git status
-# 4. git commit -m'@ physicelldataloader : next release.'
+# 4. git commit -m'@ physicell data loader : next release.'
 # 5. git tag -a v0.0.0 -m'version 0.0.0'
 # 6. rm -r dist
 # 7. python3 -c "import pcdl; pcdl.uninstall_data()"
@@ -75,6 +75,7 @@ dependencies = [
     "bioio-ome-tiff",
     "geopandas>=0.14",  # spatialdata
     "matplotlib",
+    "networkx",
     "neuroglancer",
     "numpy",
     "pandas>=2.2.2",
@@ -84,6 +85,7 @@ dependencies = [
     "shapely>=2.0.1",  # spatialdata
     "spatialdata>=0.7.2",
     "vtk",
+    "ome-zarr<0.14.0", # bue 20260405: bugfix for spatialdata 0.7.2
 ]
 
 
@@ -108,6 +110,7 @@ pcdl_make_graph_gml = "pcdl.commandline:make_graph_gml"
 pcdl_plot_scatter = "pcdl.commandline:plot_scatter"
 pcdl_make_cell_vtk = "pcdl.commandline:make_cell_vtk"
 # substrate and cell agent
+pcdl_get_muspan = "pcdl.commandline:get_muspan"
 pcdl_get_spatialdata = "pcdl.commandline:get_spatialdata"
 pcdl_plot_timeseries = "pcdl.commandline:plot_timeseries"
 pcdl_make_ome_tiff = "pcdl.commandline:make_ome_tiff"

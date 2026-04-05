@@ -111,9 +111,10 @@ class TestTimeSeries3dInit(object):
               (mcdsts.l_mcds == l_mcds)
 
     def test_mcdsts_form_list_of_mcds(self):
-        mcdsts = pcdl.TimeSeries([])
+        mcdsts = pcdl.TimeSeries(s_path_3d, load=True, verbose=True)
+        mcdsts = pcdl.TimeSeries(mcdsts.l_mcds)
         assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
-              (len(mcdsts.l_mcds) == 0)
+              (len(mcdsts.l_mcds) == 25)
 
 
 ## micro environment related functions ##
@@ -169,7 +170,8 @@ class TestTimeSeries3dMicroenv(object):
         ls_pathfile = mcdsts.plot_contour(
             focus = 'oxygen',
             z_slice = -3.333,  # test if
-            extrema = None,  # test if and for loop
+            vmin = None, # test if and for loop
+            vmax = None, # test if and for loop
             #alpha = 1,  # TimeStep
             #fill = True,  # TimeStep
             #cmap = 'viridis',  # TimeStep
@@ -197,7 +199,8 @@ class TestTimeSeries3dMicroenv(object):
         l_fig = mcdsts.plot_contour(
             focus = 'oxygen',
             z_slice = 0.0,  # jump over if
-            extrema = [0, 38],  # jump over if
+            vmin = 0,  # jump over if
+            vmax = 38,  # jump over if
             #alpha = 1,  # TimeStep
             #fill = True,  # TimeStep
             #cmap = 'viridis',  # TimeStep
@@ -313,7 +316,7 @@ class TestTimeSeries3dCell(object):
             xlim = None,  # test if
             ylim = None,  # test if
             #xyequal = True,  # TimeStep
-            s = None,  # test if
+            s = 0.1,  # test calculation
             figsizepx = None,  # case extract from initial.svg
             ext = 'jpeg',
             figbgcolor = None,  # test if
@@ -344,7 +347,7 @@ class TestTimeSeries3dCell(object):
             xlim = None,  # test if
             ylim = None,  # test if
             #xyequal = True,  # TimeStep
-            s = None,  # test if
+            #s = 1.0,  # test calculation
             figsizepx = [641, 481],  # test case non even pixel number
             ext = None,
             figbgcolor = 'cyan',  # jump over if
@@ -792,7 +795,7 @@ class TestTimeSeries3dAnnData(object):
               (ann.X.shape[0] > 9) and \
               (ann.X.shape[1] == 105) and \
               (ann.obs.shape[0] > 9) and \
-              (ann.obs.shape[1] == 8) and \
+              (ann.obs.shape[1] == 7) and \
               (ann.obsm['spatial'].shape[0] > 9) and \
               (ann.obsm['spatial'].shape[1] == 3) and \
               (len(ann.obsp) == 0) and \
@@ -811,7 +814,7 @@ class TestTimeSeries3dAnnData(object):
               (ann.X.shape[0] > 9) and \
               (ann.X.shape[1] == 56) and \
               (ann.obs.shape[0] > 9) and \
-              (ann.obs.shape[1] == 7) and \
+              (ann.obs.shape[1] == 6) and \
               (ann.obsm['spatial'].shape[0] > 9) and \
               (ann.obsm['spatial'].shape[1] == 3) and \
               (len(ann.obsp) == 0) and \
@@ -850,12 +853,52 @@ class TestTimeSeries3dAnnData(object):
               (ann.X.shape[0] > 9) and \
               (ann.X.shape[1] == 105) and \
               (ann.obs.shape[0] > 9) and \
-              (ann.obs.shape[1] == 8) and \
+              (ann.obs.shape[1] == 7) and \
               (ann.obsm['spatial'].shape[0] > 9) and \
               (ann.obsm['spatial'].shape[1] == 3) and \
               (len(ann.obsp) == 0) and \
               (ann.var.shape == (105, 0)) and \
               (len(ann.uns) == 0)
+
+
+## muspan time series related functions ##
+class TestTimeSeriesMuspan(object):
+    ''' test for pcdl.TimeSeries class. '''
+
+    ## get_muspan command ##
+    def test_mcdsts_get_muspan_default(self):
+        try:
+            import muspan as ms
+            mcdsts = pcdl.TimeSeries(s_path_3d, verbose=False)
+            do_domain = mcdsts.get_muspan(z_slice=None, values=1, drop=set(), keep=set())
+            s_key = sorted(do_domain.keys())[-1]
+            assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+                  (type(do_domain) == dict) and \
+                  (len(do_domain) == 275) and \
+                  (str(type(do_domain[s_key])) == "<class 'muspan.domain.domain'>") and \
+                  (len(do_domain[s_key].collections) == 2) and \
+                  (len(do_domain[s_key].networks) == 3) and \
+                  (len(do_domain[s_key].objects) > 9)
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestTimeSeriesMuspan : muspan module not installed.')
+            assert True
+
+    def test_mcdsts_get_muspan_zslice(self):
+        try:
+            import muspan as ms
+            mcdsts = pcdl.TimeSeries(s_path_3d, verbose=False)
+            do_domain = mcdsts.get_muspan(z_slice=0.0, values=1, drop=set(), keep=set())
+            s_key = sorted(do_domain.keys())[-1]
+            assert(str(type(mcdsts)) == "<class 'pcdl.timeseries.TimeSeries'>") and \
+                  (type(do_domain) == dict) and \
+                  (len(do_domain) == 25) and \
+                  (str(type(do_domain[s_key])) == "<class 'muspan.domain.domain'>") and \
+                  (len(do_domain[s_key].collections) == 2) and \
+                  (len(do_domain[s_key].networks) == 3) and \
+                  (len(do_domain[s_key].objects) > 9)
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestTimeSeriesMuspan : muspan module not installed.')
+            assert True
 
 
 ## spatialdata time seris related functions ##

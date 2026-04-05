@@ -3,6 +3,8 @@
 
 ## input:
 ```
+            ext: string; default '_conc.vtr'.
+                file extension.
 
 ```
 

@@ -9,7 +9,7 @@
 ## output:
 ```
             s_version : sting
-                PhysiCell version which generated the data.
+                PhysiCell version that generated the data.
 
 ```
 
