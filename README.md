@@ -49,7 +49,8 @@ Basics Tutorials:
 Extras tutorials python3 language:
 + [pcdl and python3 and json](https://github.com/elmbeech/physicelldataloader/blob/master/man/TUTORIAL_python3_json.md)
 + [pcdl and python3 and pandas](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_pandas.md)
-+ [pcdl and python3 and scipy and scanpy](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_scverse.md)
++ [pcdl and python3 and scanpy and squidpy](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_scverse.md)
++ [pcdl and python3 and muspan](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_muspan.md)
 + [pcdl and python3 and graphs](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_graph.md)
 + [pcdl and python3 and matplotlib](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_matplotlib.md)
 + [pcdl and python3 and vtk](https://github.com/elmbeech/physicelldataloader/tree/master/man/TUTORIAL_python3_vtk.md)
@@ -147,6 +148,7 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 
 + version 4.1.0 (2025-12-31): elmbeech/physicelldataloader
     + new **get_spatialdata** TimeStep class and TimeSeris class function and **pcdl_get_spatialdata** command line command. special thanks to Luca Marconato!
+    + with this release, pcdl officially became an [scverse ecosystem](https://scverse.org/packages/#ecosystem) package.
 
 + version 4.0.5 (2025-10-22): elmbeech/physicelldataloader
     + **settingxml** default is now set to False, because the cell\_type id label mapping can, in recent PhysiCell output, be retrieved from output\*.xml too.

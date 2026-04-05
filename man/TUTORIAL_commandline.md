@@ -342,9 +342,7 @@ Further readings:
 From time series and single time steps, generate [muspan](https://www.muspan.co.uk/) domain files.
 One file per time step and z-layer.
 
-Muspan is a sophisticated python3 library
-
-sphisticated python3 libaray for multiscale spatial data analysis, develop by researchers at the University of Oxford.
+Muspan is a sphisticated python3 libaray for multiscale spatial data analysis, develop by researchers at the University of Oxford.
 
 ```bash
 pcdl_get_muspan output/output00000000.xml
