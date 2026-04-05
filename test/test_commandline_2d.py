@@ -1494,214 +1494,324 @@ class TestCommandLineInterfaceMuspan(object):
 
     # timeseries
     def test_pcdl_get_muspan_timeseries(self):
-        o_result = subprocess.run(['pcdl_get_muspan', s_path_2d], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        for i_step in range(25):
-            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
-        assert o_result.returncode == 0
+        try:
+            import muspan as ms
+            o_result = subprocess.run(['pcdl_get_muspan', s_path_2d], check=False, capture_output=True)
+            print(f'o_result: {o_result}\n')
+            print(f'o_result.returncode: {o_result.returncode}\n')
+            print(f'o_result.stdout: {o_result.stdout}\n')
+            print(f'o_result.stderr: {o_result.stderr}\n')
+            for i_step in range(25):
+                os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
+            assert o_result.returncode == 0
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestCommandLineInterfaceMuspan : muspan module not installed.')
+            assert True
 
     def test_pcdl_get_muspan_timeseries_customtype(self):
-        o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '--custom_data_type', 'sample:bool'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        for i_step in range(25):
-            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
-        assert o_result.returncode == 0
+        try:
+            import muspan as ms
+            o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '--custom_data_type', 'sample:bool'], check=False, capture_output=True)
+            print(f'o_result: {o_result}\n')
+            print(f'o_result.returncode: {o_result.returncode}\n')
+            print(f'o_result.stdout: {o_result.stdout}\n')
+            print(f'o_result.stderr: {o_result.stderr}\n')
+            for i_step in range(25):
+                os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
+            assert o_result.returncode == 0
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestCommandLineInterfaceMuspan : muspan module not installed.')
+            assert True
 
     def test_pcdl_get_muspan_timeseries_microenv(self):
-        o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        for i_step in range(25):
-            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
-        assert o_result.returncode == 0
+        try:
+            import muspan as ms
+            o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '--microenv', 'false'], check=False, capture_output=True)
+            print(f'o_result: {o_result}\n')
+            print(f'o_result.returncode: {o_result.returncode}\n')
+            print(f'o_result.stdout: {o_result.stdout}\n')
+            print(f'o_result.stderr: {o_result.stderr}\n')
+            for i_step in range(25):
+                os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
+            assert o_result.returncode == 0
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestCommandLineInterfaceMuspan : muspan module not installed.')
+            assert True
 
     def test_pcdl_get_muspan_timeseries_graph(self):
-        o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '--graph', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        for i_step in range(25):
-            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
-        assert o_result.returncode == 0
+        try:
+            import muspan as ms
+            o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '--graph', 'false'], check=False, capture_output=True)
+            print(f'o_result: {o_result}\n')
+            print(f'o_result.returncode: {o_result.returncode}\n')
+            print(f'o_result.stdout: {o_result.stdout}\n')
+            print(f'o_result.stderr: {o_result.stderr}\n')
+            for i_step in range(25):
+                os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
+            assert o_result.returncode == 0
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestCommandLineInterfaceMuspan : muspan module not installed.')
+            assert True
 
     def test_pcdl_get_muspan_timeseries_physiboss(self):
-        o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        for i_step in range(25):
-            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
-        assert o_result.returncode == 0
+        try:
+            import muspan as ms
+            o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '--physiboss', 'false'], check=False, capture_output=True)
+            print(f'o_result: {o_result}\n')
+            print(f'o_result.returncode: {o_result.returncode}\n')
+            print(f'o_result.stdout: {o_result.stdout}\n')
+            print(f'o_result.stderr: {o_result.stderr}\n')
+            for i_step in range(25):
+                os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
+            assert o_result.returncode == 0
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestCommandLineInterfaceMuspan : muspan module not installed.')
+            assert True
 
     def test_pcdl_get_muspan_timeseries_settingxmlfalse(self):
-        o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '--settingxml', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        for i_step in range(25):
-            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
-        assert o_result.returncode == 0
+        try:
+            import muspan as ms
+            o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '--settingxml', 'false'], check=False, capture_output=True)
+            print(f'o_result: {o_result}\n')
+            print(f'o_result.returncode: {o_result.returncode}\n')
+            print(f'o_result.stdout: {o_result.stdout}\n')
+            print(f'o_result.stderr: {o_result.stderr}\n')
+            for i_step in range(25):
+                os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
+            assert o_result.returncode == 0
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestCommandLineInterfaceMuspan : muspan module not installed.')
+            assert True
 
     def test_pcdl_get_muspan_timeseries_settingxmlnone(self):
-        o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '--settingxml', 'none'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        for i_step in range(25):
-            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
-        assert o_result.returncode == 0
+        try:
+            import muspan as ms
+            o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '--settingxml', 'none'], check=False, capture_output=True)
+            print(f'o_result: {o_result}\n')
+            print(f'o_result.returncode: {o_result.returncode}\n')
+            print(f'o_result.stdout: {o_result.stdout}\n')
+            print(f'o_result.stderr: {o_result.stderr}\n')
+            for i_step in range(25):
+                os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
+            assert o_result.returncode == 0
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestCommandLineInterfaceMuspan : muspan module not installed.')
+            assert True
 
-    def test_pcdl_get_spatialdata_timeseries_zslice(self):
-        o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '1.1'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        for i_step in range(25):
-            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
-        assert o_result.returncode == 0
+    def test_pcdl_get_muspan_timeseries_zslice(self):
+        try:
+            import muspan as ms
+            o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '1.1'], check=False, capture_output=True)
+            print(f'o_result: {o_result}\n')
+            print(f'o_result.returncode: {o_result.returncode}\n')
+            print(f'o_result.stdout: {o_result.stdout}\n')
+            print(f'o_result.stderr: {o_result.stderr}\n')
+            for i_step in range(25):
+                os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
+            assert o_result.returncode == 0
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestCommandLineInterfaceMuspan : muspan module not installed.')
+            assert True
 
-    def test_pcdl_get_spatialdata_timeseries_value(self):
-        o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '--value', '2'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        for i_step in range(25):
-            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
-        assert o_result.returncode == 0
+    def test_pcdl_get_muspan_timeseries_value(self):
+        try:
+            import muspan as ms
+            o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '--value', '2'], check=False, capture_output=True)
+            print(f'o_result: {o_result}\n')
+            print(f'o_result.returncode: {o_result.returncode}\n')
+            print(f'o_result.stdout: {o_result.stdout}\n')
+            print(f'o_result.stderr: {o_result.stderr}\n')
+            for i_step in range(25):
+                os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
+            assert o_result.returncode == 0
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestCommandLineInterfaceMuspan : muspan module not installed.')
+            assert True
 
-    def test_pcdl_get_spatialdata_timeseries_drop(self):
-        o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '--drop', 'cell_type', 'oxygen'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        for i_step in range(25):
-            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
-        assert o_result.returncode == 0
+    def test_pcdl_get_muspan_timeseries_drop(self):
+        try:
+            import muspan as ms
+            o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '--drop', 'cell_type', 'oxygen'], check=False, capture_output=True)
+            print(f'o_result: {o_result}\n')
+            print(f'o_result.returncode: {o_result.returncode}\n')
+            print(f'o_result.stdout: {o_result.stdout}\n')
+            print(f'o_result.stderr: {o_result.stderr}\n')
+            for i_step in range(25):
+                os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
+            assert o_result.returncode == 0
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestCommandLineInterfaceMuspan : muspan module not installed.')
+            assert True
 
-    def test_pcdl_get_spatialdata_timeseries_keep(self):
-        o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '--keep', 'cell_type', 'oxygen'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        for i_step in range(25):
-            os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
-        assert o_result.returncode == 0
+    def test_pcdl_get_muspan_timeseries_keep(self):
+        try:
+            import muspan as ms
+            o_result = subprocess.run(['pcdl_get_muspan', s_path_2d, '--keep', 'cell_type', 'oxygen'], check=False, capture_output=True)
+            print(f'o_result: {o_result}\n')
+            print(f'o_result.returncode: {o_result.returncode}\n')
+            print(f'o_result.stdout: {o_result.stdout}\n')
+            print(f'o_result.stderr: {o_result.stderr}\n')
+            for i_step in range(25):
+                os.remove(f'{s_path_2d}/output000000{str(i_step).zfill(2)}_z0.muspan')
+            assert o_result.returncode == 0
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestCommandLineInterfaceMuspan : muspan module not installed.')
+            assert True
 
     # timestep
-    def test_pcdl_get_spatialdata_timestep(self):
-        o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_z0.muspan')
-        assert o_result.returncode == 0
+    def test_pcdl_get_muspan_timestep(self):
+        try:
+            import muspan as ms
+            o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d], check=False, capture_output=True)
+            print(f'o_result: {o_result}\n')
+            print(f'o_result.returncode: {o_result.returncode}\n')
+            print(f'o_result.stdout: {o_result.stdout}\n')
+            print(f'o_result.stderr: {o_result.stderr}\n')
+            os.remove(f'{s_path_2d}/output00000024_z0.muspan')
+            assert o_result.returncode == 0
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestCommandLineInterfaceMuspan : muspan module not installed.')
+            assert True
 
-    def test_pcdl_get_spatialdata_timestep_customtype(self):
-        o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '--custom_data_type', 'sample:bool'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_z0.muspan')
-        assert o_result.returncode == 0
+    def test_pcdl_get_muspan_timestep_customtype(self):
+        try:
+            import muspan as ms
+            o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '--custom_data_type', 'sample:bool'], check=False, capture_output=True)
+            print(f'o_result: {o_result}\n')
+            print(f'o_result.returncode: {o_result.returncode}\n')
+            print(f'o_result.stdout: {o_result.stdout}\n')
+            print(f'o_result.stderr: {o_result.stderr}\n')
+            os.remove(f'{s_path_2d}/output00000024_z0.muspan')
+            assert o_result.returncode == 0
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestCommandLineInterfaceMuspan : muspan module not installed.')
+            assert True
 
-    def test_pcdl_get_spatialdata_timestep_microenv(self):
-        o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '--microenv', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_z0.muspan')
-        assert o_result.returncode == 0
+    def test_pcdl_get_muspan_timestep_microenv(self):
+        try:
+            import muspan as ms
+            o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '--microenv', 'false'], check=False, capture_output=True)
+            print(f'o_result: {o_result}\n')
+            print(f'o_result.returncode: {o_result.returncode}\n')
+            print(f'o_result.stdout: {o_result.stdout}\n')
+            print(f'o_result.stderr: {o_result.stderr}\n')
+            os.remove(f'{s_path_2d}/output00000024_z0.muspan')
+            assert o_result.returncode == 0
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestCommandLineInterfaceMuspan : muspan module not installed.')
+            assert True
 
-    def test_pcdl_get_spatialdata_timestep_graph(self):
-        o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '--graph', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_z0.muspan')
-        assert o_result.returncode == 0
+    def test_pcdl_get_muspan_timestep_graph(self):
+        try:
+            import muspan as ms
+            o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '--graph', 'false'], check=False, capture_output=True)
+            print(f'o_result: {o_result}\n')
+            print(f'o_result.returncode: {o_result.returncode}\n')
+            print(f'o_result.stdout: {o_result.stdout}\n')
+            print(f'o_result.stderr: {o_result.stderr}\n')
+            os.remove(f'{s_path_2d}/output00000024_z0.muspan')
+            assert o_result.returncode == 0
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestCommandLineInterfaceMuspan : muspan module not installed.')
+            assert True
 
-    def test_pcdl_get_spatialdata_timestep_physiboss(self):
-        o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '--physiboss', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_z0.muspan')
-        assert o_result.returncode == 0
+    def test_pcdl_get_muspan_timestep_physiboss(self):
+        try:
+            import muspan as ms
+            o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '--physiboss', 'false'], check=False, capture_output=True)
+            print(f'o_result: {o_result}\n')
+            print(f'o_result.returncode: {o_result.returncode}\n')
+            print(f'o_result.stdout: {o_result.stdout}\n')
+            print(f'o_result.stderr: {o_result.stderr}\n')
+            os.remove(f'{s_path_2d}/output00000024_z0.muspan')
+            assert o_result.returncode == 0
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestCommandLineInterfaceMuspan : muspan module not installed.')
+            assert True
 
-    def test_pcdl_get_spatialdata_timestep_settingxmlfalse(self):
-        o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '--settingxml', 'false'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_z0.muspan')
-        assert o_result.returncode == 0
+    def test_pcdl_get_muspan_timestep_settingxmlfalse(self):
+        try:
+            import muspan as ms
+            o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '--settingxml', 'false'], check=False, capture_output=True)
+            print(f'o_result: {o_result}\n')
+            print(f'o_result.returncode: {o_result.returncode}\n')
+            print(f'o_result.stdout: {o_result.stdout}\n')
+            print(f'o_result.stderr: {o_result.stderr}\n')
+            os.remove(f'{s_path_2d}/output00000024_z0.muspan')
+            assert o_result.returncode == 0
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestCommandLineInterfaceMuspan : muspan module not installed.')
+            assert True
 
-    def test_pcdl_get_spatialdata_timestep_settingxmlnone(self):
-        o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '--settingxml', 'none'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_z0.muspan')
-        assert o_result.returncode == 0
+    def test_pcdl_get_muspan_timestep_settingxmlnone(self):
+        try:
+            import muspan as ms
+            o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '--settingxml', 'none'], check=False, capture_output=True)
+            print(f'o_result: {o_result}\n')
+            print(f'o_result.returncode: {o_result.returncode}\n')
+            print(f'o_result.stdout: {o_result.stdout}\n')
+            print(f'o_result.stderr: {o_result.stderr}\n')
+            os.remove(f'{s_path_2d}/output00000024_z0.muspan')
+            assert o_result.returncode == 0
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestCommandLineInterfaceMuspan : muspan module not installed.')
+            assert True
 
-    def test_pcdl_get_spatialdata_timestep_zslice(self):
-        o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '1.1'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_z0.muspan')
-        assert o_result.returncode == 0
+    def test_pcdl_get_muspan_timestep_zslice(self):
+        try:
+            import muspan as ms
+            o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '1.1'], check=False, capture_output=True)
+            print(f'o_result: {o_result}\n')
+            print(f'o_result.returncode: {o_result.returncode}\n')
+            print(f'o_result.stdout: {o_result.stdout}\n')
+            print(f'o_result.stderr: {o_result.stderr}\n')
+            os.remove(f'{s_path_2d}/output00000024_z0.muspan')
+            assert o_result.returncode == 0
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestCommandLineInterfaceMuspan : muspan module not installed.')
+            assert True
 
-    def test_pcdl_get_spatialdata_timestep_value(self):
-        o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '--value', '2'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_z0.muspan')
-        assert o_result.returncode == 0
+    def test_pcdl_get_muspan_timestep_value(self):
+        try:
+            import muspan as ms
+            o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '--value', '2'], check=False, capture_output=True)
+            print(f'o_result: {o_result}\n')
+            print(f'o_result.returncode: {o_result.returncode}\n')
+            print(f'o_result.stdout: {o_result.stdout}\n')
+            print(f'o_result.stderr: {o_result.stderr}\n')
+            os.remove(f'{s_path_2d}/output00000024_z0.muspan')
+            assert o_result.returncode == 0
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestCommandLineInterfaceMuspan : muspan module not installed.')
+            assert True
 
-    def test_pcdl_get_spatialdata_timestep_drop(self):
-        o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '--drop', 'cell_type', 'oxygen'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_z0.muspan')
-        assert o_result.returncode == 0
+    def test_pcdl_get_muspan_timestep_drop(self):
+        try:
+            import muspan as ms
+            o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '--drop', 'cell_type', 'oxygen'], check=False, capture_output=True)
+            print(f'o_result: {o_result}\n')
+            print(f'o_result.returncode: {o_result.returncode}\n')
+            print(f'o_result.stdout: {o_result.stdout}\n')
+            print(f'o_result.stderr: {o_result.stderr}\n')
+            os.remove(f'{s_path_2d}/output00000024_z0.muspan')
+            assert o_result.returncode == 0
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestCommandLineInterfaceMuspan : muspan module not installed.')
+            assert True
 
-    def test_pcdl_get_spatialdata_timestep_keep(self):
-        o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '--keep', 'cell_type', 'oxygen'], check=False, capture_output=True)
-        print(f'o_result: {o_result}\n')
-        print(f'o_result.returncode: {o_result.returncode}\n')
-        print(f'o_result.stdout: {o_result.stdout}\n')
-        print(f'o_result.stderr: {o_result.stderr}\n')
-        os.remove(f'{s_path_2d}/output00000024_z0.muspan')
-        assert o_result.returncode == 0
+    def test_pcdl_get_muspan_timestep_keep(self):
+        try:
+            import muspan as ms
+            o_result = subprocess.run(['pcdl_get_muspan', s_pathfile_2d, '--keep', 'cell_type', 'oxygen'], check=False, capture_output=True)
+            print(f'o_result: {o_result}\n')
+            print(f'o_result.returncode: {o_result.returncode}\n')
+            print(f'o_result.stdout: {o_result.stdout}\n')
+            print(f'o_result.stderr: {o_result.stderr}\n')
+            os.remove(f'{s_path_2d}/output00000024_z0.muspan')
+            assert o_result.returncode == 0
+        except ModuleNotFoundError:
+            print('Warning @ pytest TestCommandLineInterfaceMuspan : muspan module not installed.')
+            assert True
 
 
 class TestCommandLineInterfaceSpatialdata(object):

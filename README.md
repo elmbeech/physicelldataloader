@@ -23,7 +23,7 @@ The pcdl python3 library maintains four branches:
 ## Header:
 
 + Language: python [>= 3.11](https://devguide.python.org/versions/)
-+ Library dependencies: anndata, bioio, geopandas, matplotlib, neuroglancer, numpy, pandas, (requests), scikit-image, scipy, shapely, spatialdata, vtk
++ Library dependencies: anndata, bioio, geopandas, matplotlib, networkx, neuroglancer, numpy, pandas, (requests), scikit-image, scipy, shapely, spatialdata, vtk
 + Date of origin original PhysiCell-Tools python-loader: 2019-09-02
 + Date of origin pcdl fork: 2022-08-30
 + Doi: https://doi.org/10.5281/ZENODO.8176399
@@ -130,7 +130,10 @@ Developers, please make pull requests to the https://github.com/elmbeech/physice
 
 
 ## Release Notes:
-+ version 4.1.4 (2026-04-05)
++ version 4.1.5 (2026-04-05)
+    + bugfix library dependencies and library versions.
+
++ version 4.1.4 (2026-04-04)
     + pyMCDSts **mcdsts.make_contour** extrema parameter is replaced by vmin and vmax to be compatible with mcds.make\_contour and plt.contour.
     + **make_cell_vtk** and **make_conc_vtk** now offer an ext parameter, allowing to manually specify the exact file extension. special thanks to Danyon Gedris!
     + new **make_muspan** TimeStep class and TimeSeris class function and **pcdl_get_muspan** command line command. special thanks to Joshua Moore and Joshua Bull!

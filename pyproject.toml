@@ -85,6 +85,7 @@ dependencies = [
     "shapely>=2.0.1",  # spatialdata
     "spatialdata>=0.7.2",
     "vtk",
+    "ome-zarr<0.14.0", # bue 20260405: bugfix for spatialdata 0.7.2
 ]
 
 

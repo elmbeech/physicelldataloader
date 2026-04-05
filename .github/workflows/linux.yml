@@ -35,7 +35,7 @@ jobs:
         sudo apt update
         sudo apt install ffmpeg imagemagick
         python -m pip install --upgrade pip
-        python -m pip install flake8 pytest anndata bioio bioio-ome-tiff matplotlib neuroglancer numpy pandas requests scikit-image scipy vtk
+        python -m pip install flake8 pytest anndata bioio bioio-ome-tiff matplotlib networkx neuroglancer numpy pandas requests scikit-image scipy vtk "ome-zarr<0.14.0"
         python -m pip install /home/runner/work/physicelldataloader/physicelldataloader -v
         #if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: lint with flake8
