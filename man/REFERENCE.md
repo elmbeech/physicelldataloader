@@ -100,6 +100,8 @@ Basically, there are four types of functions:
 + [help(mcds.make_graph_gml)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.make_graph_gml.md)  #! workhose function
 
 ### TimeStep microenvironment and cells
++ [help(mcds.get_muspan)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_muspan.md)  #! workhose function
++ [help(mcds.get_spatialdata)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_spatialdata.md)  #! workhose function
 + [help(mcds.make_ome_tiff)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.make_ome_tiff.md)  #! workhose function
 + [help(mcds.make_neuroglancer)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.make_neuroglancer.md)  #! workhose function
 
@@ -147,6 +149,8 @@ Basically, there are four types of functions:
 + [help(mcdsts.get_graph_gml)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.make_graph_gml.md)  #! workhose function
 
 ### TimeSteries microenvironment and cells
++ [help(mcdsts.get_muspan)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_muspan.md)  #! workhose function
++ [help(mcdsts.get_spatialdata)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.get_spatialdata.md)  #! workhose function
 + [help(mcdsts.make_ome_tiff)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.make_ome_tiff.md)  #! workhose function
 + [help(mcdsts.make_neuroglancer)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcdsts.make_neuroglancer.md)  #! workhose function
 
@@ -197,6 +201,8 @@ The command line interface functions mimic the name and parameter arguments as c
 + [pcdl_make_graph_gml --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_make_graph_gml.md)  #! workhorse function
 
 ### Command line cells and microenvironment
++ [pcdl_get_muspan --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_muspan.md)  #! workhorse function
++ [pcdl_get_spatialdata --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_get_spatialdata.md)  #! workhorse function
 + [pcdl_make_ome_tiff --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_make_ome_tiff.md)  #! workhorse function
 + [pcdl_make_neuroglancer --help](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/pcdl_make_neuroglancer.md)  #! workhorse function
 

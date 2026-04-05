@@ -370,6 +370,7 @@ class TestCommandLineInterfaceConcVtk(object):
     # timestep and timeseries:
     # + path nop
     # + verbose (true, _false_) nop
+    # + ext (_conc.vtr, _.vtr_) nop
 
     def test_pcdl_make_conc_vtk_timeseries_default(self):
         o_result = subprocess.run(['pcdl_make_conc_vtk', s_path_2d], check=False, capture_output=True)
@@ -419,10 +420,27 @@ class TestCommandLineInterfaceCelltypeList(object):
 
     # timestep:
     # + path (pathfile, path) ok
+    # + settingxml (string, _none_, _false_) ok
     # + verbose (true, _false_) nop
 
     def test_pcdl_get_celltype_list_timeseries(self):
         o_result = subprocess.run(['pcdl_get_celltype_list', s_path_2d], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_celltype_list_timeseries_settingxmlnone(self):
+        o_result = subprocess.run(['pcdl_get_celltype_list', s_path_2d, '--settingxml', 'none'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_celltype_list_timeseries_settingxmlfalse(self):
+        o_result = subprocess.run(['pcdl_get_celltype_list', s_path_2d, '--settingxml', 'false'], check=False, capture_output=True)
         print(f'o_result: {o_result}\n')
         print(f'o_result.returncode: {o_result.returncode}\n')
         print(f'o_result.stdout: {o_result.stdout}\n')
@@ -437,6 +455,22 @@ class TestCommandLineInterfaceCelltypeList(object):
         print(f'o_result.stderr: {o_result.stderr}\n')
         assert o_result.returncode == 0
 
+    def test_pcdl_get_celltype_list_timestep_settingxmlnone(self):
+        o_result = subprocess.run(['pcdl_get_celltype_list', s_pathfile_2d, '--settingxml', 'none'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        assert o_result.returncode == 0
+
+    def test_pcdl_get_celltype_list_timestep_settingxmlfalse(self):
+        o_result = subprocess.run(['pcdl_get_celltype_list', s_pathfile_2d, '--settingxml', 'false'], check=False, capture_output=True)
+        print(f'o_result: {o_result}\n')
+        print(f'o_result.returncode: {o_result.returncode}\n')
+        print(f'o_result.stdout: {o_result.stdout}\n')
+        print(f'o_result.stderr: {o_result.stderr}\n')
+        assert o_result.returncode == 0
+
 
 class TestCommandLineInterfaceCellAttributeList(object):
     ''' tests for one  pcdl command line interface  function. '''
@@ -444,7 +478,7 @@ class TestCommandLineInterfaceCellAttributeList(object):
     # timeseries collapsed:
     # + path (str) nop
     # + microenv (true, _false_) ok
-    # + physiboss (true, _false_)
+    # + physiboss (true, _false_) ok
     # + settingxml (string, _none_, _false_) ok
     # + verbose (true, _false_) nop
 
@@ -1005,7 +1039,7 @@ class TestCommandLineInterfaceGraphGml(object):
     # + path nop
     # + customtype ([], _sample:bool_) ok
     # + microenv (true, false) ok
-    # + physiboss (true, _false_)
+    # + physiboss (true, _false_) ok
     # + settingxml (string, _none_, _false_) ok
     # + verbose (true, _false_) nop
     # + graph_type (neighbor, _attached_) ok
@@ -1209,25 +1243,25 @@ class TestCommandLineInterfacePlotScatter(object):
     # time series and time steps.
     # + path nop
     # + customtype ([], _sample:bool_) ok
-    # + microenv (true, _false_)
-    # + physiboss (true, _false_)
-    # + settingxml (PhysiCell_settings.xml, _false_)
+    # + microenv (true, _false_) ok
+    # + physiboss (true, _false_) ok
+    # + settingxml (PhysiCell_settings.xml, _false_) ok
     # + verbose (true, _false_) nop
     # + focus (_oxygen_) ok
     # + z_slize (0.0, _1.1_) ok
     # + z_axis (none, _0.0_40.0_) ok
     # + alpha (1.0, _0.5_) ok
-    # + cmap (viridis, _magma_)
-    # + title (, _abc_)
-    # + grid (true, _false_)
-    # + legend_loc ('lower left', _'upper right'_)
-    # + xlim (none, _-40_400_)
-    # + ylim (none, _-30_300_)
-    # + xyequal (true, _false_)
-    # + s ('none', '74')
-    # + figsizepx (none, _[641, 481]_)
-    # + ext (jpeg, _tiff_)
-    # + figbgcolor (none, _yellow_)
+    # + cmap (viridis, _magma_) ok
+    # + title (, _abc_)  ok
+    # + grid (true, _false_) ok
+    # + legend_loc ('lower left', _'upper right'_) ok
+    # + xlim (none, _-40_400_) ok
+    # + ylim (none, _-30_300_) ok
+    # + xyequal (true, _false_) ok
+    # + s ('none', '74') ok
+    # + figsizepx (none, _[641, 481]_) ok
+    # + ext (jpeg, _tiff_) ok
+    # + figbgcolor (none, _yellow_) ok
 
     def test_pcdl_plot_scatter_default(self):
         o_result = subprocess.run([
@@ -1279,10 +1313,11 @@ class TestCommandLineInterfaceCellVtk(object):
     # + path nop
     # + customtype ([], _sample:bool_) ok
     # + microenv (true, _false) ok
-    # + physiboss (true, _false_)
+    # + physiboss (true, _false_) ok
     # + settingxml (string, _none_, _false_) ok
     # + verbose (true, _false_) nop
     # + attribute (cell_type oxygen, _empty_) ok
+    # + ext (_cell.vtp, _.vtp_) ok
 
     def test_pcdl_make_cell_vtk_timeseries_default(self):
         o_result = subprocess.run(['pcdl_make_cell_vtk', s_path_2d], check=False, capture_output=True)
@@ -1944,34 +1979,34 @@ class TestCommandLineInterfacePlotTimeSeries(object):
     # time series.
     # + path nop
     # + customtype ([], _sample:bool_) ok
-    # + microenv (true, _false_)
-    # + physiboss (true, _false_)
-    # + settingxml (PhysiCell_settings.xml, _false_)
-    # + verbose (true, _false_) nop
-    # + focus_cat ('none', _cell_type_) ok
-    # + focus_num ('none', _oxygen_) ok
+    # + microenv (true, _false_) nop
+    # + physiboss (true, _false_) ok
+    # + settingxml (PhysiCell_settings.xml, _false_) ok
+    # + verbose (true, _false_) ok
+    # + focus_cat ('none', _cell_type_) nop
+    # + focus_num ('none', _oxygen_) nop
     # + aggregate_num ('mean', 'entropy') ok
-    # + cat_drop ('', '1 2 3 4')
-    # + cat_keep ('', '1 2 3 4')
-    # + frame ('cell', 'conc')
+    # + cat_drop ('', '1 2 3 4') nop
+    # + cat_keep ('', '1 2 3 4') nop
+    # + frame ('cell', 'conc') ok
     # + z_slice ('none', _1.1_) ok
-    # + logy (false, _true_)
-    # + ylim (['none'], ['', ''])
-    # + secondary_y (false, _true_)
-    # + subplots (false, _true_)
-    # + sharex (false, _true_)
-    # + sharey (false, _true_)
-    # + linestyle ('-', '-.')
-    # + linewidth ('none', 9.0)
-    # + cmap ('none', 'magma')
-    # + color ('none', 'maroon')
-    # + grid (true, _false_)
-    # + legend (true, _false_)
-    # + yunit ('none', 'myunit')
-    # + title ('none', 'my title')
-    # + figsizepx (none, _[641, 481]_)
-    # + ext (csv, jpeg, png, _tiff_)
-    # + figbgcolor (none, _yellow_)
+    # + logy (false, _true_) ok
+    # + ylim (['none'], ['6.0', '7.0'])
+    # + secondary_y (false, _true_) ok
+    # + subplots (false, _true_) ok
+    # + sharex (false, _true_) ok
+    # + sharey (false, _true_) ok
+    # + linestyle ('-', '-.') ok
+    # + linewidth ('none', 9.0) ok
+    # + cmap ('none', 'magma') ok
+    # + color ('none', 'maroon') ok
+    # + grid (true, _false_) ok
+    # + legend (true, false, _reverse_)
+    # + yunit ('none', 'myunit') ok
+    # + title ('none', 'my title') ok
+    # + figsizepx (none, _[641, 481]_) ok
+    # + ext (csv, jpeg, png, _tiff_) ok
+    # + figbgcolor (none, _yellow_) ok
 
     def test_pcdl_plot_timeseries_default(self):
         o_result = subprocess.run([

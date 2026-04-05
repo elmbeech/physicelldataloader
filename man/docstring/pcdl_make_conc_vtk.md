@@ -1,5 +1,5 @@
 ```
-usage: pcdl_make_conc_vtk [-h] [-v VERBOSE] [path]
+usage: pcdl_make_conc_vtk [-h] [-v VERBOSE] [--ext EXT] [path]
 
 function generates rectilinear grid vtk files, one per mcds time step,
 contains distribution of substrates over microenvironment. you can post-
@@ -15,6 +15,7 @@ options:
   -v VERBOSE, --verbose VERBOSE
                         setting verbose to False for less text output, while
                         processing. default is True.
+  --ext EXT             file extension for the vtk rectilinear grid file.
 
 homepage: https://github.com/elmbeech/physicelldataloader
 ```
