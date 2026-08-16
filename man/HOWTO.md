@@ -9,6 +9,26 @@ Below you will find information about how to install, load, update, uninstall, a
 pip3 install pcdl
 ```
 
+This installs pcdl light weight: only the libraries needed to load PhysiCell
+output into pandas dataframes and to render basic contour and scatter plots
+(matplotlib, numpy, pandas, scipy).
+
+A handful of functions (`get_anndata`, `get_spatialdata`, `make_ome_tiff`,
+`make_conc_vtk`, `make_cell_vtk`, `render_neuroglancer`, `install_data`) rely
+on additional, heavyweight, specialized libraries (anndata, bioio,
+bioio-ome-tiff, geopandas, neuroglancer, requests, scikit-image, shapely,
+spatialdata, vtk) that are not installed by default. Calling one of these
+functions without the underlying library installed will raise an error that
+explains what is missing and how to install it. To install pcdl with all
+optional dependencies right away, run:
+
+```bash
+pip3 install pcdl[full]
+```
+
+Alternatively, install only the specific library a function's error message
+asks for, e.g. `pip3 install vtk`.
+
 
 ## How to load the pcdl library?
 
