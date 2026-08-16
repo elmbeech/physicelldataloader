@@ -69,19 +69,30 @@ classifiers = [
 ]
 
 # bue 2024-12-06: enforcing some versions
+# bue 2026-08-14: default install is light weight: only the libraries
+# needed to load PhysiCell output into pandas dataframes and to render
+# basic contour and scatter plots. heavyweight, specialized libraries,
+# only needed for anndata, ome tiff, neuroglancer, muspan, vtk, and
+# spatialdata related functions, are bundled in the optional "full" extra.
+# run pip install pcdl[full] to install all of them at once, or install
+# a missing library manually, should a function ask for it at runtime.
 dependencies = [
+    "matplotlib",
+    "numpy",
+    "pandas>=2.2.2",
+    "scipy>=1.13.0",
+]
+
+[project.optional-dependencies]
+full = [
     "anndata>=0.10.8",
     "bioio>=2.0.0",
     "bioio-ome-tiff",
     "geopandas>=0.14",  # spatialdata
-    "matplotlib",
     "networkx",
     "neuroglancer",
-    "numpy",
-    "pandas>=2.2.2",
     "requests",
     "scikit-image>=0.24.0",
-    "scipy>=1.13.0",
     "shapely>=2.0.1",  # spatialdata
     "spatialdata>=0.7.2",
     "vtk",
