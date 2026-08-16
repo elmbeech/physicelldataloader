@@ -23,7 +23,7 @@
 import os
 import pathlib
 import pcdl
-import requests
+from pcdl._optional import optional_import
 import shutil
 import tarfile
 
@@ -40,6 +40,9 @@ class install_data:
         function to install a 2D and 3D PhysiCell output test dataset.
     """
     def __init__(self):
+        # load optional dependency
+        requests = optional_import('requests', s_caller='pcdl.install_data')
+
         # get pcdl library installation path
         s_path = str(pathlib.Path(pcdl.__file__).parent).replace('\\','/') + '/'
 
