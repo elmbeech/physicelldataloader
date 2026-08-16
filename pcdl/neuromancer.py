@@ -39,13 +39,22 @@
 
 # library
 import argparse
-from bioio import BioImage
 import matplotlib as mpl
-import neuroglancer
-import neuroglancer.cli
 import numpy as np
-from skimage import exposure, util
 import sys
+from pcdl._optional import optional_import
+
+# bue 2026-08-14: bioio, neuroglancer, and scikit-image are heavyweight,
+# specialized libraries, not part of the default, light weight pcdl
+# installation. this module only gets imported (from pcdl.timestep and
+# pcdl.timeseries) the moment render_neuroglancer actually is called, so
+# it is fine to eagerly, but lazily (from the caller's perspective), load
+# them here, with an actionable error message in case they are missing.
+BioImage = optional_import('bioio', s_attr='BioImage', s_pip='bioio', s_caller='pcdl.render_neuroglancer')
+neuroglancer = optional_import('neuroglancer', s_caller='pcdl.render_neuroglancer')
+optional_import('neuroglancer.cli', s_caller='pcdl.render_neuroglancer')  # binds neuroglancer.cli as attribute
+exposure = optional_import('skimage.exposure', s_pip='scikit-image', s_caller='pcdl.render_neuroglancer')
+util = optional_import('skimage.util', s_pip='scikit-image', s_caller='pcdl.render_neuroglancer')
 
 
 # functions

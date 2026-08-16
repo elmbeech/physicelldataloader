@@ -15,10 +15,6 @@
 
 
 # load library
-import anndata as ad
-import bioio_base
-from bioio.writers import OmeTiffWriter
-import geopandas as gpd
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib import colors
@@ -26,23 +22,26 @@ try:
     import muspan as ms
 except ModuleNotFoundError:
     ms = None
-import networkx as nx
-import neuroglancer
 import numpy as np
 import os
 import pandas as pd
 from pcdl import imagine
 from pcdl import pdplt
-from pcdl import neuromancer
+from pcdl._optional import optional_import
 from scipy import io
 from scipy import sparse
-import shapely
-import spatialdata as sd
 import sys
-import vtk
 import warnings
 import xml.etree.ElementTree as etree
 from pcdl.VERSION import __version__
+
+# bue 2026-08-14: anndata, bioio, bioio_base, geopandas, networkx,
+# neuroglancer, shapely, spatialdata, and vtk are heavyweight, specialized
+# libraries, only needed by a handful of functions (get_anndata,
+# get_spatialdata, get_muspan, make_ome_tiff, make_conc_vtk, make_cell_vtk,
+# render_neuroglancer). to keep the default pcdl installation light weight,
+# these libraries are lazy loaded, via optional_import, from within the
+# functions that actually need them.
 
 
 # const physicell codec
@@ -223,6 +222,10 @@ def render_neuroglancer(tiffpathfile, timestep=0, intensity_cmap='gray'):
         function to load a time step from an ome tiff files, generated
         with make_ome_tiff, into neuroglancer.
     """
+    # load optional dependencies (neuromancer itself lazy loads bioio and scikit-image)
+    neuroglancer = optional_import('neuroglancer', s_caller='pcdl.render_neuroglancer')
+    from pcdl import neuromancer
+
     # start neuroglancer
     viewer = neuroglancer.Viewer()
     with viewer.txn() as state:
@@ -1404,6 +1407,9 @@ class TimeStep:
 
             https://www.paraview.org/
         """
+        # load optional dependency
+        vtk = optional_import('vtk', s_caller='TimeStep.make_conc_vtk')
+
         # off we go.
         s_vtkfile = self.xmlfile.replace('.xml', ext)
         if self.verbose:
@@ -1896,6 +1902,9 @@ class TimeStep:
 
             https://www.paraview.org/
         """
+        # load optional dependency
+        vtk = optional_import('vtk', s_caller='TimeStep.make_cell_vtk')
+
         # off we go.
         s_vtkfile = self.xmlfile.replace('.xml', ext)
         if self.verbose:
@@ -2031,6 +2040,11 @@ class TimeStep:
             https://napari.org/stable/
             https://fiji.sc/
         """
+        # load optional dependencies
+        if file:
+            OmeTiffWriter = optional_import('bioio.writers', s_attr='OmeTiffWriter', s_pip='bioio', s_caller='TimeStep.make_ome_tiff')
+            bioio_base = optional_import('bioio_base', s_pip='bioio', s_caller='TimeStep.make_ome_tiff')
+
         # handle channels
         ls_substrate = self.get_substrate_list()
         ls_celltype = self.get_celltype_list()
@@ -2404,6 +2418,9 @@ class TimeStep:
             function to transform a mcds time step into an anndata object
             for downstream analysis.
         """
+        # load optional dependency
+        ad = optional_import('anndata', s_caller='TimeStep.get_anndata')
+
         # processing
         if self.verbose:
             print(f'processing: 1/1 {round(self.get_time(),9)}[min] mcds into anndata obj.')
@@ -2479,6 +2496,12 @@ class TimeStep:
             function to transform a mcds time step into
             a spatialdata object for downstream analysis.
         """
+        # load optional dependencies
+        ad = optional_import('anndata', s_caller='TimeStep.get_spatialdata')
+        sd = optional_import('spatialdata', s_caller='TimeStep.get_spatialdata')
+        shapely = optional_import('shapely', s_caller='TimeStep.get_spatialdata')
+        gpd = optional_import('geopandas', s_caller='TimeStep.get_spatialdata')
+
         # set table spatial element links
         s_region_subs = None
         s_region_cell = None
@@ -2722,6 +2745,9 @@ class TimeStep:
         # check if muspan library is installed
         if ms is None:
             sys.exit(f'Error @ TimeStep.get_muspa : the muspan Multi Spatial Analysis python3 library is not installed!\nfor instructions check out : https://www.muspan.co.uk/')
+
+        # load optional dependency
+        nx = optional_import('networkx', s_caller='TimeStep.get_muspan')
 
         # get conc and cell dataframe
         df_conc = self.get_conc_df(values=values, drop=drop, keep=keep)

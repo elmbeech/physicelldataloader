@@ -16,19 +16,22 @@
 
 
 # load libraries
-import anndata as ad
-import bioio_base
-from bioio.writers import OmeTiffWriter
 import glob
 import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pandas as pd
 from pcdl import render_neuroglancer
+from pcdl._optional import optional_import
 from pcdl.timestep import TimeStep, es_coor_cell, es_coor_conc, _anndextract
 from pcdl.VERSION import __version__
 import platform
 import sys
+
+# bue 2026-08-14: anndata and bioio are heavyweight, specialized libraries,
+# only needed by get_anndata and make_ome_tiff. to keep the default pcdl
+# installation light weight, these libraries are lazy loaded, via
+# optional_import, from within the functions that actually need them.
 
 
 ############
@@ -1176,6 +1179,9 @@ class TimeSeries:
 
         # output 11 ometiff file
         elif (file and collapse):  # 11
+            OmeTiffWriter = optional_import('bioio.writers', s_attr='OmeTiffWriter', s_pip='bioio', s_caller='TimeSeries.make_ome_tiff')
+            bioio_base = optional_import('bioio_base', s_pip='bioio', s_caller='TimeSeries.make_ome_tiff')
+
             a_tczyx_img = np.array(l_tczyx_img)
             if self.verbose:
                 print('a_tczyx_img shape:', a_tczyx_img.shape)
@@ -1661,6 +1667,9 @@ class TimeSeries:
             function to transform mcds time steps into one or many
             anndata objects for downstream analysis.
         """
+        # load optional dependency
+        ad = optional_import('anndata', s_caller='TimeSeries.get_anndata')
+
         # initialize vaiable
         l_annmcds = []
         df_anncount = None
