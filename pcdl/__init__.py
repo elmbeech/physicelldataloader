@@ -34,7 +34,7 @@ def read(s_path, custom_data_type={}, load=True, microenv=True, graph=True, phys
     # output timestep
     elif s_pathfile.endswith('.xml'):
         #s_path = '/'.join(s_path.split('/')[:-1])
-        pcd = timestep.TimeStep(
+        pcd = TimeStep(
             xmlfile = s_pathfile,
             output_path = '.',
             custom_data_type = custom_data_type,
@@ -49,7 +49,7 @@ def read(s_path, custom_data_type={}, load=True, microenv=True, graph=True, phys
     else:
         s_pathfile = s_pathfile + '/initial.xml'
         if os.path.exists(s_pathfile):
-            pcd = timeseries.TimeSeries(
+            pcd = TimeSeries(
                 output_path = s_path,
                 custom_data_type = custom_data_type,
                 load = load,

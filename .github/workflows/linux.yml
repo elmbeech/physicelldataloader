@@ -6,8 +6,8 @@ name: linux_pcdl_unitests
 run-name: ${{ github.actor }}::pytest pcdl library on linux os; all python3 versions.
 
 on:
-  push:
-    branches: []  # "master"
+  #push:
+  #  branches: ["master"]
   pull_request:
     branches: ["development", "master"]
 

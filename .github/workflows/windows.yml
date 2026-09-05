@@ -6,8 +6,8 @@ name: windows_pcdl_unitests
 run-name: ${{ github.actor }}::pytest pcdl library on windows os; the latest python3 versions.
 
 on:
-  push:
-    branches: []  # "master"
+  #push:
+  #  branches: ["master"]
   pull_request:
     branches: ["development", "master"]
 
