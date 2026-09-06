@@ -90,10 +90,10 @@ else:
     axs = axs.ravel()
 
 # plotting
-for i_substarte, s_substarte in enumerate(mcds.get_substrate_list()):
-    mcds.plot_contour(s_substarte, cmap='Oranges', ax=axs[i_substarte])
-    mcds.plot_scatter(ax=axs[i_substarte])
-    axs[i_substarte].axis('equal')
+for i_substrate, s_substrate in enumerate(mcds.get_substrate_list()):
+    mcds.plot_contour(s_substrate, cmap='Oranges', ax=axs[i_substrate])
+    mcds.plot_scatter(ax=axs[i_substrate])
+    axs[i_substrate].axis('equal')
 
 # fine-tuning
 fig.suptitle('cell agents and substrates')

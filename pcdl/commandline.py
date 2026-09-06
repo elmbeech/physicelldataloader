@@ -185,7 +185,7 @@ def get_unit_dict():
 
 
 ###########################################
-# substarte relatd command line functions #
+# substrate relatd command line functions #
 ###########################################
 
 def get_substrate_list():
@@ -2843,7 +2843,7 @@ def make_ome_tiff():
         '--conc_cutoff',
         nargs = '*',
         default = [],
-        help = 'if a contour from a substrate not should be cut by greater than zero (shifted to integer 1), another cutoff value can be specified here like this: substarte:value substrate:value substarte:value . default is and empty string.',
+        help = 'if a contour from a substrate not should be cut by greater than zero (shifted to integer 1), another cutoff value can be specified here like this: substrate:value substrate:value substrate:value . default is and empty string.',
     )
     # make_ome_tiff focus
     parser.add_argument(

@@ -126,7 +126,7 @@ class TestCommandLineInterfaceUnitDict(object):
 
 
 ##############################
-# substarte relatd test code #
+# substrate relatd test code #
 ##############################
 
 class TestCommandLineInterfaceSubstrateList(object):

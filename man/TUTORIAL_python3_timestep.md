@@ -86,10 +86,10 @@ sorted(mcds.data['metadata'].keys())  # multicellds_version, physicell_version, 
 sorted(mcds.data['mesh'].keys())  # voxel (ijk), mesh (mnp), and position (xyz) range, axis, spacing, voxel volume, coordinate, and grid.
 
 # microenvironment
-sorted(mcds.data['substrate'].keys())  # df_conc, df_substarte, ds_substrate, ls_substarte
-print(mcds.data['substrate']['ls_substarte'] # list of all processed substrates
+sorted(mcds.data['substrate'].keys())  # df_conc, df_substrate, ds_substrate, ls_substrate
+print(mcds.data['substrate']['ls_substrate'] # list of all processed substrates
 print(mcds.data['substrate']['ds_substrate'] # dictionary with substrate ID label mapping
-print(mcds.data['substrate']['df_substarte'] # pandas data frame with substrate decay_rate and diffusion_coefficient.
+print(mcds.data['substrate']['df_substrate'] # pandas data frame with substrate decay_rate and diffusion_coefficient.
 print(mcds.data['substrate']['df_conc'] # pandas data frame with the actual substrate concentrations in each voxel.
 
 # cell

@@ -15,6 +15,7 @@
 
 
 # load library
+import json
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib import colors
@@ -33,6 +34,7 @@ from scipy import sparse
 import sys
 import warnings
 import xml.etree.ElementTree as etree
+from zipfile import ZipFile
 from pcdl.VERSION import __version__
 
 
@@ -165,7 +167,7 @@ do_var_type = {
     'is_motile': bool,
     # categorical
     'cell_type': str,  # id mapping cell_type
-    'chemotaxis_index': str,  # id mapping substarte
+    'chemotaxis_index': str,  # id mapping substrate
     'cycle_model': str,  # codec mapping
     'current_phase': str,  # codec mapping
     'current_death_model': str,  # codec mapping
@@ -638,6 +640,46 @@ class TimeStep:
         return o_viewer
 
 
+    def to_pcd(self, s_prefix='', compressleve=None):
+        """
+        input:
+        output:
+        description:
+        """
+        s_file = f"{s_prefix}{self.xmlfile.replace('.xml', '.pcd')}"
+        s_pathfile = self.path + '/' + s_file
+        print(f'writing: {s_pathfile} ...')
+        # manipulate data structure
+        o_pcd = self.data.copy()
+        # set to list
+        for s_graph in o_pcd['cell']['dei_graph']:
+            o_pcd['cell']['dei_graph'][s_graph] = {i_key: sorted(ei_value) for i_key, ei_value in o_pcd['cell']['dei_graph'][s_graph].items()}
+        # numpy array to list
+        o_pcd['mesh']['ijk_axis'] = [a_value.tolist() for a_value in o_pcd['mesh']['ijk_axis']]
+        o_pcd['mesh']['mnp_axis'] = [a_value.tolist() for a_value in o_pcd['mesh']['mnp_axis']]
+        o_pcd['mesh']['mnp_coordinate'] = o_pcd['mesh']['mnp_coordinate'].tolist()
+        o_pcd['mesh']['mnp_grid'] = o_pcd['mesh']['mnp_grid'].tolist()
+        # zip the diles together
+        with ZipFile(s_pathfile, 'w') as myzip:
+            # write and pop pandas dataframe
+            #print(f'write pandas dataframes ...')
+            with myzip.open(self.xmlfile.replace('.xml', '_subs.csv'), 'w') as f:
+                f.write(o_pcd['substrate']['df_substrate'].to_csv().encode('utf-8'))
+            o_pcd['substrate']['df_substrate'] = None  # pop
+            with myzip.open(self.xmlfile.replace('.xml', '_conc.csv'), 'w') as f:
+                f.write(o_pcd['substrate']['df_conc'].to_csv().encode('utf-8'))
+            o_pcd['substrate']['df_conc'] = None  # pop
+            with myzip.open(self.xmlfile.replace('.xml', '_cell.csv'), 'w') as f:
+                f.write(o_pcd['cell']['df_cell'].to_csv().encode('utf-8'))
+            o_pcd['cell']['df_cell'] = None  # pop
+            # write the json
+            #print(f'write json ...')
+            with myzip.open(self.xmlfile.replace('.xml', '.json'), 'w') as f:
+                f.write(json.dumps(o_pcd).encode('utf-8'))
+        # going home
+        print(f'ok!')
+
+
     ## METADATA RELATED FUNCTIONS ##
 
     def get_multicellds_version(self):
@@ -1080,7 +1122,7 @@ class TimeStep:
             function returns all chemical species names, modeled
             in the microenvironment, ordered by chemical species ID.
         """
-        return self.data['substrate']['ls_substarte'].copy()
+        return self.data['substrate']['ls_substrate'].copy()
 
 
     def get_substrate_dict(self):
@@ -1112,7 +1154,7 @@ class TimeStep:
             function returns a dataframe with each substrate's
             decay_rate and difusion_coefficient.
         """
-        return self.data['substrate']['df_substarte'].copy()
+        return self.data['substrate']['df_substrate'].copy()
 
 
     def get_conc_df(self, z_slice=None, halt=False, values=1, drop=set(), keep=set()):
@@ -1473,7 +1515,7 @@ class TimeStep:
         vrg_data.SetYCoordinates(vfa_y)
         vrg_data.SetZCoordinates(vfa_z)
 
-        # loop over substartes to populate rectilinear grid
+        # loop over substrates to populate rectilinear grid
         b_first = True
         for s_substrate in self.get_substrate_list():
             vfa_value = vtk.vtkFloatArray()
@@ -2743,9 +2785,9 @@ class TimeStep:
 
         # extract voxel radius
         di_grow = {}
-        for s_substarte in ls_substrate:
+        for s_substrate in ls_substrate:
             di_grow.update({
-                s_substarte : int(np.round(np.mean(self.get_voxel_spacing()[:2])) - 1)
+                s_substrate : int(np.round(np.mean(self.get_voxel_spacing()[:2])) - 1)
             })
 
         # get and shift substrate xy data
@@ -3196,13 +3238,13 @@ class TimeStep:
         ds_substrate =  d_mcds['substrate']['ds_substrate']
         ls_substrate = [ds_substrate[s_key] for s_key in sorted(ds_substrate, key=int)]
         # store values
-        d_mcds['substrate']['ls_substarte'] = ls_substrate
+        d_mcds['substrate']['ls_substrate'] = ls_substrate
 
         ## get substrate df
         # extract data
         ls_column = ['substrate','decay_rate','diffusion_coefficient']
         ll_sub = []
-        for s_substrate in d_mcds['substrate']['ls_substarte']:
+        for s_substrate in d_mcds['substrate']['ls_substrate']:
             s_decay_value = d_mcds['raw_substrate'][s_substrate]['decay_rate']['value']
             s_diffusion_value = d_mcds['raw_substrate'][s_substrate]['diffusion_coefficient']['value']
             ll_sub.append([s_substrate, s_decay_value, s_diffusion_value])
@@ -3211,7 +3253,7 @@ class TimeStep:
         df_substrate.set_index('substrate', inplace=True)
         df_substrate.columns.name = 'attribute'
         # store values
-        d_mcds['substrate']['df_substarte'] = df_substrate
+        d_mcds['substrate']['df_substrate'] = df_substrate
 
         ## get conc df
         # flatten mesh coordnates
@@ -3232,7 +3274,7 @@ class TimeStep:
         ]
         la_data = [ai_i, ai_j, ai_k, ar_m, ar_n, ar_p]
         # handle concentrations
-        for s_substrate in d_mcds['substrate']['ls_substarte']:
+        for s_substrate in d_mcds['substrate']['ls_substrate']:
             ls_column.append(s_substrate)
             ar_conc = d_mcds['raw_substrate'][s_substrate]['data'].copy()
             la_data.append(ar_conc.flatten(order='C'))
@@ -3495,7 +3537,7 @@ class TimeStep:
         # microenvironment
         if self.microenv:
             # merge substrate (left join)
-            df_sub = d_mcds['substrate']['df_substarte']
+            df_sub = d_mcds['substrate']['df_substrate']
             for s_sub in df_sub.index:
                  for s_rate in df_sub.columns:
                      s_var = f'{s_sub}_{s_rate}'
@@ -3561,7 +3603,7 @@ class TimeStep:
 
         # microenvironment
         if self.microenv:
-            for s_substrate in d_mcds['substrate']['ls_substarte']:
+            for s_substrate in d_mcds['substrate']['ls_substrate']:
                 # unit from substrate parameters
                 s_unit = d_mcds['raw_substrate'][s_substrate]['units']
                 ds_unit.update({s_substrate: s_unit})

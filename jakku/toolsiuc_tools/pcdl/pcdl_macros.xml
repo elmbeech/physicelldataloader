@@ -24,7 +24,7 @@
         <param name="attribute" label="attribute" type="text" value="cell_type" optional="false" help="Listing of mcds.get_cell_df dataframe column names, used for cell attributes."/>
     </xml>
     <xml name="cat_drop">
-        <param argument="--cat_drop" label="categorical label drop" type="text" value="" optional="true" help="If focus is a categorical attribute (e.g. cell_type), set of category labels, strings separated by space (e.g. cell type or substarte names), to be dropped for the dataframe. Attention: when the categorical label keep parameter is given, then the categorical label drop parameter has to be an empty string!"/>
+        <param argument="--cat_drop" label="categorical label drop" type="text" value="" optional="true" help="If focus is a categorical attribute (e.g. cell_type), set of category labels, strings separated by space (e.g. cell type or substrate names), to be dropped for the dataframe. Attention: when the categorical label keep parameter is given, then the categorical label drop parameter has to be an empty string!"/>
     </xml>
     <xml name="cat_keep">
         <param argument="--cat_keep" label="categorical label keep" type="text" value="" optional="true" help="If focus is a categorical attribute (e.g. cel_type), set of category labels, strings separated by space (e.g. cell type or substrate names), to be dropped for the dataframe. Attention: when the categorical label keep parameter is given, then the categorical label drop parameter has to be an empty string!"/>
@@ -273,7 +273,7 @@
         <param name="focus_num" label="focus numerical data" type="text" value="none" optional="false" help="Numerical data column within dataframe specified under frame (pcdl_get_cell_attribute_list or pcdl_get_substrate_list). None is count, agent or voxel count."/>
     </xml>
     <xml name="frame">
-        <param argument="--frame" label="frame" type="select" display="radio" help="To specifies the data dataframe from which the values are taken. Cell: agent centric value. Conc: whole domain centric substarte concentration values.">
+        <param argument="--frame" label="frame" type="select" display="radio" help="To specifies the data dataframe from which the values are taken. Cell: agent centric value. Conc: whole domain centric substrate concentration values.">
             <option value="cell" selected="true">cell</option>
             <option value="conc">conc</option>
         </param>

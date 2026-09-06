@@ -308,7 +308,7 @@ docstring_md(
     ls_doc = pcdl.TimeStep.make_graph_gml.__doc__.split('\n'),
 )
 
-# write TimeStep substarte and cells function markdown files
+# write TimeStep substrate and cells function markdown files
 docstring_md(
     s_function = 'mcds.get_muspan',
     ls_doc = pcdl.TimeStep.get_muspan.__doc__.split('\n'),

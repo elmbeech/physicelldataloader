@@ -82,7 +82,7 @@ Basically, there are four types of functions:
 + [help(mcds.get_voxel_volume)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_voxel_volume.md)
 + [help(mcds.get_voxel_ijk)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_voxel_ijk.md)
 
-### TimeStep substarte
+### TimeStep substrate
 
 + [help(mcds.get_substrate_list)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_substrate_list.md)  #! workhorse function
 + [help(mcds.get_substrate_dict)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_substrate_dict.md)
@@ -105,7 +105,7 @@ Basically, there are four types of functions:
 + [help(mcds.make_cell_vtk)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.make_cell_vtk.md)  #! workhorse function
 + [help(mcds.make_graph_gml)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.make_graph_gml.md)  #! workhose function
 
-### TimeStep substarte and cells
+### TimeStep substrate and cells
 
 + [help(mcds.get_muspan)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_muspan.md)  #! workhose function
 + [help(mcds.get_spatialdata)](https://github.com/elmbeech/physicelldataloader/tree/master/man/docstring/mcds.get_spatialdata.md)  #! workhose function
