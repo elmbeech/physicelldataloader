@@ -16,6 +16,7 @@
 
 # load library
 import json
+import lzma
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib import colors
@@ -640,13 +641,13 @@ class TimeStep:
         return o_viewer
 
 
-    def to_pcd(self, s_prefix='', compressleve=None):
+    def to_file(self, prefix='', compresslevel=None):
         """
         input:
         output:
         description:
         """
-        s_file = f"{s_prefix}{self.xmlfile.replace('.xml', '.pcd')}"
+        s_file = f"{prefix}{self.xmlfile.replace('.xml', '.pcdl')}"
         s_pathfile = self.path + '/' + s_file
         print(f'writing: {s_pathfile} ...')
         # manipulate data structure
@@ -661,21 +662,33 @@ class TimeStep:
         o_pcd['mesh']['mnp_grid'] = o_pcd['mesh']['mnp_grid'].tolist()
         # zip the diles together
         with ZipFile(s_pathfile, 'w') as myzip:
-            # write and pop pandas dataframe
-            #print(f'write pandas dataframes ...')
-            with myzip.open(self.xmlfile.replace('.xml', '_subs.csv'), 'w') as f:
-                f.write(o_pcd['substrate']['df_substrate'].to_csv().encode('utf-8'))
+            # write and pop df_substrate
+            s_file = self.xmlfile.replace('.xml', '_subs.csv') if (compresslevel is None) else self.xmlfile.replace('.xml', '_subs.csv.xz')
+            with myzip.open(s_file, 'w') as f:
+                s_byte = o_pcd['substrate']['df_substrate'].to_csv().encode('utf-8')
+                s_byte = s_byte if (compresslevel is None) else lzma.compress(s_byte, format=lzma.FORMAT_XZ, preset=compresslevel)
+                f.write(s_byte)
             o_pcd['substrate']['df_substrate'] = None  # pop
-            with myzip.open(self.xmlfile.replace('.xml', '_conc.csv'), 'w') as f:
-                f.write(o_pcd['substrate']['df_conc'].to_csv().encode('utf-8'))
+            # write and pop df_conc
+            s_file = self.xmlfile.replace('.xml', '_conc.csv') if (compresslevel is None) else self.xmlfile.replace('.xml', '_conc.csv.xz')
+            with myzip.open(s_file, 'w') as f:
+                s_byte = o_pcd['substrate']['df_conc'].to_csv().encode('utf-8')
+                s_byte = s_byte if (compresslevel is None) else lzma.compress(s_byte, format=lzma.FORMAT_XZ, preset=compresslevel)
+                f.write(s_byte)
             o_pcd['substrate']['df_conc'] = None  # pop
-            with myzip.open(self.xmlfile.replace('.xml', '_cell.csv'), 'w') as f:
-                f.write(o_pcd['cell']['df_cell'].to_csv().encode('utf-8'))
+            # write and pop df_cell
+            s_file = self.xmlfile.replace('.xml', '_cell.csv') if (compresslevel is None) else self.xmlfile.replace('.xml', '_cell.csv.xz')
+            with myzip.open(s_file, 'w') as f:
+                s_byte = o_pcd['cell']['df_cell'].to_csv().encode('utf-8')
+                s_byte = s_byte if (compresslevel is None) else lzma.compress(s_byte, format=lzma.FORMAT_XZ, preset=compresslevel)
+                f.write(s_byte)
             o_pcd['cell']['df_cell'] = None  # pop
             # write the json
-            #print(f'write json ...')
-            with myzip.open(self.xmlfile.replace('.xml', '.json'), 'w') as f:
-                f.write(json.dumps(o_pcd).encode('utf-8'))
+            s_file = self.xmlfile.replace('.xml', '.json') if (compresslevel is None) else self.xmlfile.replace('.xml', '.json.xz')
+            with myzip.open(s_file, 'w') as f:
+                s_byte = json.dumps(o_pcd).encode('utf-8')
+                s_byte = s_byte if (compresslevel is None) else lzma.compress(s_byte, format=lzma.FORMAT_XZ, preset=compresslevel)
+                f.write(s_byte)
         # going home
         print(f'ok!')
 
