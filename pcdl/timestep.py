@@ -520,6 +520,7 @@ class TimeStep:
             xmlfile: string
                 name of the xml file with or without path.
                 in the with path case, output_path has to be set to the default!
+                or mcds TimeStep data dictionary.
 
             output_path: string; default '.'
                 relative or absolute path to the directory where
@@ -566,17 +567,41 @@ class TimeStep:
             the same directory. data is loaded by reading the xml file
             for a particular time step and the therein referenced files.
         """
-        self.path = None
-        self.xmlfile = None
-        self.custom_data_type = custom_data_type
-        self.microenv = microenv
-        self.graph = graph
-        self.physiboss = physiboss
-        if type(settingxml) is str:
-            settingxml = settingxml.replace('\\','/').split('/')[-1]
-        self.settingxml = settingxml
+        # set generic variables
         self.verbose = verbose
-        self.data = self._read_xml(xmlfile, output_path)
+
+        # load mcds timestep from passed mcds data dictionary
+        if (type(xmlfile) is dict):
+            # check mcds pcdl version
+            try:
+                xmlfile['metadata']['pcdl_version']
+                xmlfile['metadata']['timestep']
+            except KeyError:
+                sys.exit(f'Error @ TimeStep.__init__ : mcds data dictionary {type(xmlfile)} is not pcdl version >= 4.2 compatible!')
+            # set variables
+            self.ls_xmlfile = None
+            self.path = '.'
+            self.microenv = True
+            self.graph = True
+            self.physiboss = None
+            self.settingxml = None
+            # load data
+            self.data = xmlfile
+
+        # load mcds timestep from physicell output directory
+        else:
+            # set variables
+            self.xmlfile = None
+            self.path = None
+            self.custom_data_type = custom_data_type
+            self.microenv = microenv
+            self.graph = graph
+            self.physiboss = physiboss
+            if type(settingxml) is str:
+                settingxml = settingxml.replace('\\','/').split('/')[-1]
+            self.settingxml = settingxml
+            # load data
+            self.data = self._read_xml(xmlfile, output_path)
 
 
     def custom_data_astype(self, custom_data_type={}):
@@ -3417,6 +3442,12 @@ class TimeStep:
             if self.verbose:
                 print(f'Warning @ TimeStep._read_xml : corrupt {s_cellpathfile} detected!\nassuming time step with zero cells because of a known bug in PhysiCell MultiCellDS version 0.5 output.')
             ar_cell = np.empty([len(ls_variable),0])
+
+
+        ## extract timestep id
+        # <filename>output00000014_cells.mat</filename>
+        # <filename>output00000014_microenvironment0.mat</filename>
+        d_mcds['metadata']['timestep'] = int(x_celldata.find('filename').text.split('_')[0].replace('output',''))
 
         # check for column label mapping error (as good as it gets)
         if (ar_cell.shape[0] != len(ls_variable)):

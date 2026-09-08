@@ -236,7 +236,7 @@ class TimeSeries:
             self.physiboss = None
             self.settingxml = None
 
-        # load mcds timrseries from physicell output directory
+        # load mcds timeseries from physicell output directory
         else:
             output_path = output_path.replace('\\','/')
             while (output_path.find('//') > -1):
