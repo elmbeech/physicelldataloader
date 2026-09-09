@@ -15,6 +15,7 @@
 
 
 # load library
+import copy
 import json
 import lzma
 import matplotlib.pyplot as plt
@@ -676,7 +677,7 @@ class TimeStep:
         s_pathfile = self.path + '/' + s_file
         print(f'writing: {s_pathfile} ...')
         # manipulate data structure
-        o_pcd = self.data.copy()
+        o_pcd = copy.deepcopy(self.data)
         # set to list
         for s_graph in o_pcd['cell']['dei_graph']:
             o_pcd['cell']['dei_graph'][s_graph] = {i_key: sorted(ei_value) for i_key, ei_value in o_pcd['cell']['dei_graph'][s_graph].items()}

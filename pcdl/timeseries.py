@@ -16,7 +16,10 @@
 
 
 # load libraries
+import copy
 import glob
+import lzma
+import json
 import matplotlib.pyplot as plt
 import numpy as np
 import os
@@ -27,6 +30,7 @@ from pcdl.timestep import TimeStep, es_coor_cell, es_coor_conc, _anndextract
 from pcdl.VERSION import __version__
 import platform
 import sys
+from zipfile import ZipFile
 
 
 ############
@@ -340,6 +344,68 @@ class TimeSeries:
             intensity_cmap = intensity_cmap,
         )
         return o_viewer
+
+
+    def to_file(self, prefix='', compresslevel=None, collapse=True):
+        """
+        input:
+        output:
+        description:
+        """
+        if collapse:
+            s_file = f"{prefix}timeseries.pcdl"
+            s_pathfile = self.path + '/' + s_file
+            print(f'writing: {s_pathfile} ...')
+            # zip the files together
+            with ZipFile(s_pathfile, 'w') as myzip:
+                for mcds in self.get_mcds_list():
+                    # manipulate data structure
+                    o_pcd = copy.deepcopy(mcds.data)
+                    # set to list
+                    for s_graph in o_pcd['cell']['dei_graph']:
+                        o_pcd['cell']['dei_graph'][s_graph] = {i_key: sorted(ei_value) for i_key, ei_value in o_pcd['cell']['dei_graph'][s_graph].items()}
+                    # numpy array to list
+                    o_pcd['mesh']['ijk_axis'] = [a_value.tolist() for a_value in o_pcd['mesh']['ijk_axis']]
+                    o_pcd['mesh']['mnp_axis'] = [a_value.tolist() for a_value in o_pcd['mesh']['mnp_axis']]
+                    o_pcd['mesh']['mnp_coordinate'] = o_pcd['mesh']['mnp_coordinate'].tolist()
+                    o_pcd['mesh']['mnp_grid'] = o_pcd['mesh']['mnp_grid'].tolist()
+                    # write and pop df_substrate
+                    s_file = mcds.xmlfile.replace('.xml', '_subs.csv') if (compresslevel is None) else mcds.xmlfile.replace('.xml', '_subs.csv.xz')
+                    with myzip.open(s_file, 'w') as f:
+                        s_byte = o_pcd['substrate']['df_substrate'].to_csv().encode('utf-8')
+                        s_byte = s_byte if (compresslevel is None) else lzma.compress(s_byte, format=lzma.FORMAT_XZ, preset=compresslevel)
+                        f.write(s_byte)
+                    o_pcd['substrate']['df_substrate'] = None  # pop
+                    # write and pop df_conc
+                    s_file = mcds.xmlfile.replace('.xml', '_conc.csv') if (compresslevel is None) else mcds.xmlfile.replace('.xml', '_conc.csv.xz')
+                    with myzip.open(s_file, 'w') as f:
+                        s_byte = o_pcd['substrate']['df_conc'].to_csv().encode('utf-8')
+                        s_byte = s_byte if (compresslevel is None) else lzma.compress(s_byte, format=lzma.FORMAT_XZ, preset=compresslevel)
+                        f.write(s_byte)
+                    o_pcd['substrate']['df_conc'] = None  # pop
+                    # write and pop df_cell
+                    s_file = mcds.xmlfile.replace('.xml', '_cell.csv') if (compresslevel is None) else mcds.xmlfile.replace('.xml', '_cell.csv.xz')
+                    with myzip.open(s_file, 'w') as f:
+                        s_byte = o_pcd['cell']['df_cell'].to_csv().encode('utf-8')
+                        s_byte = s_byte if (compresslevel is None) else lzma.compress(s_byte, format=lzma.FORMAT_XZ, preset=compresslevel)
+                        f.write(s_byte)
+                    o_pcd['cell']['df_cell'] = None  # pop
+                    # write the json
+                    s_file = mcds.xmlfile.replace('.xml', '.json') if (compresslevel is None) else mcds.xmlfile.replace('.xml', '.json.xz')
+                    with myzip.open(s_file, 'w') as f:
+                        s_byte = json.dumps(o_pcd).encode('utf-8')
+                        s_byte = s_byte if (compresslevel is None) else lzma.compress(s_byte, format=lzma.FORMAT_XZ, preset=compresslevel)
+                        f.write(s_byte)
+            # going home
+            print(f'ok!')
+
+        # call timestep function
+        else:
+            for mcds in self.get_mcds_list():
+                mcds.to_file(
+                    prefix = prefix,
+                    compresslevel = compresslevel,
+                )
 
 
     ## LOAD DATA ##
