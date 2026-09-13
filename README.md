@@ -7,7 +7,7 @@ to load output, generated with the [PhysiCell](https://github.com/MathCancer/Phy
 into [python3](https://en.wikipedia.org/wiki/Python_(programming_language)) or transform PhysiCell output into more widely used data formats,
 straight on the command line.
 
-![pcdl concept](man/img/physicelldataloader_concept_v4.0.0.png)
+![pcdl concept](man/img/physicelldataloader_concept_v4.2.0.png)
 
 <!--
 pcdl was forked from the original [PhysiCell-Tools](https://github.com/PhysiCell-Tools) [python-loader](https://github.com/PhysiCell-Tools/python-loader) implementation.

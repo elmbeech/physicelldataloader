@@ -125,6 +125,7 @@ full = [
 [project.scripts]
 # special thanks to Miguel Ponce-de-Leon who introduced me to entry point scripts!
 # initialize
+pcdl_to_file ="pcdl.commandline:to_file"
 # metadata
 pcdl_get_version = "pcdl.commandline:get_version"
 pcdl_get_unit_dict = "pcdl.commandline:get_unit_dict"

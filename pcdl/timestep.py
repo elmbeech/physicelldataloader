@@ -673,9 +673,16 @@ class TimeStep:
         output:
         description:
         """
+        # hanldle input
+        if not (self.microenv and self.graph and self.physiboss):
+            sys.exit(f'Error @ TimeStep.to_file : pcdl.read microenv, graph, and physiboss have to be set to True if you like later on write to_file ({self.microenv}, {self.graph}, {self.physiboss}).')
+
+        # generate output file name
         s_file = f"{prefix}{self.xmlfile.replace('.xml', '.pcdl')}"
         s_pathfile = self.path + '/' + s_file
-        print(f'writing: {s_pathfile} ...')
+        if self.verbose:
+            print(f'write (xz compresslevel {str(compresslevel)}): {s_pathfile} ...')
+
         # manipulate data structure
         o_pcd = copy.deepcopy(self.data)
         # set to list
@@ -686,7 +693,8 @@ class TimeStep:
         o_pcd['mesh']['mnp_axis'] = [a_value.tolist() for a_value in o_pcd['mesh']['mnp_axis']]
         o_pcd['mesh']['mnp_coordinate'] = o_pcd['mesh']['mnp_coordinate'].tolist()
         o_pcd['mesh']['mnp_grid'] = o_pcd['mesh']['mnp_grid'].tolist()
-        # zip the diles together
+
+        # compress and zip the files together
         with ZipFile(s_pathfile, 'w') as myzip:
             # write and pop df_substrate
             s_file = self.xmlfile.replace('.xml', '_subs.csv') if (compresslevel is None) else self.xmlfile.replace('.xml', '_subs.csv.xz')
@@ -715,8 +723,9 @@ class TimeStep:
                 s_byte = json.dumps(o_pcd).encode('utf-8')
                 s_byte = s_byte if (compresslevel is None) else lzma.compress(s_byte, format=lzma.FORMAT_XZ, preset=compresslevel)
                 f.write(s_byte)
+
         # going home
-        print(f'ok!')
+        return s_pathfile
 
 
     ## METADATA RELATED FUNCTIONS ##

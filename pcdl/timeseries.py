@@ -352,10 +352,15 @@ class TimeSeries:
         output:
         description:
         """
+        # hanldle input
+        if not (self.microenv and self.graph and self.physiboss):
+            sys.exit(f'Error @ TimeStep.to_file : pcdl.read microenv, graph, and physiboss have to be set to True if you like later on write to_file ({self.microenv}, {self.graph}, {self.physiboss}).')
+
+        # process timeseries
         if collapse:
             s_file = f"{prefix}timeseries.pcdl"
             s_pathfile = self.path + '/' + s_file
-            print(f'writing: {s_pathfile} ...')
+            print(f'write (xz compresslevel {str(compresslevel)}): {s_pathfile} ...')
             # zip the files together
             with ZipFile(s_pathfile, 'w') as myzip:
                 for mcds in self.get_mcds_list():
@@ -397,15 +402,19 @@ class TimeSeries:
                         s_byte = s_byte if (compresslevel is None) else lzma.compress(s_byte, format=lzma.FORMAT_XZ, preset=compresslevel)
                         f.write(s_byte)
             # going home
-            print(f'ok!')
+            return s_pathfile
 
         # call timestep function
         else:
+            ls_pathfile = []
             for mcds in self.get_mcds_list():
-                mcds.to_file(
+                s_pathfile = mcds.to_file(
                     prefix = prefix,
                     compresslevel = compresslevel,
                 )
+                ls_pathfile.append(s_pathfile)
+            # going home
+            return ls_pathfile
 
 
     ## LOAD DATA ##

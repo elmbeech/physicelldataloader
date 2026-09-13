@@ -39,6 +39,139 @@ def entropy(pk):
     return stats.entropy(pk=pk, qk=None, base=2, nan_policy='omit', axis=0)[0]
 
 
+#######################################
+# save command line function #
+#######################################
+
+def to_file():
+    # argv
+    # argv
+    parser = argparse.ArgumentParser(
+        prog = 'pcdl_to_file',
+        description = 'this function save the pcdl data structure to a pcdl file, with or without xz compression.',
+        epilog = 'homepage: https://github.com/elmbeech/physicelldataloader',
+    )
+
+    # TimeSeries path
+    parser.add_argument(
+        'path',
+        nargs = '?',
+        default = '.',
+        help = 'path to the PhysiCell output directory or a outputnnnnnnnn.xml file. default is . .',
+    )
+    # TimeSeries output_path '.'
+    # TimeSeries custom_data_type
+    parser.add_argument(
+        '--custom_data_type',
+        nargs = '*',
+        default = [],
+        help = 'parameter to specify custom_data variable types other than float (namely: int, bool, str) like this var:dtype myint:int mybool:bool mystr:str . downstream float and int will be handled as numeric, bool as Boolean, and str as categorical data. default is an empty string.',
+    )
+    # TimeSeries microenv True
+    # TimeSeries graph True
+    # TimeSeries physiboss True
+    # TimeSeries settingxml None  !!!
+    parser.add_argument(
+        '--settingxml',
+        default = 'false',
+        help = 'the settings.xml that is loaded, from which the cell type ID label mapping, is extracted, if this information is not found in the output xml file. set to None or False if the xml file is missing! default is False.',
+    )
+    # TimeSeries verbose
+    parser.add_argument(
+        '-v', '--verbose',
+        default = 'true',
+        help = 'setting verbose to False for less text output, while processing. default is True.',
+    )
+    # to_file prefix
+    parser.add_argument(
+        '--prefix', '--pf',
+        default = '',
+        help = 'file name prefix. default is an empty string.',
+    )
+    # to_file compression level
+    parser.add_argument(
+        '--compresslevel', '--cl',
+        default = 'none',
+        help = 'integer. xz compression  level. None does no compression. default is None.',
+    )
+    # to_file collapse
+    parser.add_argument(
+        '--collapse',
+        default = 'true',
+        help = 'should all mcds time steps from the time series be collapsed into one big timeseries.pcdl, or a many outputnnnnnnnn.pcdl, one for each time step? default is True.'
+    )
+
+    # parse arguments
+    args = parser.parse_args()
+    print(args)
+
+    # process arguments
+    s_path = args.path.replace('\\','/')
+    while (s_path.find('//') > -1):
+        s_path = s_path.replace('//','/')
+    if (s_path.endswith('/')) and (len(s_path) > 1):
+        s_path = s_path[:-1]
+    s_pathfile = s_path
+    if not s_pathfile.endswith('.xml'):
+        s_pathfile = s_pathfile + '/initial.xml'
+    else:
+        s_path = '/'.join(s_path.split('/')[:-1])
+    if not os.path.exists(s_pathfile):
+        sys.exit(f'Error @ pcdl_to_file : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
+
+    # custom_data_type
+    d_vartype = {}
+    for vartype in args.custom_data_type:
+        s_var, s_type = vartype.split(':')
+        if s_type in {'bool'}: o_type = bool
+        elif s_type in {'int'}: o_type = int
+        elif s_type in {'float'}: o_type = float
+        elif s_type in {'str'}: o_type = str
+        else:
+            sys.exit(f'Error @ pcdl_to_file : {s_var} {s_type} has an unknowen data type. knowen are bool, int, float, str.')
+        d_vartype.update({s_var : o_type})
+
+    # run
+    if os.path.isfile(args.path):
+        mcds = pcdl.TimeStep(
+            xmlfile = s_pathfile,
+            output_path = '.',
+            custom_data_type = d_vartype,
+            microenv = True,
+            graph = True,
+            physiboss = True,
+            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+            verbose = False if args.verbose.lower().startswith('f') else True
+        )
+        s_opathfile = mcds.to_file(
+            prefix = args.prefix,
+            compresslevel = None if (args.compresslevel.lower() == 'none') else int(args.compresslevel),
+        )
+        # going home
+        print(s_opathfile)
+
+    else:
+        mcdsts = pcdl.TimeSeries(
+            output_path = s_path,
+            custom_data_type = d_vartype,
+            load = True,
+            microenv = True,
+            graph = True,
+            physiboss = True,
+            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+            verbose = False if args.verbose.lower().startswith('f') else True,
+        )
+        o_opathfile = mcdsts.to_file(
+            prefix = args.prefix,
+            compresslevel = None if (args.compresslevel.lower() == 'none') else int(args.compresslevel),
+            collapse = False if args.collapse.lower().startswith('f') else True,
+        )
+        # going home
+        print(o_opathfile)
+
+    # going home
+    return 0
+
 ###########################################
 # metadata realted command line functions #
 ###########################################
