@@ -360,7 +360,8 @@ class TimeSeries:
         if collapse:
             s_file = f"{prefix}timeseries.pcdl"
             s_pathfile = self.path + '/' + s_file
-            print(f'write (xz compresslevel {str(compresslevel)}): {s_pathfile} ...')
+            if self.verbose:
+                print(f'write (xz compresslevel {str(compresslevel)}): {s_pathfile} ...')
             # zip the files together
             with ZipFile(s_pathfile, 'w') as myzip:
                 for mcds in self.get_mcds_list():

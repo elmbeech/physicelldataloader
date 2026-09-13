@@ -105,21 +105,7 @@ def to_file():
     args = parser.parse_args()
     print(args)
 
-    # process arguments
-    s_path = args.path.replace('\\','/')
-    while (s_path.find('//') > -1):
-        s_path = s_path.replace('//','/')
-    if (s_path.endswith('/')) and (len(s_path) > 1):
-        s_path = s_path[:-1]
-    s_pathfile = s_path
-    if not s_pathfile.endswith('.xml'):
-        s_pathfile = s_pathfile + '/initial.xml'
-    else:
-        s_path = '/'.join(s_path.split('/')[:-1])
-    if not os.path.exists(s_pathfile):
-        sys.exit(f'Error @ pcdl_to_file : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
-
-    # custom_data_type
+    # handle custom_data_type
     d_vartype = {}
     for vartype in args.custom_data_type:
         s_var, s_type = vartype.split(':')
@@ -132,44 +118,35 @@ def to_file():
         d_vartype.update({s_var : o_type})
 
     # run
-    if os.path.isfile(args.path):
-        mcds = pcdl.TimeStep(
-            xmlfile = s_pathfile,
-            output_path = '.',
-            custom_data_type = d_vartype,
-            microenv = True,
-            graph = True,
-            physiboss = True,
-            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
-            verbose = False if args.verbose.lower().startswith('f') else True
-        )
-        s_opathfile = mcds.to_file(
+    mcds = pcdl.read(
+        s_path = args.path,
+        custom_data_type = d_vartype,
+        load = True,
+        microenv = True,
+        graph = True,
+        physiboss = True,
+        settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
+        verbose = False if args.verbose.lower().startswith('f') else True
+    )
+
+    # timestep
+    o_opathfile = None
+    if type(mcds) == pcdl.timestep.TimeStep:
+        o_opathfile = mcds.to_file(
             prefix = args.prefix,
             compresslevel = None if (args.compresslevel.lower() == 'none') else int(args.compresslevel),
         )
-        # going home
-        print(s_opathfile)
 
+    # timeseries
     else:
-        mcdsts = pcdl.TimeSeries(
-            output_path = s_path,
-            custom_data_type = d_vartype,
-            load = True,
-            microenv = True,
-            graph = True,
-            physiboss = True,
-            settingxml = None if ((args.settingxml.lower() == 'none') or (args.settingxml.lower() == 'false')) else args.settingxml,
-            verbose = False if args.verbose.lower().startswith('f') else True,
-        )
-        o_opathfile = mcdsts.to_file(
+        o_opathfile = mcds.to_file(
             prefix = args.prefix,
             compresslevel = None if (args.compresslevel.lower() == 'none') else int(args.compresslevel),
             collapse = False if args.collapse.lower().startswith('f') else True,
         )
-        # going home
-        print(o_opathfile)
 
     # going home
+    print(o_opathfile)
     return 0
 
 ###########################################
