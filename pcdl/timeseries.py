@@ -219,17 +219,6 @@ class TimeSeries:
 
         # load mcds timeseries from list if mcds timesteps
         if (type(output_path) is list):
-            # check mcds pcdl version
-            try:
-                s_mcdsv = output_path[0].get_pcdl_version()
-            except AttributeError:
-                s_mcdsv = 'pcdl_<4.1.3'
-            except KeyError:
-                s_mcdsv = 'pcdl_<4.1.3'
-            except IndexError:
-                sys.exit(f'Error @ TimeSeries.__init__ : {output_path}. mcds list is empty!')
-            if (f'pcdl_{__version__}' != s_mcdsv):
-                print(f'Warning @ TimeSeries.__init__ : pcdl_{__version__} != {s_mcdsv}. the installed pcdl version and the pcdl version the mcds were generated from are not the same.\n the TimeSeries functions might or might not work.')
             # set variables
             self.ls_xmlfile = None
             self.l_mcds = output_path
@@ -239,6 +228,24 @@ class TimeSeries:
             self.graph = None
             self.physiboss = None
             self.settingxml = None
+            # check for empty list
+            if len(output_path) < 1:
+                sys.exit(f'Error @ TimeSeries.__init__ : {output_path}. mcds list is empty!')
+            # check mcds pcdl version >= 4.1.3
+            try:
+                s_mcdsv = output_path[0].get_pcdl_version()
+            except AttributeError:
+                s_mcdsv = 'pcdl_<4.1.3'
+            except KeyError:
+                s_mcdsv = 'pcdl_<4.1.3'
+            # check mcds pcdl version >= 4.2
+            try:
+                output_path[0].data['metadata']['timestep']
+                self.microenv = True
+                self.graph = True
+                self.physiboss = True
+            except KeyError:
+                pass
 
         # load mcds timeseries from physicell output directory
         else:
@@ -376,28 +383,28 @@ class TimeSeries:
                     o_pcd['mesh']['mnp_coordinate'] = o_pcd['mesh']['mnp_coordinate'].tolist()
                     o_pcd['mesh']['mnp_grid'] = o_pcd['mesh']['mnp_grid'].tolist()
                     # write and pop df_substrate
-                    s_file = mcds.xmlfile.replace('.xml', '_subs.csv') if (compresslevel is None) else mcds.xmlfile.replace('.xml', '_subs.csv.xz')
+                    s_file = o_pcd['metadata']['xmlfile'].replace('.xml', '_subs.csv') if (compresslevel is None) else o_pcd['metadata']['xmlfile'].replace('.xml', '_subs.csv.xz')
                     with myzip.open(s_file, 'w') as f:
                         s_byte = o_pcd['substrate']['df_substrate'].to_csv().encode('utf-8')
                         s_byte = s_byte if (compresslevel is None) else lzma.compress(s_byte, format=lzma.FORMAT_XZ, preset=compresslevel)
                         f.write(s_byte)
                     o_pcd['substrate']['df_substrate'] = None  # pop
                     # write and pop df_conc
-                    s_file = mcds.xmlfile.replace('.xml', '_conc.csv') if (compresslevel is None) else mcds.xmlfile.replace('.xml', '_conc.csv.xz')
+                    s_file = o_pcd['metadata']['xmlfile'].replace('.xml', '_conc.csv') if (compresslevel is None) else o_pcd['metadata']['xmlfile'].replace('.xml', '_conc.csv.xz')
                     with myzip.open(s_file, 'w') as f:
                         s_byte = o_pcd['substrate']['df_conc'].to_csv().encode('utf-8')
                         s_byte = s_byte if (compresslevel is None) else lzma.compress(s_byte, format=lzma.FORMAT_XZ, preset=compresslevel)
                         f.write(s_byte)
                     o_pcd['substrate']['df_conc'] = None  # pop
                     # write and pop df_cell
-                    s_file = mcds.xmlfile.replace('.xml', '_cell.csv') if (compresslevel is None) else mcds.xmlfile.replace('.xml', '_cell.csv.xz')
+                    s_file = o_pcd['metadata']['xmlfile'].replace('.xml', '_cell.csv') if (compresslevel is None) else o_pcd['metadata']['xmlfile'].replace('.xml', '_cell.csv.xz')
                     with myzip.open(s_file, 'w') as f:
                         s_byte = o_pcd['cell']['df_cell'].to_csv().encode('utf-8')
                         s_byte = s_byte if (compresslevel is None) else lzma.compress(s_byte, format=lzma.FORMAT_XZ, preset=compresslevel)
                         f.write(s_byte)
                     o_pcd['cell']['df_cell'] = None  # pop
                     # write the json
-                    s_file = mcds.xmlfile.replace('.xml', '.json') if (compresslevel is None) else mcds.xmlfile.replace('.xml', '.json.xz')
+                    s_file = o_pcd['metadata']['xmlfile'].replace('.xml', '.json') if (compresslevel is None) else o_pcd['metadata']['xmlfile'].replace('.xml', '.json.xz')
                     with myzip.open(s_file, 'w') as f:
                         s_byte = json.dumps(o_pcd).encode('utf-8')
                         s_byte = s_byte if (compresslevel is None) else lzma.compress(s_byte, format=lzma.FORMAT_XZ, preset=compresslevel)

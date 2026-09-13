@@ -584,7 +584,7 @@ class TimeStep:
             self.path = '.'
             self.microenv = True
             self.graph = True
-            self.physiboss = None
+            self.physiboss = True
             self.settingxml = None
             # load data
             self.data = xmlfile
@@ -678,7 +678,7 @@ class TimeStep:
             sys.exit(f'Error @ TimeStep.to_file : pcdl.read microenv, graph, and physiboss have to be set to True if you like later on write to_file ({self.microenv}, {self.graph}, {self.physiboss}).')
 
         # generate output file name
-        s_file = f"{prefix}{self.xmlfile.replace('.xml', '.pcdl')}"
+        s_file = f"{prefix}{self.data['metadata']['xmlfile'].replace('.xml', '.pcdl')}"
         s_pathfile = self.path + '/' + s_file
         if self.verbose:
             print(f'write (xz compresslevel {str(compresslevel)}): {s_pathfile} ...')
@@ -697,28 +697,28 @@ class TimeStep:
         # compress and zip the files together
         with ZipFile(s_pathfile, 'w') as myzip:
             # write and pop df_substrate
-            s_file = self.xmlfile.replace('.xml', '_subs.csv') if (compresslevel is None) else self.xmlfile.replace('.xml', '_subs.csv.xz')
+            s_file = o_pcd['metadata']['xmlfile'].replace('.xml', '_subs.csv') if (compresslevel is None) else o_pcd['metadata']['xmlfile'].replace('.xml', '_subs.csv.xz')
             with myzip.open(s_file, 'w') as f:
                 s_byte = o_pcd['substrate']['df_substrate'].to_csv().encode('utf-8')
                 s_byte = s_byte if (compresslevel is None) else lzma.compress(s_byte, format=lzma.FORMAT_XZ, preset=compresslevel)
                 f.write(s_byte)
             o_pcd['substrate']['df_substrate'] = None  # pop
             # write and pop df_conc
-            s_file = self.xmlfile.replace('.xml', '_conc.csv') if (compresslevel is None) else self.xmlfile.replace('.xml', '_conc.csv.xz')
+            s_file = o_pcd['metadata']['xmlfile'].replace('.xml', '_conc.csv') if (compresslevel is None) else o_pcd['metadata']['xmlfile'].replace('.xml', '_conc.csv.xz')
             with myzip.open(s_file, 'w') as f:
                 s_byte = o_pcd['substrate']['df_conc'].to_csv().encode('utf-8')
                 s_byte = s_byte if (compresslevel is None) else lzma.compress(s_byte, format=lzma.FORMAT_XZ, preset=compresslevel)
                 f.write(s_byte)
             o_pcd['substrate']['df_conc'] = None  # pop
             # write and pop df_cell
-            s_file = self.xmlfile.replace('.xml', '_cell.csv') if (compresslevel is None) else self.xmlfile.replace('.xml', '_cell.csv.xz')
+            s_file = o_pcd['metadata']['xmlfile'].replace('.xml', '_cell.csv') if (compresslevel is None) else o_pcd['metadata']['xmlfile'].replace('.xml', '_cell.csv.xz')
             with myzip.open(s_file, 'w') as f:
                 s_byte = o_pcd['cell']['df_cell'].to_csv().encode('utf-8')
                 s_byte = s_byte if (compresslevel is None) else lzma.compress(s_byte, format=lzma.FORMAT_XZ, preset=compresslevel)
                 f.write(s_byte)
             o_pcd['cell']['df_cell'] = None  # pop
             # write the json
-            s_file = self.xmlfile.replace('.xml', '.json') if (compresslevel is None) else self.xmlfile.replace('.xml', '.json.xz')
+            s_file = o_pcd['metadata']['xmlfile'].replace('.xml', '.json') if (compresslevel is None) else o_pcd['metadata']['xmlfile'].replace('.xml', '.json.xz')
             with myzip.open(s_file, 'w') as f:
                 s_byte = json.dumps(o_pcd).encode('utf-8')
                 s_byte = s_byte if (compresslevel is None) else lzma.compress(s_byte, format=lzma.FORMAT_XZ, preset=compresslevel)
@@ -1489,7 +1489,7 @@ class TimeStep:
             else:
                 s_path = f'{directory}/'
             os.makedirs(s_path, exist_ok=True)
-            s_file = self.xmlfile.replace('.xml', f"_{focus.replace(' ','_')}.{ext}")
+            s_file = self.data['metadata']['xmlfile'].replace('.xml', f"_{focus.replace(' ','_')}.{ext}")
             s_pathfile = f'{s_path}{s_file}'
             # handle figure background color
             if figbgcolor is None:
@@ -1523,7 +1523,7 @@ class TimeStep:
         vtk = optional_import('vtk', s_caller='TimeStep.make_conc_vtk')
 
         # off we go.
-        s_vtkfile = self.xmlfile.replace('.xml', ext)
+        s_vtkfile = self.data['metadata']['xmlfile'].replace('.xml', ext)
         if self.verbose:
             print(f'processing: {s_vtkfile} ...')
 
@@ -2088,7 +2088,7 @@ class TimeStep:
             else:
                 s_path = f'{directory}/'
             os.makedirs(s_path, exist_ok=True)
-            s_file = self.xmlfile.replace('.xml', f"_{focus.replace(' ','_')}.{ext}")
+            s_file = self.data['metadata']['xmlfile'].replace('.xml', f"_{focus.replace(' ','_')}.{ext}")
             s_pathfile = f'{s_path}{s_file}'
             # handle figure background color
             if figbgcolor is None:
@@ -2128,7 +2128,7 @@ class TimeStep:
         vtk = optional_import('vtk', s_caller='TimeStep.make_cell_vtk')
 
         # off we go.
-        s_vtkfile = self.xmlfile.replace('.xml', ext)
+        s_vtkfile = self.data['metadata']['xmlfile'].replace('.xml', ext)
         if self.verbose:
             print(f'processing: {s_vtkfile} ...')
 
@@ -2271,7 +2271,7 @@ class TimeStep:
             sys.exit(f'Erro @ make_graph_gml : unknown graph_type {graph_type}. known are attached, neighbor, spring, and touch.')
 
         # generate filename
-        s_gmlpathfile = self.path + '/' + self.xmlfile.replace('.xml',f'_{graph_type}.gml')
+        s_gmlpathfile = self.path + '/' + self.data['metadata']['xmlfile'].replace('.xml',f'_{graph_type}.gml')
 
         # open result gml file
         f = open(s_gmlpathfile, 'w')
@@ -2376,10 +2376,10 @@ class TimeStep:
 
             # processing
             if self.verbose:
-                print(f'processing: {self.xmlfile} mcds {i_klayer + 1}/{i_kmax + 1} z-stack layer to muspan obj.')
+                print(f"processing: {self.data['metadata']['xmlfile']} mcds {i_klayer + 1}/{i_kmax + 1} z-stack layer to muspan obj.")
 
             ## generate muspan domain
-            s_domain = f"{self.xmlfile.replace('.xml','')}_z{str(i_klayer).zfill(i_kdigit)}"
+            s_domain = f"{self.data['metadata']['xmlfile'].replace('.xml','')}_z{str(i_klayer).zfill(i_kdigit)}"
             o_domain = ms.domain(
                 name = s_domain,
                 unit_of_length = 'um',
@@ -2963,11 +2963,11 @@ class TimeStep:
                 s_channel += f'_{s_celltype}'
             if len(ls_celltype) > 0:
                 s_channel += f'_{cell_attribute}'
-            s_tifffile = self.xmlfile.replace('.xml', f'{s_channel}.ome.tiff')
+            s_tifffile = self.data['metadata']['xmlfile'].replace('.xml', f'{s_channel}.ome.tiff')
             s_tifffile = s_tifffile.replace(' ','_')
             if (len(s_tifffile) > 255):
                 print(f"Warning: filename {len(s_tifffile)} > 255 character.")
-                s_tifffile = self.xmlfile.replace('.xml', f'_channels.ome.tiff')
+                s_tifffile = self.data['metadata']['xmlfile'].replace('.xml', f'_channels.ome.tiff')
                 print(f"file name adjusted to {s_tifffile}.")
             s_tiffpathfile = self.path + '/' + s_tifffile
 
@@ -3115,6 +3115,16 @@ class TimeStep:
         d_mcds['metadata']['current_runtime'] = float(x_time.text)
         d_mcds['metadata']['runtime_units'] = x_time.get('units')
 
+        ## set xmlfile  (v4.2.0)
+        d_mcds['metadata']['xmlfile'] = self.xmlfile
+
+        ## set timestep id  (v4.2.0)
+        if d_mcds['metadata']['xmlfile'].startswith('initial.'):
+            d_mcds['metadata']['timestep'] = -np.inf
+        elif d_mcds['metadata']['xmlfile'].startswith('final.'):
+            d_mcds['metadata']['timestep'] = np.inf
+        else:
+            d_mcds['metadata']['timestep'] = int(d_mcds['metadata']['xmlfile'].replace('output','').replace('.xml',''))
 
         ####################
         # handle mesh data #
@@ -3331,7 +3341,7 @@ class TimeStep:
         df_conc = pd.DataFrame(aa_data.T, columns=ls_column)
         df_conc['time'] = d_mcds['metadata']['current_time']
         df_conc['runtime'] = d_mcds['metadata']['current_runtime'] / 60  # in min
-        df_conc['xmlfile'] = self.xmlfile
+        df_conc['xmlfile'] = d_mcds['metadata']['xmlfile']
         d_dtype = {'voxel_i': int, 'voxel_j': int, 'voxel_k': int}
         df_conc = df_conc.astype(d_dtype)
         # store values
@@ -3453,12 +3463,6 @@ class TimeStep:
                 print(f'Warning @ TimeStep._read_xml : corrupt {s_cellpathfile} detected!\nassuming time step with zero cells because of a known bug in PhysiCell MultiCellDS version 0.5 output.')
             ar_cell = np.empty([len(ls_variable),0])
 
-
-        ## extract timestep id
-        # <filename>output00000014_cells.mat</filename>
-        # <filename>output00000014_microenvironment0.mat</filename>
-        d_mcds['metadata']['timestep'] = int(x_celldata.find('filename').text.split('_')[0].replace('output',''))
-
         # check for column label mapping error (as good as it gets)
         if (ar_cell.shape[0] != len(ls_variable)):
             sys.exit(f'Error @ TimeStep._read_xml : extracted column label list leng {len(ls_variable)} and data array shape {ar_cell.shape} are incompatible!')
@@ -3488,7 +3492,7 @@ class TimeStep:
         df_cell = pd.DataFrame(d_mcds['raw_cell']['data'])
         df_cell['time'] = d_mcds['metadata']['current_time']
         df_cell['runtime'] = d_mcds['metadata']['current_runtime'] / 60  # in min
-        df_cell['xmlfile'] = self.xmlfile
+        df_cell['xmlfile'] = d_mcds['metadata']['xmlfile']
         df_voxel = df_cell.loc[:,['position_x','position_y','position_z']].copy()
 
         # get mesh spacing
@@ -3555,7 +3559,7 @@ class TimeStep:
 
             # intracellular file (hack because this is not yet in output.xml)
             df_physiboss = None
-            s_intracellpathfile = self.path + f'/states_{self.xmlfile.replace("output","").replace(".xml",".csv")}'
+            s_intracellpathfile = self.path + '/' + f"states_{d_mcds['metadata']['xmlfile'].replace('output','').replace('.xml','.csv')}"
             if os.path.exists(s_intracellpathfile):
                 if self.verbose:
                     print(f'reading: {s_intracellpathfile}')

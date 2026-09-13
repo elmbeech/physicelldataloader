@@ -45,7 +45,6 @@ def entropy(pk):
 
 def to_file():
     # argv
-    # argv
     parser = argparse.ArgumentParser(
         prog = 'pcdl_to_file',
         description = 'this function save the pcdl data structure to a pcdl file, with or without xz compression.',
@@ -192,7 +191,7 @@ def get_version():
     if (s_path.endswith('/')) and (len(s_path) > 1):
         s_path = s_path[:-1]
     s_pathfile = s_path
-    if not s_pathfile.endswith('.xml'):
+    if not (s_pathfile.endswith('.xml') or s_pathfile.endswith('.pcdl')):
         s_pathfile = s_pathfile + '/initial.xml'
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
@@ -200,10 +199,10 @@ def get_version():
         sys.exit(f'Error @ pcdl_get_version : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # run
-    mcds = pcdl.TimeStep(
-        xmlfile = s_pathfile,
-        output_path = '.',
+    mcds = pcdl.read(
+        s_path = s_pathfile,
         #custom_data_type,
+        load = True,
         microenv = False,
         graph = False,
         physiboss = False,
@@ -265,7 +264,7 @@ def get_unit_dict():
     if (s_path.endswith('/')) and (len(s_path) > 1):
         s_path = s_path[:-1]
     s_pathfile = s_path
-    if not s_pathfile.endswith('.xml'):
+    if not (s_pathfile.endswith('.xml') or s_pathfile.endswith('.pcdl')):
         s_pathfile = s_pathfile + '/initial.xml'
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
@@ -273,10 +272,10 @@ def get_unit_dict():
         sys.exit(f'Error @ pcdl_get_unit_dict : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # run
-    mcds = pcdl.TimeStep(
-        xmlfile = s_pathfile,
-        output_path = '.',
+    mcds = pcdl.read(
+        s_path = s_pathfile,
         #custom_data_type,
+        load = True,
         microenv = False if args.microenv.lower().startswith('f') else True,
         graph = False,
         physiboss = False,
@@ -337,7 +336,7 @@ def get_substrate_list():
     if (s_path.endswith('/')) and (len(s_path) > 1):
         s_path = s_path[:-1]
     s_pathfile = s_path
-    if not s_pathfile.endswith('.xml'):
+    if not (s_pathfile.endswith('.xml') or s_pathfile.endswith('.pcdl')):
         s_pathfile = s_pathfile + '/initial.xml'
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
@@ -345,10 +344,10 @@ def get_substrate_list():
         sys.exit(f'Error @ pcdl_get_substrate_list : {s_pathfile} path does not look like a outputnnnnnnnn.xml file or physicell output directory ({s_path}/initial.xml is missing).')
 
     # run
-    mcds = pcdl.TimeStep(
-        xmlfile = s_pathfile,
-        output_path = '.',
+    mcds = pcdl.read(
+        s_path = s_pathfile,
         #custom_data_type,
+        load = True,
         microenv = True,
         graph = False,
         physiboss = False,
@@ -427,7 +426,7 @@ def get_conc_df():
     if (s_path.endswith('/')) and (len(s_path) > 1):
         s_path = s_path[:-1]
     s_pathfile = s_path
-    if not s_pathfile.endswith('.xml'):
+    if not (s_pathfile.endswith('.xml') or s_pathfile.endswith('.pcdl')):
         s_pathfile = s_pathfile + '/initial.xml'
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
@@ -557,7 +556,7 @@ def get_conc_attribute():
     if (s_path.endswith('/')) and (len(s_path) > 1):
         s_path = s_path[:-1]
     s_pathfile = s_path
-    if not s_pathfile.endswith('.xml'):
+    if not (s_pathfile.endswith('.xml') or s_pathfile.endswith('.pcdl')):
         s_pathfile = s_pathfile + '/initial.xml'
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
@@ -734,7 +733,7 @@ def plot_contour():
     if (s_path.endswith('/')) and (len(s_path) > 1):
         s_path = s_path[:-1]
     s_pathfile = s_path
-    if not s_pathfile.endswith('.xml'):
+    if not (s_pathfile.endswith('.xml') or s_pathfile.endswith('.pcdl')):
         s_pathfile = s_pathfile + '/initial.xml'
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
@@ -897,7 +896,7 @@ def make_conc_vtk():
     if (s_path.endswith('/')) and (len(s_path) > 1):
         s_path = s_path[:-1]
     s_pathfile = s_path
-    if not s_pathfile.endswith('.xml'):
+    if not (s_pathfile.endswith('.xml') or s_pathfile.endswith('.pcdl')):
         s_pathfile = s_pathfile + '/initial.xml'
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
@@ -991,7 +990,7 @@ def get_celltype_list():
     if (s_path.endswith('/')) and (len(s_path) > 1):
         s_path = s_path[:-1]
     s_pathfile = s_path
-    if not s_pathfile.endswith('.xml'):
+    if not (s_pathfile.endswith('.xml') or s_pathfile.endswith('.pcdl')):
         s_pathfile = s_pathfile + '/initial.xml'
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
@@ -1096,7 +1095,7 @@ def get_cell_df():
     if (s_path.endswith('/')) and (len(s_path) > 1):
         s_path = s_path[:-1]
     s_pathfile = s_path
-    if not s_pathfile.endswith('.xml'):
+    if not (s_pathfile.endswith('.xml') or s_pathfile.endswith('.pcdl')):
         s_pathfile = s_pathfile + '/initial.xml'
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
@@ -1247,7 +1246,7 @@ def get_cell_attribute():
     if (s_path.endswith('/')) and (len(s_path) > 1):
         s_path = s_path[:-1]
     s_pathfile = s_path
-    if not s_pathfile.endswith('.xml'):
+    if not (s_pathfile.endswith('.xml') or s_pathfile.endswith('.pcdl')):
         s_pathfile = s_pathfile + '/initial.xml'
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
@@ -1370,7 +1369,7 @@ def get_cell_attribute_list():
     if (s_path.endswith('/')) and (len(s_path) > 1):
         s_path = s_path[:-1]
     s_pathfile = s_path
-    if not s_pathfile.endswith('.xml'):
+    if not (s_pathfile.endswith('.xml') or s_pathfile.endswith('.pcdl')):
         s_pathfile = s_pathfile + '/initial.xml'
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
@@ -1492,7 +1491,7 @@ def get_anndata():
     if (s_path.endswith('/')) and (len(s_path) > 1):
         s_path = s_path[:-1]
     s_pathfile = s_path
-    if not s_pathfile.endswith('.xml'):
+    if not (s_pathfile.endswith('.xml') or s_pathfile.endswith('.pcdl')):
         s_pathfile = s_pathfile + '/initial.xml'
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
@@ -1748,7 +1747,7 @@ def plot_scatter():
     if (s_path.endswith('/')) and (len(s_path) > 1):
         s_path = s_path[:-1]
     s_pathfile = s_path
-    if not s_pathfile.endswith('.xml'):
+    if not (s_pathfile.endswith('.xml') or s_pathfile.endswith('.pcdl')):
         s_pathfile = s_pathfile + '/initial.xml'
     else:
         s_path = '/'.join(s_pathfile.split('/')[:-1])
@@ -1917,7 +1916,7 @@ def make_cell_vtk():
     if (s_path.endswith('/')) and (len(s_path) > 1):
         s_path = s_path[:-1]
     s_pathfile = s_path
-    if not s_pathfile.endswith('.xml'):
+    if not (s_pathfile.endswith('.xml') or s_pathfile.endswith('.pcdl')):
         s_pathfile = s_pathfile + '/initial.xml'
     else:
         s_path = '/'.join(s_pathfile.split('/')[:-1])
@@ -2056,7 +2055,7 @@ def make_graph_gml():
     if (s_path.endswith('/')) and (len(s_path) > 1):
         s_path = s_path[:-1]
     s_pathfile = s_path
-    if not s_pathfile.endswith('.xml'):
+    if not (s_pathfile.endswith('.xml') or s_pathfile.endswith('.pcdl')):
         s_pathfile = s_pathfile + '/initial.xml'
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
@@ -2193,7 +2192,7 @@ def make_simularium():
     if (s_path.endswith('/')) and (len(s_path) > 1):
         s_path = s_path[:-1]
     s_pathfile = s_path
-    if not s_pathfile.endswith('.xml'):
+    if not (s_pathfile.endswith('.xml') or s_pathfile.endswith('.pcdl')):
         s_pathfile = s_pathfile + '/initial.xml'
     else:
         s_path = '/'.join(s_pathfile.split('/')[:-1])
@@ -2332,7 +2331,7 @@ def get_muspan():
     if (s_path.endswith('/')) and (len(s_path) > 1):
         s_path = s_path[:-1]
     s_pathfile = s_path
-    if not s_pathfile.endswith('.xml'):
+    if not (s_pathfile.endswith('.xml') or s_pathfile.endswith('.pcdl')):
         s_pathfile = s_pathfile + '/initial.xml'
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
@@ -2524,7 +2523,7 @@ def get_spatialdata():
     if (s_path.endswith('/')) and (len(s_path) > 1):
         s_path = s_path[:-1]
     s_pathfile = s_path
-    if not s_pathfile.endswith('.xml'):
+    if not (s_pathfile.endswith('.xml') or s_pathfile.endswith('.pcdl')):
         s_pathfile = s_pathfile + '/initial.xml'
     else:
         s_path = '/'.join(s_path.split('/')[:-1])
@@ -2981,7 +2980,7 @@ def make_ome_tiff():
     if (s_path.endswith('/')) and (len(s_path) > 1):
         s_path = s_path[:-1]
     s_pathfile = s_path
-    if not s_pathfile.endswith('.xml'):
+    if not (s_pathfile.endswith('.xml') or s_pathfile.endswith('.pcdl')):
         s_pathfile = s_pathfile + '/initial.xml'
     else:
         s_path = '/'.join(s_pathfile.split('/')[:-1])

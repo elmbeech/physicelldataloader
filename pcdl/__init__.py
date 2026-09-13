@@ -1,6 +1,7 @@
 # libarary
 import io
 import json
+import lzma
 import numpy as np
 import os
 import pandas as pd
@@ -76,7 +77,7 @@ def read(s_path, custom_data_type={}, load=True, microenv=True, graph=True, phys
             pcd = l_mcds[0]
         # transform list of many mcds TimeSteps to TimeSeries
         elif (len(l_mcds) > 1):
-            pcd = TimeSeries(l_mcds)
+            pcd = TimeSeries(l_mcds)  # BUE: this is the shit, we don't set the path correct!
         # error handling
         else:
             sys.exit(f'Error @ load"*",8,1 : {s_pathfile} path pcdl files does not contain any mcds time step.')
