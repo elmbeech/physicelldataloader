@@ -231,16 +231,12 @@ class TimeSeries:
             # check for empty list
             if len(output_path) < 1:
                 sys.exit(f'Error @ TimeSeries.__init__ : {output_path}. mcds list is empty!')
-            # check mcds pcdl version >= 4.1.3
-            try:
-                s_mcdsv = output_path[0].get_pcdl_version()
-            except AttributeError:
-                s_mcdsv = 'pcdl_<4.1.3'
-            except KeyError:
-                s_mcdsv = 'pcdl_<4.1.3'
             # check mcds pcdl version >= 4.2
             try:
-                output_path[0].data['metadata']['timestep']
+                self.l_mcds[0].get_pcdl_version()
+                self.l_mcds[0].data['metadata']['timestep']  # BUE: output_path[0].get_timestep()
+                self.ls_xmlfile = [mcds.data['metadata']['xmlfile'] for mcds in self.l_mcds]  # BUE: mcds.get_xmlfile()
+                self.path = self.l_mcds[0].path
                 self.microenv = True
                 self.graph = True
                 self.physiboss = True

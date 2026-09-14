@@ -576,12 +576,18 @@ class TimeStep:
             # check mcds pcdl version
             try:
                 xmlfile['metadata']['pcdl_version']
-                xmlfile['metadata']['timestep']
+                xmlfile['metadata']['timestep']  # BUE: get_timestep
+                xmlfile['metadata']['xmlfile']  # BUE: get_xmlfile
             except KeyError:
                 sys.exit(f'Error @ TimeStep.__init__ : mcds data dictionary {type(xmlfile)} is not pcdl version >= 4.2 compatible!')
-            # set variables
-            self.ls_xmlfile = None
-            self.path = '.'
+            # manipulate path
+            output_path = output_path.replace('\\','/')
+            while (output_path.find('//') > -1):
+                output_path = output_path.replace('//','/')
+            if (output_path.endswith('/')) and (len(output_path) > 1):
+                output_path = output_path[:-1]
+            self.path = output_path
+            # set for pcdl file
             self.microenv = True
             self.graph = True
             self.physiboss = True
@@ -3014,6 +3020,7 @@ class TimeStep:
 
         # file and path manipulation
         s_xmlfile = xmlfile.replace('\\','/')
+        output_path = output_path.replace('\\','/')
         if (xmlfile.find('/') > -1) and (output_path == '.'):
             ls_xmlfile = xmlfile.split('/')
             s_xmlfile = ls_xmlfile.pop(-1)
@@ -3092,7 +3099,7 @@ class TimeStep:
         ## get multicellds xml version
         d_mcds['metadata']['multicellds_version'] = f"MultiCellDS_{x_root.get('version')}"
 
-        ## get pcdl version
+        ## get pcdl version (v4.1.3)
         d_mcds['metadata']['pcdl_version'] = f"pcdl_{__version__}"
 
         ## get physicell software version
@@ -3115,10 +3122,10 @@ class TimeStep:
         d_mcds['metadata']['current_runtime'] = float(x_time.text)
         d_mcds['metadata']['runtime_units'] = x_time.get('units')
 
-        ## set xmlfile  (v4.2.0)
+        ## set xmlfile (v4.2.0)
         d_mcds['metadata']['xmlfile'] = self.xmlfile
 
-        ## set timestep id  (v4.2.0)
+        ## set timestep id (v4.2.0)
         if d_mcds['metadata']['xmlfile'].startswith('initial.'):
             d_mcds['metadata']['timestep'] = -np.inf
         elif d_mcds['metadata']['xmlfile'].startswith('final.'):
