@@ -1,7 +1,11 @@
 <macros>
+    <!-- tool version -->
+    <token name="@TOOL_VERSION@">4.1.9</token>
+    <token name="@VERSION_SUFFIX@">0</token>
+    <token name="@PROFILE@">21.05</token>
     <!-- requirements -->
     <xml name="requirement">
-        <requirement type="package" version="4.1.7">pcdl</requirement>
+        <requirement type="package" version="4.1.9">pcdl</requirement>
     </xml>
     <!-- input -->
     <xml name="aggregate_num">
