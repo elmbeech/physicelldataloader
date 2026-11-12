@@ -1298,7 +1298,29 @@ class TimeStep:
         return df_conc
 
 
-    def plot_contour(self, focus, z_slice=0.0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', title=None, grid=True, xlim=None, ylim=None, xyequal=True, ax=None, figsizepx=None, directory=None, ext=None, figbgcolor=None, **kwargs):
+    def plot_contour(
+            self,
+            focus,
+            z_slice=0.0,
+            vmin=None,
+            vmax=None,
+            alpha=1,
+            fill=True,
+            cmap='viridis',
+            colorbar=True,
+            title=None,
+            grid=True,
+            xlim=None,
+            ylim=None,
+            xyequal=True,
+            tight_layout=True,
+            ax=None,
+            figsizepx=None,
+            directory=None,
+            ext=None,
+            figbgcolor=None,
+            **kwargs
+        ):
         """
         input:
             focus: string
@@ -1331,6 +1353,9 @@ class TimeStep:
                 matplotlib color map color label.
                 https://matplotlib.org/stable/tutorials/colors/colormaps.html
 
+            colorbar: boolean; default True
+                True will plot the colorbar.
+
             title: string; default None
                 possible plot title string.
 
@@ -1348,6 +1373,11 @@ class TimeStep:
 
             xyequal: boolean; default True
                 to specify equal axis spacing for x and y axis.
+
+            tight_layout: boolean; default True
+                if True, matplotlib's plt.tight_layout() is applied.
+                usually this is ok, however, if you wanna generat a movie
+                out of the images, it might make the movie jumping.
 
             ax: matplotlib axis object; default setting is None
                 the ax object, which will be used as a canvas for plotting.
@@ -1477,11 +1507,12 @@ class TimeStep:
             ax.set_ylim(ylim[0], ylim[1])
 
         # add colorbar to fig
-        fig.colorbar(
-            mappable=cm.ScalarMappable(norm=colors.Normalize(vmin=vmin, vmax=vmax), cmap=cmap),
-            label=focus,
-            ax=ax
-        )
+        if colorbar:
+            fig.colorbar(
+                mappable=cm.ScalarMappable(norm=colors.Normalize(vmin=vmin, vmax=vmax), cmap=cmap),
+                label=focus,
+                ax=ax
+            )
 
         # finalize
         if (ext is None):
@@ -1501,7 +1532,8 @@ class TimeStep:
             if figbgcolor is None:
                 figbgcolor = 'auto'
             # plotting
-            plt.tight_layout()
+            if tight_layout:
+                plt.tight_layout()
             fig.savefig(s_pathfile, facecolor=figbgcolor)
             plt.close(fig)
             # output
@@ -1813,7 +1845,31 @@ class TimeStep:
         return self.data['cell']['dei_graph']['spring_attached_cells'].copy()
 
 
-    def plot_scatter(self, focus='cell_type', cat_drop=set(), cat_keep=set(), z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title=None, grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, ax=None, figsizepx=None,  directory=None, ext=None, figbgcolor=None, **kwargs):
+    def plot_scatter(
+            self,
+            focus='cell_type',
+            cat_drop=set(),
+            cat_keep=set(),
+            z_slice=0.0,
+            z_axis=None,
+            alpha=1,
+            cmap='viridis',
+            dead='black',
+            title=None,
+            grid=True,
+            legend_loc='lower left',
+            xlim=None,
+            ylim=None,
+            xyequal=True,
+            s=1.0,
+            tight_layout=True,
+            ax=None,
+            figsizepx=None,
+            directory=None,
+            ext=None,
+            figbgcolor=None,
+            **kwargs
+        ):
         """
         input:
             focus: string; default is 'cell_type'
@@ -1851,6 +1907,10 @@ class TimeStep:
                 dictionary that maps labels to list of rgb floats. e.g. {'default': [0.5,0.0,0.0]}
                 https://matplotlib.org/stable/tutorials/colors/colormaps.html
 
+            dead: string; default is 'black'.
+                if data is cathegorical, set a color for dead cells.
+                None will not specificaly color dead cells, but treat the like alive.
+
             title: string; default None
                 possible plot title string.
 
@@ -1878,6 +1938,11 @@ class TimeStep:
             s: floating point number; default is 1.0
                 scatter plot dot size scale factor.
                 adjust if necessary.
+
+            tight_layout: boolean; default True
+                if True, matplotlib's plt.tight_layout() is applied.
+                usually this is ok, however, if you wanna generat a movie
+                out of the images, it might make the movie jumping.
 
             ax: matplotlib axis object; default setting is None
                 the ax object, which will be used as a canvas for plotting.
@@ -1954,7 +2019,6 @@ class TimeStep:
             z_slice = ar_p_axis[abs(ar_p_axis - z_slice).argmin()]
             if self.verbose:
                 print(f'z_slice set to {z_slice}.')
-
         # get data z slice
         df_cell = self.get_cell_df(values=1, drop=set(), keep=set())
         df_cell = df_cell.loc[(df_cell.mesh_center_p == z_slice),:]
@@ -1965,6 +2029,7 @@ class TimeStep:
 
         # handle z_axis categorical cases
         if (str(df_cell.loc[:,focus].dtype) in {'bool', 'str', 'object'}):
+            # extract ls_category
             vmin = None
             vmax = None
             if (z_axis is None):
@@ -2013,13 +2078,14 @@ class TimeStep:
 
         # layout the canvas
         if xyequal:
-            ax.axis('equal')
+            ax.set_aspect('equal', adjustable='box')
 
         # handle categorical variable
         if not (ls_category is None):
             s_focus_color = focus + '_color'
             # use specified category color dictionary
             if type(cmap) == dict:
+                cmap = cmap.copy()
                 if type(list(cmap.values())[0]) == list:
                     for s_category, lr_color in cmap.items():
                         cmap[s_category] = colors.to_hex(lr_color)
@@ -2037,13 +2103,19 @@ class TimeStep:
                     s_cmap = cmap,
                     b_shuffle = False,
                 )
+            # handle dead cells
+            if not (dead is None):
+                df_cell.loc[df_cell.dead, s_focus_color] = dead
+                df_cell.loc[df_cell.dead, focus] = 'dead'
+                ds_color.update({'dead': dead})
+                ls_category.append('dead')
             # filter categories
             es_cat = set()
             if (len(cat_keep) > 0):
                 es_cat = set(ls_category).intersection(cat_keep)
             else:
                 es_cat = set(ls_category).difference(cat_drop)
-            df_cell= df_cell.loc[df_cell.loc[:,focus].isin(es_cat),:]
+            df_cell = df_cell.loc[df_cell.loc[:,focus].isin(es_cat),:]
             # generate color list
             c = list(df_cell.loc[:, s_focus_color].values)
             s_cmap = None
@@ -2072,15 +2144,15 @@ class TimeStep:
             **kwargs,
         )
 
-        # plot categorical data legen
+        # plot categorical data legend
         if not (ls_category is None) and not (legend_loc in {None, False}):
-                pdplt.ax_colorlegend(
-                    ax = ax,
-                    ds_color = ds_color,
-                    ls_label = ls_category,
-                    s_loc = legend_loc,
-                    s_fontsize = 'small',
-                )
+            pdplt.ax_colorlegend(
+                ax = ax,
+                ds_color = ds_color,
+                ls_label = ls_category,
+                s_loc = legend_loc,
+                s_fontsize = 'small',
+            )
 
         # finalize
         if (ext is None):
@@ -2100,7 +2172,8 @@ class TimeStep:
             if figbgcolor is None:
                 figbgcolor = 'auto'
             # plotting
-            plt.tight_layout()
+            if tight_layout:
+                plt.tight_layout()
             fig.savefig(s_pathfile, facecolor=figbgcolor)
             plt.close(fig)
             # output

@@ -664,6 +664,12 @@ def plot_contour():
         default = 'viridis',
         help = 'matplotlib colormap string from https://matplotlib.org/stable/tutorials/colors/colormaps.html . default is viridis.',
     )
+    # plot_contour colorbar
+    parser.add_argument(
+        '--colorbar',
+        default = 'true',
+        help = 'boolen. true will plot the colorbar; false will not. default is true.',
+    )
     # plot_contour title
     parser.add_argument(
         '--title',
@@ -695,6 +701,12 @@ def plot_contour():
         '--xyequal',
         default = 'true',
         help = 'to specify equal axis spacing for x and y axis. default is true.',
+    )
+    # plot_contour tight_layout
+    parser.add_argument(
+        '--tight_layout',
+        default = 'true',
+        help = 'boolean. true calls the matplotlib pyplot tight_layout function to adjust the padding between and around subplots. default is true.',
     )
     # plot_contour figsizepx
     parser.add_argument(
@@ -782,11 +794,13 @@ def plot_contour():
             alpha = args.alpha,
             fill = False if args.fill.lower().startswith('f') else True,
             cmap = args.cmap,
+            colormap = False if args.colormap.lower().startswith('f') else True,
             title = args.title,
             grid = False if args.grid.lower().startswith('f') else True,
             xlim = None if (args.xlim[0].lower() == 'none') else args.xlim,
             ylim = None if (args.ylim[0].lower() == 'none') else args.ylim,
             xyequal = False if args.xyequal.lower().startswith('f') else True,
+            tight_layout = False if args.tight_layout.lower().startswith('f') else True,
             ax = None,
             figsizepx = None if (args.figsizepx[0].lower() == 'none') else [int(n) for n in args.figsizepx],
             directory = None if (args.directory.lower() == 'none') else args.directory,
@@ -833,11 +847,13 @@ def plot_contour():
             alpha = args.alpha,
             fill = False if args.fill.lower().startswith('f') else True,
             cmap = args.cmap,
+            colormap = False if args.colormap.lower().startswith('f') else True,
             title = args.title,
             grid = False if args.grid.lower().startswith('f') else True,
             xlim = None if (args.xlim[0].lower() == 'none') else args.xlim,
             ylim = None if (args.ylim[0].lower() == 'none') else args.ylim,
             xyequal = False if args.xyequal.lower().startswith('f') else True,
+            tight_layout = False if args.tight_layout.lower().startswith('f') else True,
             figsizepx = None if (args.figsizepx[0].lower() == 'none') else [int(n) for n in args.figsizepx],
             directory = None if (args.directory.lower() == 'none') else args.directory,
             ext = args.ext,
@@ -1665,6 +1681,12 @@ def plot_scatter():
         default = 'viridis',
         help = 'matplotlib colormap string from https://matplotlib.org/stable/tutorials/colors/colormaps.html . default is viridis.',
     )
+    # plot_scatter dead
+    parser.add_argument(
+        '--dead',
+        default = 'black',
+        help = 'string. if focus is categorical, the color dead cells should be plotted. None will treat dead cells like alive ones. default is black.',
+    )
     # plot_scatter title
     parser.add_argument(
         '--title',
@@ -1709,6 +1731,12 @@ def plot_scatter():
         default = 1.0,
         type = float,
         help = 'scatter plot dot size scale factor. with figsizepx extracted from initial.svg, scale factor 1.0 should be ok. adjust if necessary. default 1.0.',
+    )
+    # plot_contour tight_layout
+    parser.add_argument(
+        '--tight_layout',
+        default = 'true',
+        help = 'boolean. true calls the matplotlib pyplot tight_layout function to adjust the padding between and around subplots. default is true.',
     )
     # plot_scatter figsizepx
     parser.add_argument(
@@ -1787,6 +1815,7 @@ def plot_scatter():
             z_axis = None if (args.z_axis[0].lower() == 'none') else args.z_axis,
             alpha = args.alpha,
             cmap = args.cmap,
+            dead = None if (args.dead.lower() == 'none') else args.dead,
             title = args.title,
             grid = False if args.grid.lower().startswith('f') else True,
             legend_loc = args.legend_loc,
@@ -1794,6 +1823,7 @@ def plot_scatter():
             ylim = None if (args.ylim[0].lower() == 'none') else args.ylim,
             xyequal = False if args.xyequal.lower().startswith('f') else True,
             s = args.s,
+            tight_layout = False if args.tight_layout.lower().startswith('f') else True,
             ax = None,
             figsizepx = None if (args.figsizepx[0].lower() == 'none') else [int(i) for i in args.figsizepx],
             directory = None if (args.directory.lower() == 'none') else args.directory,
@@ -1823,6 +1853,7 @@ def plot_scatter():
             z_axis = None if (args.z_axis[0].lower() == 'none') else args.z_axis,
             alpha = args.alpha,
             cmap = args.cmap,
+            dead = None if (args.dead.lower() == 'none') else args.dead,
             title = args.title,
             grid = False if args.grid.lower().startswith('f') else True,
             legend_loc = args.legend_loc,
@@ -1830,6 +1861,7 @@ def plot_scatter():
             ylim = None if (args.ylim[0].lower() == 'none') else args.ylim,
             xyequal = False if args.xyequal.lower().startswith('f') else True,
             s = args.s,
+            tight_layout = False if args.tight_layout.lower().startswith('f') else True,
             figsizepx = None if (args.figsizepx[0].lower() == 'none') else [int(i) for i in args.figsizepx],
             directory = None if (args.directory.lower() == 'none') else args.directory,
             ext = args.ext,

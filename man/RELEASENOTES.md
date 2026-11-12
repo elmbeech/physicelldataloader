@@ -2,6 +2,14 @@
 
 + branch v4: active feature development, bug fixes, and security maintenance.
 
++ version 4.2.0 (2026-nn-nn): elmbeech/physicelldataloader
+    + new **pcdl.read** function
+    + new TimeStep, TimeSeries, and command line **to_file** function.
+    + new TimeStep and command line **get_xmlfile** function.
+    + new TimeStep and command line **get_timestep** function.
+    + TimeStep, TimeSeries, and command line **plot_contour** function has new parameters colorbar and tight\_layout.
+    + TimeStep, TimeSeries, and command line **plot_scatter** function has new parameters dead and tight\_layout.
+
 + version 4.1.9 (2026-08-28): elmbeech/physicelldataloader
     + new TimeSeries **make_simularium** and **pcdl_make_simularium** function. special thanks to Randy Heiland!
 

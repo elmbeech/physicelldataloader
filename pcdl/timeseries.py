@@ -140,19 +140,11 @@ def make_movie(path, interface='jpeg', framerate=12):
     s_ofile = s_ofile.replace(' ','_')
     s_opathfile = f'{s_path}/{s_ofile}'
 
-    # generate input file list
-    os.chdir(s_path)
-    ls_ifile = sorted(glob.glob(f'*.{interface}'))
-    f = open('ffmpeginput.txt', 'w')
-    for s_ifile in ls_ifile:
-        f.write(f"file '{s_ifile}'\n")
-    f.close()
-
     # genearete movie
-    s_cmd = f'ffmpeg -f concat -i ffmpeginput.txt -y -r {framerate} -pix_fmt yuv420p -strict -2 -codec:v h264 -tune animation -crf 15 -codec:a none "{s_ofile}"'  # -safe 0
+    s_cmd = f"ffmpeg -framerate {framerate} -pattern_type glob -i '{s_path}/*.{interface}' -y -pix_fmt yuv420p -codec:v h264 -tune animation -crf 15 -codec:a none '{s_path}/{s_ofile}'"
+    print(s_cmd)
     if (os.system(s_cmd) != 0):
         sys.exit("Error @ make_movie : ffmpeg could not generatet the movie.")
-    os.remove('ffmpeginput.txt')
 
     # output
     os.chdir(s_pwd)
@@ -652,8 +644,30 @@ class TimeSeries:
         # output
         return dlr_variable_range
 
+    colorbar, tightlayout
 
-    def plot_contour(self, focus, z_slice=0.0, vmin=None, vmax=None, alpha=1, fill=True, cmap='viridis', title='', grid=True, xlim=None, ylim=None, xyequal=True, figsizepx=None, directory=None, ext='jpeg', figbgcolor=None, **kwargs):
+    def plot_contour(
+            self,
+            focus,
+            z_slice=0.0,
+            vmin=None,
+            vmax=None,
+            alpha=1,
+            fill=True,
+            cmap='viridis',
+            colorbar=True,
+            title='',
+            grid=True,
+            xlim=None,
+            ylim=None,
+            xyequal=True,
+            tight_layout=True,
+            figsizepx=None,
+            directory=None,
+            ext='jpeg',
+            figbgcolor=None,
+             **kwargs
+        ):
         """
         input:
             self: TimeSeries class instance
@@ -686,12 +700,15 @@ class TimeSeries:
                 True generates a matplotlib contourf plot.
                 False generates a matplotlib contour plot.
 
-            title: string; default is ''
-                title prefix.
-
             cmap: string; default viridis.
                 matplotlib colormap.
                 https://matplotlib.org/stable/tutorials/colors/colormaps.html
+
+            colorbar: boolean; default True
+                True will plot the colorbar; false will not.
+
+            title: string; default is ''
+                title prefix.
 
             grid: boolean; default True.
                 plot axis grid lines.
@@ -706,6 +723,11 @@ class TimeSeries:
 
             xyequal: boolean; default True
                 to specify equal axis spacing for x and y axis.
+
+            tight_layout: boolean; default True
+                if True, matplotlib's plt.tight_layout() is applied.
+                usually this is ok, however, if you wanna generat a movie
+                out of the images, it might make the movie jumping.
 
             figsizepx: list of two integers; default is None
                 size of the figure in pixels, (x, y).
@@ -792,11 +814,13 @@ class TimeSeries:
                 alpha = alpha,
                 fill = fill,
                 cmap = cmap,
+                colorbar = colorbar,
                 title = f'{title}{focus} z{round(z_slice,3)}\n{round(mcds.get_time(),3)}[min]',
                 grid = grid,
                 xlim = xlim,
                 ylim = ylim,
                 xyequal = xyequal,
+                tight_layout = tight_layout,
                 ax = None,
                 figsizepx = figsizepx,
                 directory = directory,
@@ -962,7 +986,7 @@ class TimeSeries:
                 dictionary with an entry of all non-coordinate column names
                 that at least in one of the time steps or in between
                 time steps, reach the given minimal value count.
-                key is the column name, mapped is a list of all values
+                key is the column name, mapped is a sorted list of all values
                 (bool, str, and, if allvalues is True, int and float) or
                 a list with minimum and maximum values (int, float).
 
@@ -1151,7 +1175,32 @@ class TimeSeries:
         return self.l_annmcds
 
 
-    def plot_scatter(self, focus='cell_type', cat_drop=set(), cat_keep=set(), z_slice=0.0, z_axis=None, alpha=1, cmap='viridis', title='', grid=True, legend_loc='lower left', xlim=None, ylim=None, xyequal=True, s=1.0, figsizepx=None, directory=None, ext='jpeg', figbgcolor=None, **kwargs):
+    dead, tightlayout
+
+    def plot_scatter(
+            self,
+            focus='cell_type',
+            cat_drop=set(),
+            cat_keep=set(),
+            z_slice=0.0,
+            z_axis=None,
+            alpha=1,
+            cmap='viridis',
+            dead='black',
+            title='',
+            grid=True,
+            legend_loc='lower left',
+            xlim=None,
+            ylim=None,
+            xyequal=True,
+            s=1.0,
+            tight_layout=True,
+            figsizepx=None,
+            directory=None,
+            ext='jpeg',
+            figbgcolor=None,
+            **kwargs
+        ):
         """
         input:
             self: TimeSeries class instance
@@ -1189,6 +1238,10 @@ class TimeSeries:
                 matplotlib colormap string.
                 https://matplotlib.org/stable/tutorials/colors/colormaps.html
 
+            dead: string; default is 'black'.
+                if data is cathegorical, set a color for dead cells.
+                None will not specificaly color dead cells, but treat the like alive.
+
             title: string; default is ''
                 title prefix.
 
@@ -1217,6 +1270,11 @@ class TimeSeries:
                 scatter plot dot size scale factor.
                 with figsizepx extracted from initial.svg, scale factor 1.0
                 should be ok. adjust if necessary.
+
+            tight_layout: boolean; default True
+                if True, matplotlib's plt.tight_layout() is applied.
+                usually this is ok, however, if you wanna generat a movie
+                out of the images, it might make the movie jumping.
 
             figsizepx: list of two integers; default is None
                 size of the figure in pixels, (x, y).
@@ -1281,6 +1339,7 @@ class TimeSeries:
                 s = s,
                 ax = None,
                 figsizepx = figsizepx,
+                tight_layout = tight_layout,
                 directory = directory,
                 ext = ext,
                 figbgcolor = figbgcolor,
